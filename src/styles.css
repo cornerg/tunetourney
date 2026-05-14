@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+#app {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  width: 100vw;
+  min-height: 100vh;
+  background: var(--color-background);
+  overflow-x: hidden;
+}
