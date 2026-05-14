@@ -3,9 +3,11 @@ import ButtonDiscordLogin from "#/components/ButtonDiscordLogin.tsx";
 import React from "react";
 import {supabase} from "#/integrations/supabase/supabase.ts";
 import type {Session} from "@supabase/auth-js";
+import {useBreakpoints} from "#/hooks/utils.ts";
 
 export default function Header() {
   const [session, setSession] = React.useState<Session | null>(null);
+  const { isMobile } = useBreakpoints();
 
   const getSession = React.useCallback(async () => {
     const { data, error } = await supabase.auth.getSession();
@@ -45,6 +47,7 @@ export default function Header() {
     <header className="fixed top-0 left-0 row w-[100vw] px-8 py-1 justify-between items-center bg-background-secondary shadow-md">
       <div className="row items-center w-full flex-1">
         <img src={logo} alt="logo" width={40} height={40} style={{ minWidth: "40px", minHeight: "40px" }} />
+        {!isMobile && <p>Tune Tourney</p>}
       </div>
 
       <div className="row justify-end items-center gap-2 w-full flex-1">
