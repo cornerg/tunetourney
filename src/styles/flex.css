@@ -1,0 +1,9 @@
+:where(.row) {
+    display: flex;
+    flex-direction: row;
+}
+
+:where(.column) {
+    display: flex;
+    flex-direction: column;
+}
