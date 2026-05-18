@@ -1,13 +1,40 @@
-import {createFileRoute} from '@tanstack/react-router';
 import {useBreakpoints} from "#/hooks/utils.ts";
+import ButtonDiscordLogin from "#/components/ButtonDiscordLogin.tsx";
+import React from "react";
+import {supabase} from "#/integrations/supabase/supabase.ts";
 
-function Login() {
+export default function HomeRight() {
   const { isMobile, isTablet, isDesktop } = useBreakpoints();
 
+  const checkSession = React.useCallback(async () => {
+    const { data, error } = await supabase.auth.getSession();
+    console.log(data, error);
+  }, []);
+
+  const checkData = React.useCallback(async () => {
+    const { data, error } = await supabase.from("Clubs").select();
+    console.log(data, error);
+  }, []);
+
+  const handleLogOut = React.useCallback(async () => {
+    const { error } = await supabase.auth.signOut({ scope: 'local' });
+    if (error) {
+      console.error("Failed to log out: ", error);
+    } else {
+      console.log("Logged out");
+    }
+  }, []);
+
   return (
-    <div className="row gap-0">
-      <div className="column min-w-[50vw] min-h-[100vh] p-4 justify-center items-center gap-2">
-        <p className="text-center">Content Left</p>
+    <div className="column min-w-[50vw] min-h-[100vh] p-4 justify-center items-center gap-8">
+      <div className="column w-full h-max items-center gap-2">
+        <button className="border" onClick={checkData}>Check Data</button>
+        <button className="border" onClick={checkSession}>Check Session</button>
+        <button className="border" onClick={handleLogOut}>Log Out</button>
+        <ButtonDiscordLogin />
+      </div>
+
+      <div className="column w-full h-max items-center gap-2">
         <div className="row items-center gap-2 w-max min-w-32">
           <div className="w-5 h-5 rounded-full border-1 border-gray-800 p-0.5">
             <div
@@ -38,14 +65,6 @@ function Login() {
           <p>Is Desktop</p>
         </div>
       </div>
-
-      <div className="column min-w-[50vw] min-h-[100vh] p-4 justify-center items-center">
-        <p className="text-center">Content Right</p>
-      </div>
     </div>
   )
 }
-
-export const Route = createFileRoute('/login')({
-  component: Login,
-})

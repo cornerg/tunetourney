@@ -1,9 +1,9 @@
 import logo from "../assets/images/logo1.png";
-import ButtonDiscordLogin from "#/components/ButtonDiscordLogin.tsx";
 import React from "react";
 import {supabase} from "#/integrations/supabase/supabase.ts";
 import type {Session} from "@supabase/auth-js";
 import {useBreakpoints} from "#/hooks/utils.ts";
+import {Link} from "@tanstack/react-router";
 
 export default function Header() {
   const [session, setSession] = React.useState<Session | null>(null);
@@ -22,43 +22,20 @@ export default function Header() {
     getSession();
   }, []);
 
-  const checkSession = React.useCallback(async () => {
-    const { data, error } = await supabase.auth.getSession();
-    console.log(data, error);
-  }, []);
-
-  const checkData = React.useCallback(async () => {
-    const { data, error } = await supabase.from("Clubs").select();
-    console.log(data, error);
-  }, []);
-
-  const handleLogOut = React.useCallback(async () => {
-    const { error } = await supabase.auth.signOut({ scope: 'local' });
-    if (error) {
-      console.error("Failed to log out: ", error);
-    } else {
-      console.log("Logged out");
-    }
-  }, []);
-
   const user = React.useMemo(() => session?.user ?? null, [session]);
 
   return (
-    <header className="fixed top-0 left-0 row w-[100vw] px-8 py-1 justify-between items-center bg-background-secondary shadow-md">
-      <div className="row items-center w-full flex-1">
-        <img src={logo} alt="logo" width={40} height={40} style={{ minWidth: "40px", minHeight: "40px" }} />
-        {!isMobile && <p>Tune Tourney</p>}
-      </div>
+    <header className="fixed top-0 left-0 row w-[100vw] px-8 py-2 justify-between items-center bg-background-secondary shadow-md z-10">
+      <Link className="row items-center w-full flex-1 gap-3 cursor-pointer" to="/">
+        <img src={logo} alt="logo" width={36} height={36} style={{ minWidth: "36px", minHeight: "36px" }} />
+        {!isMobile && <p className="text-2xl font-bold text-primary">Tune Tourney</p>}
+      </Link>
 
       <div className="row justify-end items-center gap-2 w-full flex-1">
-        <button className="border" onClick={checkData}>Check Data</button>
-        <button className="border" onClick={checkSession}>Check Session</button>
-        <button className="border" onClick={handleLogOut}>Log Out</button>
-        <ButtonDiscordLogin />
         {user?.user_metadata?.avatar_url && (
           <div className="group relative w-8 h-8 cursor-pointer">
             <img
-              className="absolute top-0 left-0 min-w-8 min-h-8 border-1 border-secondary rounded-full overflow-y-hidden bg-background-secondary"
+              className="absolute top-0 left-0 min-w-8 min-h-8 rounded-full overflow-y-hidden bg-background-secondary"
               src={user.user_metadata.avatar_url}
               alt="user avatar"
               width={32}
