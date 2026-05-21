@@ -8,14 +8,9 @@ export function useBreakpoints() {
   const hasSetListener = React.useRef<boolean>(false);
 
   React.useEffect(() => {
-    console.log("Use Breakpoints Effect")
     if (!hasSetListener.current) {
-      console.log("Set Resize Listener");
       hasSetListener.current = true;
       window.addEventListener('resize', () => {
-        console.log("Window Resized");
-        const width = window.innerWidth;
-        console.log("Width: ", width);
         setWidth(window.innerWidth);
       });
     }
