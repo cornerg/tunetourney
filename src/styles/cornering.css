@@ -1,0 +1,40 @@
+[class^="invert"] {
+    clip-path: inset(0);
+    will-change: transform, clip-path;
+}
+
+.invert-1 {
+    border-radius: 16px 0 0 64px;
+    content: '';
+    position: absolute;
+    box-shadow: 0 0 0 16px #FFF, 0 0 0 0 #FFF;
+    pointer-events: none;
+    clip-path: inset(0);
+}
+
+.invert-3 {
+    border-radius: 0 16px 0 0;
+    content: '';
+    box-shadow: 0 0 0 32px #FFF, 0 0 0 0 #FFF;
+    pointer-events: none;
+    clip-path: inset(0);
+}
+
+.invert-4 {
+    width: 64px;
+    height: 64px;
+    background-color: #FFFFFF;
+    border-radius: 0 0 0 16px;
+    will-change: transform, clip-path;
+}
+
+.invert-6::before {
+    width: 64px;
+    height: 64px;
+    border-radius: 0 16px 16px 0;
+    content: '';
+    position: absolute;
+    box-shadow: 0 0 0 32px #FFF, 0 0 0 0 #FFF;
+    pointer-events: none;
+    clip-path: inset(0);
+}

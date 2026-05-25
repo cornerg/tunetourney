@@ -1,0 +1,1 @@
+export type SUPPORTED_PLATFORMS = "youtube" | "spotify" | "all";

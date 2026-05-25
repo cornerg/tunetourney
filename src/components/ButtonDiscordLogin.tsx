@@ -4,10 +4,10 @@ import {supabase} from "#/integrations/supabase/supabase.ts";
 
 export default function ButtonDiscordLogin() {
   const handleLogin = React.useCallback(async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({ provider: 'discord', options: { redirectTo: location.href } });
-    console.log("Login data: ");
-    console.log(data);
-    console.log(error);
+    const baseUrl = window.location.origin;
+    const destination = baseUrl + (baseUrl.includes("?") ? "&" : "?") + "signin=true";
+    const { error } = await supabase.auth.signInWithOAuth({ provider: 'discord', options: { redirectTo: destination } });
+    if (error) console.error("Error signing in: ", error);
   }, []);
 
   return (
