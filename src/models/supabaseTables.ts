@@ -24,14 +24,14 @@ export interface Round {
   description: string | null;
   start_time: string;
   end_time: string;
-  is_active: boolean;
+  status: number;
   tournament_id?: string | null;
 }
 
 export interface Submission {
   id: string;
   created_at: string;
-  url: string;
+  url?: string;
   user_id?: string;
   round_id?: string;
 }

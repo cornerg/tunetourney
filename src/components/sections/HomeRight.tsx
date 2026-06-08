@@ -2,9 +2,11 @@ import {useBreakpoints} from "#/hooks/utils.ts";
 import ButtonDiscordLogin from "#/components/ButtonDiscordLogin.tsx";
 import React from "react";
 import {supabase} from "#/integrations/supabase/supabase.ts";
+import {useLoadScreen} from "#/state/loadscreenState.ts";
 
 export default function HomeRight() {
   const { isMobile, isTablet, isDesktop } = useBreakpoints();
+  const { show, hide, changeText } = useLoadScreen();
 
   const checkSession = React.useCallback(async () => {
     const { data, error } = await supabase.auth.getSession();
@@ -25,12 +27,21 @@ export default function HomeRight() {
     }
   }, []);
 
+  const handleLoadTest = React.useCallback(async () => {
+    show("Creating account");
+    await new Promise(res => setTimeout(res, 3000));
+    changeText("Finalizing");
+    await new Promise(res => setTimeout(res, 3000));
+    hide();
+  }, [show, changeText, hide]);
+
   return (
     <div className="column min-w-[50vw] min-h-[100vh] p-4 justify-center items-center gap-8">
       <div className="column w-full h-max items-center gap-2">
         <button className="border" onClick={checkData}>Check Data</button>
         <button className="border" onClick={checkSession}>Check Session</button>
         <button className="border" onClick={handleLogOut}>Log Out</button>
+        <button className="border" onClick={handleLoadTest}>Test Load</button>
         <ButtonDiscordLogin />
       </div>
 

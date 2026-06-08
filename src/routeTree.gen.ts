@@ -14,6 +14,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ClubsRouteImport } from './routes/clubs'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TournamentTournamentIdRouteImport } from './routes/tournament/$tournamentId'
+import { Route as RoundRoundIdRouteImport } from './routes/round/$roundId'
 import { Route as ClubClubIdRouteImport } from './routes/club/$clubId'
 
 const TournamentsRoute = TournamentsRouteImport.update({
@@ -41,6 +42,11 @@ const TournamentTournamentIdRoute = TournamentTournamentIdRouteImport.update({
   path: '/tournament/$tournamentId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RoundRoundIdRoute = RoundRoundIdRouteImport.update({
+  id: '/round/$roundId',
+  path: '/round/$roundId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClubClubIdRoute = ClubClubIdRouteImport.update({
   id: '/club/$clubId',
   path: '/club/$clubId',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/tournaments': typeof TournamentsRoute
   '/club/$clubId': typeof ClubClubIdRoute
+  '/round/$roundId': typeof RoundRoundIdRoute
   '/tournament/$tournamentId': typeof TournamentTournamentIdRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/tournaments': typeof TournamentsRoute
   '/club/$clubId': typeof ClubClubIdRoute
+  '/round/$roundId': typeof RoundRoundIdRoute
   '/tournament/$tournamentId': typeof TournamentTournamentIdRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/tournaments': typeof TournamentsRoute
   '/club/$clubId': typeof ClubClubIdRoute
+  '/round/$roundId': typeof RoundRoundIdRoute
   '/tournament/$tournamentId': typeof TournamentTournamentIdRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/tournaments'
     | '/club/$clubId'
+    | '/round/$roundId'
     | '/tournament/$tournamentId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/tournaments'
     | '/club/$clubId'
+    | '/round/$roundId'
     | '/tournament/$tournamentId'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/tournaments'
     | '/club/$clubId'
+    | '/round/$roundId'
     | '/tournament/$tournamentId'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   TournamentsRoute: typeof TournamentsRoute
   ClubClubIdRoute: typeof ClubClubIdRoute
+  RoundRoundIdRoute: typeof RoundRoundIdRoute
   TournamentTournamentIdRoute: typeof TournamentTournamentIdRoute
 }
 
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TournamentTournamentIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/round/$roundId': {
+      id: '/round/$roundId'
+      path: '/round/$roundId'
+      fullPath: '/round/$roundId'
+      preLoaderRoute: typeof RoundRoundIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/club/$clubId': {
       id: '/club/$clubId'
       path: '/club/$clubId'
@@ -161,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   TournamentsRoute: TournamentsRoute,
   ClubClubIdRoute: ClubClubIdRoute,
+  RoundRoundIdRoute: RoundRoundIdRoute,
   TournamentTournamentIdRoute: TournamentTournamentIdRoute,
 }
 export const routeTree = rootRouteImport

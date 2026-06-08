@@ -19,7 +19,7 @@ export default function TournamentCard({ tournament, className, style, ...props 
     >
       <div className="column h-full w-full flex-1 gap-1">
         <div className="row w-full justify-between gap-4">
-          <div className="column w-full flex-1 gap-0">
+          <div className="column w-full flex-1 gap-0 px-2">
             <h3 className="heading">{tournament.title}</h3>
             <p className="text-xs">8 members</p>
           </div>
@@ -27,7 +27,9 @@ export default function TournamentCard({ tournament, className, style, ...props 
 
         <hr className="text-gray-300 mb-1" />
 
-        <p className="text-sm text-gray-800 pr-2">{tournament.created_at}</p>
+        <div className="column w-full flex-1 gap-0 px-2">
+          <p className="text-sm text-gray-800 pr-2">{tournament.created_at}</p>
+        </div>
       </div>
     </Link>
   )

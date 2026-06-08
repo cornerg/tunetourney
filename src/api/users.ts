@@ -25,6 +25,7 @@ export function useUserData(userIds?: string | string[] | null | undefined) {
   return useQuery({ queryKey: ["users", userToken, getUserIds], queryFn: () => fetchUsers(getUserIds), staleTime: oneHour });
 }
 
+// Get Current User
 async function fetchCurrentUser(userId: string) {
   const { data, error } = await supabase.from('Users').select('*').eq('id', userId);
   if (error) {
@@ -40,6 +41,49 @@ export function useCurrentUser() {
   return useQuery({ queryKey: ["users", userToken, currentUserId], queryFn: () => fetchCurrentUser(currentUserId), staleTime: oneHour });
 }
 
+// Get Participants for Tournament
+async function fetchTournamentUsers(tournamentid: string | null | undefined) {
+  const { data, error } = await supabase.rpc('get_tournament_users', { tournamentid });
+  if (error) {
+    console.error("Error fetching tournament users: ", error);
+    return [];
+  }
+  if (typeof data === "object" && data !== undefined && Object.hasOwn(data, "id")) {
+    return [data] as User[];
+  }
+  if (Array.isArray(data)) {
+    return data as User[];
+  }
+  return [];
+}
+
+export function useTournamentUsers(tournamentId: string | null | undefined) {
+  const currentUserId = useCurrentUserId();
+  return useQuery({ queryKey: ["tournament-users", currentUserId, tournamentId], queryFn: () => fetchTournamentUsers(tournamentId), staleTime: oneHour });
+}
+
+// Get Owners for Tournament
+async function fetchTournamentOwners(tournamentid: string | null | undefined) {
+  const { data, error } = await supabase.rpc('get_tournament_owners', { tournamentid });
+  if (error) {
+    console.error("Error fetching tournament owners: ", error);
+    return [];
+  }
+  if (typeof data === "object" && data !== undefined && Object.hasOwn(data, "id")) {
+    return [data] as User[];
+  }
+  if (Array.isArray(data)) {
+    return data as User[];
+  }
+  return [];
+}
+
+export function useTournamentOwners(tournamentId: string | null | undefined) {
+  const currentUserId = useCurrentUserId();
+  return useQuery({ queryKey: ["tournament-owners", currentUserId, tournamentId], queryFn: () => fetchTournamentOwners(tournamentId), staleTime: oneHour });
+}
+
+// Insert User
 interface insertProps {
   id: string;
   name: string | null | undefined;

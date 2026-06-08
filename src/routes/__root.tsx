@@ -1,7 +1,7 @@
 import {
   HeadContent,
   Scripts,
-  createRootRouteWithContext, useRouterState,
+  createRootRouteWithContext, useRouterState, useNavigate,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
@@ -17,6 +17,8 @@ import Sidebar from "#/components/Sidebar.tsx";
 import InternalPage from "#/components/InternalPage.tsx";
 import {supabase} from "#/integrations/supabase/supabase.ts";
 import {useInsertUser, useUserData} from "#/api/users.ts";
+import LoadScreen from "#/components/LoadScreen.tsx";
+import {useLoadScreen} from "#/state/loadscreenState.ts";
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -52,23 +54,31 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
   const { data: users } = useUserData();
   const { mutate: insertUser } = useInsertUser();
+  const { show, hide } = useLoadScreen();
+  const navigate = useNavigate();
 
   const handleSignin = React.useCallback(async () => {
-    console.log("Handle signin");
     const { data } = await supabase.auth.getUser();
     if (!data.user) return;
     const currentUserData = users?.find((user) => user.id === data.user.id);
     if (!currentUserData) {
-      console.log("Create User Data");
-      const id = data.user.id;
-      let name = "";
-      let avatar = "";
-      if (data.user.app_metadata.provider === "discord") {
-        const userdata = data.user.user_metadata;
-        name = userdata?.global_name ?? userdata?.custom_claims?.global_name ?? userdata?.full_name ?? userdata?.name ?? "";
-        avatar = userdata.avatar_url ?? userdata.picture ?? "";
+      show("Signing up");
+      try {
+        const id = data.user.id;
+        let name = "";
+        let avatar = "";
+        if (data.user.app_metadata.provider === "discord") {
+          const userdata = data.user.user_metadata;
+          name = userdata?.global_name ?? userdata?.custom_claims?.global_name ?? userdata?.full_name ?? userdata?.name ?? "";
+          avatar = userdata.avatar_url ?? userdata.picture ?? "";
+        }
+        insertUser({ id, name, avatar });
+      } catch (e) {
+        console.log("Error creating user data: ", e);
+      } finally {
+        hide();
+        await navigate({ to: "/dashboard" });
       }
-      insertUser({ id, name, avatar });
     }
   }, []);
 
@@ -85,6 +95,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <title>Tune Tourney</title>
       </head>
       <body style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}>
+        <LoadScreen />
         <Header />
         <Sidebar />
         {isInternal && <InternalPage>{children}</InternalPage>}
