@@ -1,0 +1,132 @@
+import type {Round} from "#/models/supabaseTables.ts";
+import TTButton from "#/components/primitives/TTButton.tsx";
+import React from "react";
+import {useSubmissions} from "#/api/submissions.ts";
+import {useTournamentUsers} from "#/api/users.ts";
+import {ROUND_STATUS} from "#/models/RoundStatus.ts";
+import TTAlertDialogue from "#/components/primitives/TTAlertDialogue.tsx";
+import {useUpdateRound} from "#/api/rounds.ts";
+import {useTTToast} from "#/components/primitives/TTToast.tsx";
+
+interface Props {
+  round: Round;
+}
+export default function ManageRound({ round }: Props) {
+  const [isUpdating, setIsUpdating] = React.useState<boolean>(false);
+
+  const { data: participants } = useTournamentUsers(round?.tournament_id ?? "");
+  const { data: submissions } = useSubmissions(round?.id ?? "");
+  const { mutate: updateRound, isPending, isError, isSuccess } = useUpdateRound();
+  const { TTToast, toast } = useTTToast();
+
+  const areAllSubmitted = React.useMemo(() => {
+    return (submissions?.length ?? 0) >= (participants?.length ?? 0);
+  }, [submissions, participants]);
+
+  const advanceLabel = React.useMemo(() => {
+    switch (round.status) {
+      case ROUND_STATUS.pending:
+        return "Start Round";
+      case ROUND_STATUS.submitting:
+        return "Close Submission";
+      case ROUND_STATUS.voting:
+        return "Close Voting";
+      default:
+        return "Round Ended";
+    }
+  }, [round.status]);
+
+  const dialogueDescription = React.useMemo(() => {
+    if (round?.status === ROUND_STATUS.submitting && !areAllSubmitted) {
+      return "Some participants have not yet submitted. Are you sure you want to close submissions?";
+    }
+
+    switch (round.status) {
+      case ROUND_STATUS.pending:
+        return "Are you sure you want to begin submission this round?";
+      case ROUND_STATUS.submitting:
+        return "Are you sure you want to close submissions?";
+      case ROUND_STATUS.voting:
+        return "Are you sure you want to end voting and complete the round?";
+      default:
+        return "This round has already been completed.";
+    }
+  }, [round.status, areAllSubmitted]);
+
+  const buttonStyle = React.useMemo(() => {
+    if ((round?.status === ROUND_STATUS.submitting && !areAllSubmitted) || (round?.status === ROUND_STATUS.voting)) {
+      return "outline";
+    }
+    return "primary";
+  }, [round?.status, areAllSubmitted]);
+
+  const handleAdvance = React.useCallback(async (advanceRound: Round | undefined) => {
+    if (!advanceRound?.id) {
+      console.error("No round to advance");
+      return;
+    }
+    if (advanceRound.status >= ROUND_STATUS.closed) {
+      console.error("Round is closed");
+      return;
+    }
+
+    const nextStatus = advanceRound.status + 1;
+    console.log("Set Status: ", nextStatus);
+    try {
+      setIsUpdating(true);
+      updateRound({ id: advanceRound.id, status: nextStatus });
+    } catch (e) {
+      console.error("Something went wrong updating the round. ", e);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (isUpdating || isUpdating) {
+      if (isUpdating && !isPending) {
+        if (isError) {
+          toast({
+            title: "An Error Occurred",
+            message: "An error occurred while saving your submission.",
+            type: "error",
+          });
+        }
+        if (isSuccess) {
+          toast({
+            title: "Submission Saved",
+            message: "Your submission has been saved.",
+            type: "success",
+          });
+        }
+        setIsUpdating(false);
+      }
+
+      if (isUpdating && !isPending) {
+        if (isError) {
+          toast({
+            title: "An Error Occurred",
+            message: "An error occurred while updating the round.",
+            type: "error",
+          });
+        }
+        if (isSuccess) {
+          toast({
+            title: "Round Saved",
+            message: "The round status has been updated.",
+            type: "success",
+          });
+        }
+        setIsUpdating(false);
+      }
+    }
+  }, [isUpdating, isUpdating, isPending, isError, isSuccess, isPending, isError, isSuccess]);
+
+  return (
+    <div className="row justify-end w-max gap-2">
+      <TTAlertDialogue title="Advance Round?" description={dialogueDescription} buttonText="Continue" onConfirm={() => handleAdvance(round)}>
+        <TTButton buttonStyle={buttonStyle} className="min-h-9 px-2">{advanceLabel}</TTButton>
+      </TTAlertDialogue>
+
+      <TTToast />
+    </div>
+  )
+}

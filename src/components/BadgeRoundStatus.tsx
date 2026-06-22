@@ -10,7 +10,7 @@ export default function BadgeRoundStatus({ statusKey }: Props) {
   }, [statusKey]);
 
   return (
-    <div className="w-max h-max py-1 px-2 rounded-full" style={{ backgroundColor: `${status.color}40` }}>
+    <div className="w-max h-max py-0.5 px-2 rounded-full" style={{ backgroundColor: `${status.color}40` }}>
       <p className="font-bold text-sm" style={{ color: `${status.color}` }}>{status.label}</p>
     </div>
   )

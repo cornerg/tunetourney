@@ -1,24 +1,28 @@
 import React from "react";
 import {cn} from "#/utils/utils.ts";
 import TTTooltip from "#/components/primitives/TTTooltip.tsx";
+import "@/styles/ttbutton.css";
 
 interface Props extends React.HTMLAttributes<HTMLButtonElement> {
   tooltip?: string | undefined;
   disabled?: boolean | undefined;
+  buttonStyle?: "primary" | "outline" | undefined;
 }
-export default function TTButton({ children, tooltip, className, style, disabled, ...props }: Props) {
+export default function TTButton({ children, tooltip, className, style, disabled, buttonStyle = "primary", ...props }: Props) {
   const button = React.useMemo(() => {
     return (
       <button
         className={cn(
-          "row justify-center items-center bg-surface text-dark border border-dark rounded-lg",
+          "row justify-center items-center rounded-lg",
           {
-            "opacity-50 select-none cursor-auto": disabled,
-            "cursor-pointer hover:text-primary hover:border-primary": !disabled,
+            "ttbutton-primary": buttonStyle === "primary",
+            "ttbutton-outline": buttonStyle === "outline",
+            "ttbutton-disabled opacity-50 select-none cursor-auto": disabled,
+            "cursor-pointer": !disabled,
           },
           className
         )}
-        style={{ transition: "border 150ms ease, color 150ms ease" }}
+        style={{ transition: "border 150ms ease, color 150ms ease, background 150ms ease" }}
         disabled={disabled}
         {...props}
       >

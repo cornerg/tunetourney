@@ -31,9 +31,11 @@ export interface Round {
 export interface Submission {
   id: string;
   created_at: string;
-  url?: string;
+  url_id?: string;
   user_id?: string;
   round_id?: string;
+  comment?: string;
+  platform?: SUPPORTED_PLATFORMS;
 }
 
 export interface Tournament {

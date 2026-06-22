@@ -8,7 +8,6 @@ const oneHour = 1000 * 60 * 60;
 
 async function fetchTournaments() {
   const { data, error } = await supabase.from('Tournaments').select('*');
-  console.log("Tournaments data: ", data);
   if (error) {
     console.error("Error fetching tournaments. ", error);
     return [];

@@ -4,8 +4,8 @@ import ProfilePhoto from "#/components/ProfilePhoto.tsx";
 import React from "react";
 import {useCurrentUser, useTournamentOwners, useTournamentUsers} from "#/api/users.ts";
 import {useSubmissions} from "#/api/submissions.ts";
-import TTBox from "#/components/primitives/TTBox.tsx";
 import SubmissionEdit from "#/components/sections/SubmissionEdit.tsx";
+import {cn} from "#/utils/utils.ts";
 
 interface Props {
   round: Round | null | undefined;
@@ -30,20 +30,34 @@ export default function RoundSubmitting({ round }: Props) {
     return [...otherUsers].filter((user) => !submittedIds.includes(user.id));
   }, [otherUsers, submittedIds]);
 
+  const mySubmission = React.useMemo(() => {
+    return submissions?.find((sub) => sub.user_id === currentUser?.id);
+  }, [submissions]);
+
   const hasCurrentUserSubmitted = React.useMemo(() => {
     return !isCurrentUserLoading && !!submittedIds.find((userId) => userId === currentUser?.id);
   }, [submittedIds]);
 
   return (
-    <TTBox className="column w-full gap-4">
+    <div className="column w-full gap-4">
       <div className="row w-full gap-4 flex-wrap">
         <div className="column w-full min-w-72 flex-1 gap-2">
-          <h3 className="heading">Participants</h3>
+          <h4 className="subheading">Participants</h4>
 
           <div className="row items-center w-full gap-2">
             <div key="current-user-submission" className="row items-center gap-2">
               <TTTooltip label={`${currentUser?.name ?? "Unnamed User"} (${hasCurrentUserSubmitted ? "Submitted" : "Hasn't submitted"})`} delay={30}>
-                <ProfilePhoto user={currentUser} size={40} fontSize={16} className="rounded-full bg-surface" />
+                <ProfilePhoto
+                  user={currentUser}
+                  size={40}
+                  fontSize={16}
+                  className={cn(
+                    "rounded-full bg-surface border-2",
+                    {
+                      "border-green-600": hasCurrentUserSubmitted,
+                    }
+                  )}
+                />
               </TTTooltip>
             </div>
 
@@ -53,7 +67,7 @@ export default function RoundSubmitting({ round }: Props) {
               return (
                 <div key={user.id} className="row items-center gap-2">
                   <TTTooltip label={`${user?.name ?? "Unnamed User"} (Submitted)`} delay={30}>
-                    <ProfilePhoto user={user} size={40} fontSize={16} className="rounded-full bg-surface" />
+                    <ProfilePhoto user={user} size={40} fontSize={16} className="rounded-full bg-surface border-2 border-green-600" />
                   </TTTooltip>
                 </div>
               )
@@ -65,7 +79,7 @@ export default function RoundSubmitting({ round }: Props) {
               return (
                 <div key={user.id} className="row items-center gap-2" style={{ opacity: 0.4 }}>
                   <TTTooltip label={`${user?.name ?? "Unnamed User"} (Hasn't submitted)`} delay={30}>
-                    <ProfilePhoto user={user} size={40} fontSize={16} className="rounded-full bg-surface" />
+                    <ProfilePhoto user={user} size={40} fontSize={16} className="rounded-full bg-surface border-2" />
                   </TTTooltip>
                 </div>
               )
@@ -74,7 +88,7 @@ export default function RoundSubmitting({ round }: Props) {
         </div>
 
         <div className="column w-full min-w-72 flex-1 gap-2">
-          <h3 className="heading">Organizers</h3>
+          <h4 className="subheading">Organizers</h4>
 
           <div className="row items-center w-full gap-2">
             {owners?.map((user) => {
@@ -90,11 +104,9 @@ export default function RoundSubmitting({ round }: Props) {
         </div>
       </div>
 
-      <hr className="w-full text-gray-300" />
-
       {hasCurrentUserSubmitted && (
-        <SubmissionEdit round={round} />
+        <SubmissionEdit round={round} savedSubmission={mySubmission} />
       )}
-    </TTBox>
+    </div>
   )
 }

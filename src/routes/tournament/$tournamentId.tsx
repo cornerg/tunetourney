@@ -33,15 +33,15 @@ function PageTournament() {
           <div className="row w-max justify-end gap-2">
             {!edit && (
               <>
-                <TTButton className="w-8 h-8" tooltip="Edit club" onClick={() => setEdit(true)}>
+                <TTButton buttonStyle="outline" className="w-8 h-8" tooltip="Edit club" onClick={() => setEdit(true)}>
                   <GoPencil size={22} />
                 </TTButton>
 
-                <TTButton className="w-8 h-8" tooltip="Delete club">
+                <TTButton buttonStyle="outline" className="w-8 h-8" tooltip="Delete club">
                   <FiTrash2 size={22} />
                 </TTButton>
 
-                <TTButton className="w-8 h-8" tooltip="Delete club">
+                <TTButton buttonStyle="outline" className="w-8 h-8" tooltip="Delete club">
                   <RiLogoutBoxRLine size={22} />
                 </TTButton>
               </>
@@ -49,11 +49,11 @@ function PageTournament() {
 
             {edit && (
               <>
-                <TTButton className="w-8 h-8" tooltip="Save">
+                <TTButton buttonStyle="outline" className="w-8 h-8" tooltip="Save">
                   <LuSave size={22} onClick={() => setEdit(false)} />
                 </TTButton>
 
-                <TTButton className="w-8 h-8" tooltip="Cancel">
+                <TTButton buttonStyle="outline" className="w-8 h-8" tooltip="Cancel">
                   <IoCloseSharp size={22} onClick={() => setEdit(false)} />
                 </TTButton>
               </>
