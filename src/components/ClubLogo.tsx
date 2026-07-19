@@ -15,8 +15,9 @@ const gradients: Gradient[] = [
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   club: Club | null | undefined;
+  placeholderClassName?: string;
 }
-export default function ClubLogo({ club, className, style, ...props }: Props) {
+export default function ClubLogo({ club, className, placeholderClassName, style, ...props }: Props) {
   const gradient = React.useMemo(() => {
     const seed = parseInt(new Date(club?.created_at ?? Date.now()).getTime().toString().slice(-1));
     return gradients[seed % gradients.length];
@@ -29,7 +30,7 @@ export default function ClubLogo({ club, className, style, ...props }: Props) {
       {...props}
     >
       {club?.logo && <img src={club?.logo} alt="Club logo" className="w-full h-full" />}
-      {!club?.logo && <p className="title text-white text-center">{getInitials(club?.title)}</p>}
+      {!club?.logo && <p className={cn("text-white text-center", placeholderClassName)}>{getInitials(club?.title)}</p>}
     </div>
   )
 }

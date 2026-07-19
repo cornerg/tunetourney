@@ -18,7 +18,7 @@ export default function ClubCard({ club, className, style, ...props }: Props) {
       style={{ transition: "border 150ms ease, box-shadow 150ms ease", ...style }}
       {...props}
     >
-      <ClubLogo club={club} className="rounded-2xl h-[110px]" />
+      <ClubLogo club={club} className="rounded-2xl h-[110px]" placeholderClassName="title" />
 
       <div className="column h-full w-full flex-1 gap-1">
         <div className="row w-full justify-between gap-4">

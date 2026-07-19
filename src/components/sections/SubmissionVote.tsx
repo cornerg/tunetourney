@@ -4,13 +4,16 @@ import YouTubeEmbed from "#/components/embeds/YouTubeEmbed.tsx";
 import React from "react";
 import {IoMusicalNotes} from "react-icons/io5";
 import ScoreSlider from "#/components/primitives/ScoreSlider.tsx";
+import TTInput from "#/components/primitives/TTInput.tsx";
 
 interface Props {
   submission: Submission;
   score: number | undefined;
-  handleScore: (submissionId: string, score: number) => void;
+  handleScore: (score: number) => void;
+  comment: string;
+  handleComment: (comment: string) => void;
 }
-export default function SubmissionVote({ submission, score, handleScore }: Props) {
+export default function SubmissionVote({ submission, score, handleScore, comment, handleComment }: Props) {
   const urlId = React.useMemo(() => submission?.url_id, [submission?.url_id]);
 
   return (
@@ -24,15 +27,27 @@ export default function SubmissionVote({ submission, score, handleScore }: Props
         )}
       </div>
 
-      <div className="column w-full h-full flex-1">
-        {!!submission.comment && <p>{submission.comment}</p>}
-        {!!submission && <hr className="w-full text-gray-300" />}
+      <div className="column w-full h-[162px] flex-1 gap-2">
+        <p className={submission?.comment?.trim()?.length ? undefined : "opacity-50 italic"}>{submission?.comment || "No notes"}</p>
+        <hr className="w-full text-gray-300 mb-2" />
 
-        <ScoreSlider
-          className="px-2"
-          value={score}
-          setValue={(value) => handleScore(submission.id, value)}
-        />
+        <div className="column w-full h-full flex-1 justify-evenly gap-0">
+          <div className="row w-full gap-2">
+            <p className="font-bold text-nowrap">Your score</p>
+            <ScoreSlider
+              className="px-2"
+              value={score}
+              setValue={(value) => handleScore(value)}
+            />
+          </div>
+
+          <TTInput
+            className="w-full h-9"
+            value={comment}
+            onChange={(e) => handleComment(e.target.value)}
+            label="Comment (optional)"
+          />
+        </div>
       </div>
     </TTBox>
   )

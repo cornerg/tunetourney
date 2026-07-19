@@ -27,6 +27,10 @@ export function useUserData(userIds?: string | string[] | null | undefined) {
 
 // Get Current User
 async function fetchCurrentUser(userId: string) {
+  if (!userId) {
+    console.error("No user ID");
+    return null;
+  }
   const { data, error } = await supabase.from('Users').select('*').eq('id', userId);
   if (error) {
     console.error("Error fetching current user: ", error);
@@ -43,6 +47,10 @@ export function useCurrentUser() {
 
 // Get Participants for Tournament
 async function fetchTournamentUsers(tournamentid: string | null | undefined) {
+  if (!tournamentid) {
+    console.error("No tournament ID to get users");
+    return [];
+  }
   const { data, error } = await supabase.rpc('get_tournament_users', { tournamentid });
   if (error) {
     console.error("Error fetching tournament users: ", error);
@@ -64,6 +72,10 @@ export function useTournamentUsers(tournamentId: string | null | undefined) {
 
 // Get Owners for Tournament
 async function fetchTournamentOwners(tournamentid: string | null | undefined) {
+  if (!tournamentid) {
+    console.error("No tournament ID to get owners");
+    return [];
+  }
   const { data, error } = await supabase.rpc('get_tournament_owners', { tournamentid });
   if (error) {
     console.error("Error fetching tournament owners: ", error);
@@ -81,6 +93,31 @@ async function fetchTournamentOwners(tournamentid: string | null | undefined) {
 export function useTournamentOwners(tournamentId: string | null | undefined) {
   const currentUserId = useCurrentUserId();
   return useQuery({ queryKey: ["tournament-owners", currentUserId, tournamentId], queryFn: () => fetchTournamentOwners(tournamentId), staleTime: oneHour });
+}
+
+// Get Users who have submitted votes to a round
+async function fetchVotedUsers(roundid: string | null | undefined) {
+  if (!roundid) {
+    console.error("No round ID to get voted users");
+    return [];
+  }
+  const { data, error } = await supabase.rpc('get_voted_users', { roundid });
+  if (error) {
+    console.error("Error fetching voted users: ", error);
+    return [];
+  }
+  if (typeof data === "object" && data !== undefined && Object.hasOwn(data, "id")) {
+    return [data] as string[];
+  }
+  if (Array.isArray(data)) {
+    return data as string[];
+  }
+  return [];
+}
+
+export function useVotedUsers(roundId: string | null | undefined) {
+  const currentUserId = useCurrentUserId();
+  return useQuery({ queryKey: ["voted-users", currentUserId, roundId], queryFn: () => fetchVotedUsers(roundId), staleTime: oneHour });
 }
 
 // Insert User

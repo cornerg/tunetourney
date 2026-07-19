@@ -1,7 +1,7 @@
 import type {Round, Submission} from "#/models/supabaseTables.ts";
 import React from "react";
 import {useTournament} from "#/api/tournaments.ts";
-import {allPlatforms, getPlatform, type SupportedPlatform} from "#/models/supabaseEnums.ts";
+import {allPlatforms, getPlatform, type SupportedPlatform} from "#/models/SupportedPlatforms.ts";
 import TTInput from "#/components/primitives/TTInput.tsx";
 import YouTubeEmbed from "#/components/embeds/YouTubeEmbed.tsx";
 import TTButton from "#/components/primitives/TTButton.tsx";
@@ -124,7 +124,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
   const hasDataChanged = React.useMemo(() => {
     if (!savedSubmission) return true;
     return urlId !== savedSubmission.url_id || submissionComment !== (savedSubmission.comment ?? "");
-  }, [savedSubmission, cleanUrl, submissionComment]);
+  }, [savedSubmission, urlId, submissionComment]);
 
   const handleSubmit = React.useCallback(() => {
     if (!urlId) {
@@ -154,7 +154,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
       setIsInserting(true);
       insert({ user_id: currentUserId, round_id: round.id, url_id: urlId, comment: submissionComment ?? ""  });
     }
-  }, [cleanUrl, currentUserId, round, savedSubmission, insert, update, submissionComment]);
+  }, [urlId, currentUserId, round, savedSubmission, insert, update, submissionComment]);
 
   React.useEffect(() => {
     if (isInserting || isUpdating) {

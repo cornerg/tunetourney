@@ -1,4 +1,4 @@
-import type {SUPPORTED_PLATFORMS} from "#/models/supabaseEnums.ts";
+import type {SUPPORTED_PLATFORMS} from "#/models/SupportedPlatforms.ts";
 
 export interface Club {
   id: string;
@@ -70,4 +70,5 @@ export interface Vote {
   comment: string | null;
   user_id?: string;
   submission_id?: string;
+  round_id?: string;
 }

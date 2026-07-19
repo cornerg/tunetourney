@@ -2,7 +2,7 @@ import type {Round} from "#/models/supabaseTables.ts";
 import TTButton from "#/components/primitives/TTButton.tsx";
 import React from "react";
 import {useSubmissions} from "#/api/submissions.ts";
-import {useTournamentUsers} from "#/api/users.ts";
+import {useTournamentUsers, useVotedUsers} from "#/api/users.ts";
 import {ROUND_STATUS} from "#/models/RoundStatus.ts";
 import TTAlertDialogue from "#/components/primitives/TTAlertDialogue.tsx";
 import {useUpdateRound} from "#/api/rounds.ts";
@@ -16,12 +16,19 @@ export default function ManageRound({ round }: Props) {
 
   const { data: participants } = useTournamentUsers(round?.tournament_id ?? "");
   const { data: submissions } = useSubmissions(round?.id ?? "");
+  const { data: votedUsers } = useVotedUsers(round?.id ?? "");
   const { mutate: updateRound, isPending, isError, isSuccess } = useUpdateRound();
   const { TTToast, toast } = useTTToast();
 
   const areAllSubmitted = React.useMemo(() => {
-    return (submissions?.length ?? 0) >= (participants?.length ?? 0);
-  }, [submissions, participants]);
+    if (round.status === ROUND_STATUS.submitting) {
+      return !participants?.filter((user) => !submissions?.map((sub) => sub.user_id)?.includes(user.id));
+    }
+    if (round.status === ROUND_STATUS.voting) {
+      return !participants?.filter((user) => !votedUsers?.includes(user.id));
+    }
+    return true;
+  }, [submissions, votedUsers, participants, round.status]);
 
   const advanceLabel = React.useMemo(() => {
     switch (round.status) {
@@ -39,6 +46,9 @@ export default function ManageRound({ round }: Props) {
   const dialogueDescription = React.useMemo(() => {
     if (round?.status === ROUND_STATUS.submitting && !areAllSubmitted) {
       return "Some participants have not yet submitted. Are you sure you want to close submissions?";
+    }
+    if (round?.status === ROUND_STATUS.voting && !areAllSubmitted) {
+      return "Some participants have not yet voted. Are you sure you want to end the round?";
     }
 
     switch (round.status) {

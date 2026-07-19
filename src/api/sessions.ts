@@ -27,6 +27,6 @@ export function useCurrentUserId() {
   React.useEffect(() => {
     getUserToken();
   }, []);
-
+  console.log("UserId: ", userId);
   return userId;
 }

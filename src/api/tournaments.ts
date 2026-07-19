@@ -31,3 +31,18 @@ export function useTournament(tournamentId: string | null | undefined) {
 
   return { data: tournament, ...otherData };
 }
+
+// Get Active Tournaments
+async function fetchActiveTournaments() {
+  const { data, error } = await supabase.rpc('get_active_tournaments');
+  if (error) {
+    console.error("Error fetching active tournaments. ", error);
+    return [];
+  }
+  return data as Tournament[];
+}
+
+export function useActiveTournaments() {
+  const userToken = useCurrentUserId();
+  return useQuery({ queryKey: ["activeTournaments", userToken], queryFn: fetchActiveTournaments, staleTime: oneHour });
+}
