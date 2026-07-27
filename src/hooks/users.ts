@@ -1,6 +1,6 @@
 import React from "react";
-import {supabase} from "#/integrations/supabase/supabase.ts";
-import type {Session} from "@supabase/auth-js";
+import type { Session } from "@supabase/auth-js";
+import { supabase } from "#/integrations/supabase/supabase.ts";
 
 export function useCurrentUserSession() {
   const [user, setUser] = React.useState<Session | null>(null);
@@ -10,6 +10,6 @@ export function useCurrentUserSession() {
   }, []);
   React.useEffect(() => {
     getUser();
-  })
+  });
   return user;
 }

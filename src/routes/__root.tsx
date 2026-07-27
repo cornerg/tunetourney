@@ -1,52 +1,58 @@
 import {
+  createRootRouteWithContext,
   HeadContent,
   Scripts,
-  createRootRouteWithContext,
   useRouterState,
-} from '@tanstack/react-router'
-import appCss from '../styles.css?url'
-import '../styles/flex.css';
-import '../styles/font.css';
-import '../styles/theme.css';
-import type { QueryClient } from '@tanstack/react-query'
+} from "@tanstack/react-router";
+
+import appCss from "../styles.css?url";
+
+import "../styles/flex.css";
+import "../styles/font.css";
+import "../styles/theme.css";
+
 import * as React from "react";
-import Header, {HEADER_HEIGHT} from "#/components/Header.tsx";
-import Sidebar from "#/components/Sidebar.tsx";
+import type { QueryClient } from "@tanstack/react-query";
+import Header, { HEADER_HEIGHT } from "#/components/Header.tsx";
 import InternalPage from "#/components/InternalPage.tsx";
 import LoadScreen from "#/components/LoadScreen.tsx";
-import {useAuth} from "#/hooks/auth.tsx";
+import Sidebar from "#/components/Sidebar.tsx";
+import { useAuth } from "#/hooks/auth.tsx";
 
 interface MyRouterContext {
-  queryClient: QueryClient
+  queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
       {
-        charSet: 'utf-8',
+        charSet: "utf-8",
       },
       {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
+        name: "viewport",
+        content: "width=device-width, initial-scale=1",
       },
       {
-        title: 'TanStack Start Starter',
+        title: "TanStack Start Starter",
       },
     ],
     links: [
       {
-        rel: 'stylesheet',
+        rel: "stylesheet",
         href: appCss,
       },
     ],
   }),
   shellComponent: RootDocument,
-})
+});
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const location = useRouterState({ select: (s) => s.location });
-  const isInternal = React.useMemo(() => !["", "/", "/login"].includes(location.pathname), [location.pathname]);
+  const location = useRouterState({ select: s => s.location });
+  const isInternal = React.useMemo(
+    () => !["", "/", "/login"].includes(location.pathname),
+    [location.pathname],
+  );
   const { signIn } = useAuth();
 
   React.useEffect(() => {
@@ -70,5 +76,5 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
-  )
+  );
 }

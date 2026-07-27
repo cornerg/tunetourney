@@ -1,16 +1,20 @@
-import type {Round, Submission} from "#/models/supabaseTables.ts";
 import React from "react";
-import {useTournament} from "#/api/tournaments.ts";
-import {allPlatforms, getPlatform, type SupportedPlatform} from "#/models/SupportedPlatforms.ts";
-import TTInput from "#/components/primitives/TTInput.tsx";
-import YouTubeEmbed from "#/components/embeds/YouTubeEmbed.tsx";
-import TTButton from "#/components/primitives/TTButton.tsx";
-import {IoMusicalNotes} from "react-icons/io5";
-import {useInsertSubmission, useUpdateSubmission} from "#/api/submissions.ts";
-import {useCurrentUserId} from "#/api/sessions.ts";
-import TTBox from "#/components/primitives/TTBox.tsx";
-import {useTTToast} from "#/components/primitives/TTToast.tsx";
+import { useCurrentUserId } from "#/api/sessions.ts";
+import { useInsertSubmission, useUpdateSubmission } from "#/api/submissions.ts";
+import { useTournament } from "#/api/tournaments.ts";
 import SpotifyEmbed from "#/components/embeds/SpotifyEmbed.tsx";
+import YouTubeEmbed from "#/components/embeds/YouTubeEmbed.tsx";
+import TTBox from "#/components/primitives/TTBox.tsx";
+import TTButton from "#/components/primitives/TTButton.tsx";
+import TTInput from "#/components/primitives/TTInput.tsx";
+import { useTTToast } from "#/components/primitives/TTToast.tsx";
+import type { Round, Submission } from "#/models/supabaseTables.ts";
+import {
+  allPlatforms,
+  getPlatform,
+  type SupportedPlatform,
+} from "#/models/SupportedPlatforms.ts";
+import { IoMusicalNotes } from "react-icons/io5";
 
 interface Props {
   round: Round | null | undefined;
@@ -19,7 +23,9 @@ interface Props {
 export default function SubmissionEdit({ round, savedSubmission }: Props) {
   const [submissionUrl, setSubmissionUrl] = React.useState<string>("");
   const [urlId, setUrlId] = React.useState<string>("");
-  const [urlPlatform, setUrlPlatform] = React.useState<SupportedPlatform | undefined>();
+  const [urlPlatform, setUrlPlatform] = React.useState<
+    SupportedPlatform | undefined
+  >();
   const [urlError, setUrlError] = React.useState<string>("");
   const [submissionComment, setSubmissionComment] = React.useState<string>("");
   const [isInserting, setIsInserting] = React.useState<boolean>(false);
@@ -30,80 +36,107 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
 
   const { data: tournament } = useTournament(round?.tournament_id);
   const currentUserId = useCurrentUserId();
-  const { mutate: insert, isPending: isInsertPending, isError: isInsertError, isSuccess: isInsertSuccess } = useInsertSubmission();
-  const { mutate: update, isPending: isUpdatePending, isError: isUpdateError, isSuccess: isUpdateSuccess } = useUpdateSubmission();
+  const {
+    mutate: insert,
+    isPending: isInsertPending,
+    isError: isInsertError,
+    isSuccess: isInsertSuccess,
+  } = useInsertSubmission();
+  const {
+    mutate: update,
+    isPending: isUpdatePending,
+    isError: isUpdateError,
+    isSuccess: isUpdateSuccess,
+  } = useUpdateSubmission();
   const { TTToast, toast } = useTTToast();
 
   const supportedPlatforms = React.useMemo(() => {
     if (tournament?.platform === "all") return allPlatforms;
-    return allPlatforms.filter((plat) => tournament?.platform === plat.key)
+    return allPlatforms.filter(plat => tournament?.platform === plat.key);
   }, [tournament?.platform]);
 
   // Use the newly entered URL value to set the URL ID, platform, and error states
-  const handleUrl = React.useCallback((value: string) => {
-    if (!value) {
-      setUrlId("");
-      setUrlPlatform(undefined);
-      setUrlError("");
-      return;
-    }
-    let id = "";
-    for (let i = 0; i < supportedPlatforms.length && !id; i++) {
-      id = value.match(supportedPlatforms[i]?.pattern)?.[0] ?? "";
-      if (id) {
-        setUrlPlatform(supportedPlatforms[i]);
+  const handleUrl = React.useCallback(
+    (value: string) => {
+      if (!value) {
+        setUrlId("");
+        setUrlPlatform(undefined);
+        setUrlError("");
+        return;
       }
-    }
-    setUrlId(id);
-    if (id) {
-      setUrlError("");
-    } else {
-      setUrlError("Not a valid URL");
-    }
-  }, [supportedPlatforms]);
+      let id = "";
+      for (let i = 0; i < supportedPlatforms.length && !id; i++) {
+        id = value.match(supportedPlatforms[i]?.pattern)?.[0] ?? "";
+        if (id) {
+          setUrlPlatform(supportedPlatforms[i]);
+        }
+      }
+      setUrlId(id);
+      if (id) {
+        setUrlError("");
+      } else {
+        setUrlError("Not a valid URL");
+      }
+    },
+    [supportedPlatforms],
+  );
 
   // If the input is deselected, cancel the change confirmation timer and handle it right away
-  const handleUrlBlur = React.useCallback((event: React.FocusEvent<HTMLInputElement>) => {
-    if (urlChangeTimeout.current) {
-      clearTimeout(urlChangeTimeout.current);
-      urlChangeTimeout.current = -1;
-    }
-    handleUrl(event.target.value);
-    event.currentTarget.blur();
-  }, [handleUrl]);
+  const handleUrlBlur = React.useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      if (urlChangeTimeout.current) {
+        clearTimeout(urlChangeTimeout.current);
+        urlChangeTimeout.current = -1;
+      }
+      handleUrl(event.target.value);
+      event.currentTarget.blur();
+    },
+    [handleUrl],
+  );
 
   // Whenever the entered value of the URL input changes, set a timer. If the value isn't changed in that time, the value will be handled
-  const handleUrlChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setSubmissionUrl(event.target.value);
-    if (urlChangeTimeout.current) {
-      clearTimeout(urlChangeTimeout.current);
-    }
-    urlChangeTimeout.current = setTimeout(() => {
-      handleUrl(event.target.value);
-      urlChangeTimeout.current = -1;
-    }, 3000);
-  }, []);
+  const handleUrlChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSubmissionUrl(event.target.value);
+      if (urlChangeTimeout.current) {
+        clearTimeout(urlChangeTimeout.current);
+      }
+      urlChangeTimeout.current = setTimeout(() => {
+        handleUrl(event.target.value);
+        urlChangeTimeout.current = -1;
+      }, 3000);
+    },
+    [handleUrl],
+  );
 
   // Handle updating states to match the saved data received from the database
-  const syncWithSaved = React.useCallback((saved: Submission) => {
-    presetSubmissionId.current = saved.id;
-    if (saved.url_id && saved.platform) {
-      const platform = getPlatform(saved.platform);
-      if (platform) {
-        setUrlPlatform(platform);
-        setSubmissionUrl(platform.urlTemplate.replace("<submission_id>", saved.url_id));
-        setUrlId(saved.url_id);
+  const syncWithSaved = React.useCallback(
+    (saved: Submission) => {
+      presetSubmissionId.current = saved.id;
+      if (saved.url_id && saved.platform) {
+        const platform = getPlatform(saved.platform);
+        if (platform) {
+          setUrlPlatform(platform);
+          setSubmissionUrl(
+            platform.urlTemplate.replace("<submission_id>", saved.url_id),
+          );
+          setUrlId(saved.url_id);
+        }
       }
-    }
-    setSubmissionComment(saved.comment ?? "");
-  }, [presetSubmissionId.current]);
+      setSubmissionComment(saved.comment ?? "");
+    },
+    [],
+  );
 
   // Check for new saved data being received, and call the sync function
   React.useEffect(() => {
-    if (savedSubmission?.id && presetSubmissionId.current !== (savedSubmission?.id ?? "")) {
+    if (
+      savedSubmission?.id &&
+      presetSubmissionId.current !== (savedSubmission?.id ?? "")
+    ) {
       syncWithSaved(savedSubmission);
     }
-  }, [savedSubmission, handleUrl, supportedPlatforms]);
+  }, [savedSubmission, handleUrl, syncWithSaved]);
 
   const fieldLabel = React.useMemo(() => {
     if (supportedPlatforms.length > 1) {
@@ -120,19 +153,26 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
 
   const cleanUrl = React.useMemo(() => {
     if (!urlId || !urlPlatform) return;
-    return urlPlatform.urlTemplate.replace("<submission_id>", urlId)
+    return urlPlatform.urlTemplate.replace("<submission_id>", urlId);
   }, [urlId, urlPlatform]);
 
   const submissionIssue = React.useMemo(() => {
     if (!urlId) return "Please enter a submission URL.";
     if (!!urlError) return urlError;
-    if (!urlPlatform || !supportedPlatforms.map((plat) => plat.key).includes(urlPlatform.key)) return "Music source not supported."
+    if (
+      !urlPlatform ||
+      !supportedPlatforms.map(plat => plat.key).includes(urlPlatform.key)
+    )
+      return "Music source not supported.";
     if (!cleanUrl) return "A clean URL couldn't be created.";
   }, [urlId, urlError, urlPlatform, supportedPlatforms, cleanUrl]);
 
   const hasDataChanged = React.useMemo(() => {
     if (!savedSubmission) return true;
-    return urlId !== savedSubmission.url_id || submissionComment !== (savedSubmission.comment ?? "");
+    return (
+      urlId !== savedSubmission.url_id ||
+      submissionComment !== (savedSubmission.comment ?? "")
+    );
   }, [savedSubmission, urlId, submissionComment]);
 
   const handleSubmit = React.useCallback(() => {
@@ -161,9 +201,22 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
       update({ id: savedSubmission.id, ...saveData });
     } else {
       setIsInserting(true);
-      insert({ user_id: currentUserId, round_id: round.id, url_id: urlId, comment: submissionComment ?? ""  });
+      insert({
+        user_id: currentUserId,
+        round_id: round.id,
+        url_id: urlId,
+        comment: submissionComment ?? "",
+      });
     }
-  }, [urlId, currentUserId, round, savedSubmission, insert, update, submissionComment]);
+  }, [
+    urlId,
+    currentUserId,
+    round,
+    savedSubmission,
+    insert,
+    update,
+    submissionComment,
+  ]);
 
   const embedSize = React.useMemo(() => {
     if (urlPlatform?.key === "spotify") return { width: 288, height: 152 };
@@ -220,7 +273,16 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
         setIsUpdating(false);
       }
     }
-  }, [isInserting, isUpdating, isInsertPending, isInsertError, isInsertSuccess, isUpdatePending, isUpdateError, isUpdateSuccess]);
+  }, [
+    isInserting,
+    isUpdating,
+    isInsertPending,
+    isInsertError,
+    isInsertSuccess,
+    isUpdatePending,
+    isUpdateError,
+    isUpdateSuccess,
+  ]);
 
   return (
     <TTBox className="column w-full">
@@ -229,19 +291,33 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
           {!urlId && (
             <div
               className="row justify-center items-center rounded-xl"
-              style={{ background: "linear-gradient(45deg, #1C75BC, #33C8B4)", ...embedSize }}>
+              style={{
+                background: "linear-gradient(45deg, #1C75BC, #33C8B4)",
+                ...embedSize,
+              }}>
               <IoMusicalNotes size={64} color="white" />
             </div>
           )}
-          {!!urlId && urlPlatform?.key === "youtube" && <YouTubeEmbed embedId={urlId} {...embedSize} />}
-          {!!urlId && urlPlatform?.key === "spotify" && <SpotifyEmbed embedId={urlId} {...embedSize} />}
+          {!!urlId && urlPlatform?.key === "youtube" && (
+            <YouTubeEmbed embedId={urlId} {...embedSize} />
+          )}
+          {!!urlId && urlPlatform?.key === "spotify" && (
+            <SpotifyEmbed embedId={urlId} {...embedSize} />
+          )}
         </div>
 
-        <div className="column h-max w-full justify-between gap-2 flex-1" style={{ minHeight: embedSize.height }}>
+        <div
+          className="column h-max w-full justify-between gap-2 flex-1"
+          style={{ minHeight: embedSize.height }}>
           <div className="row w-full justify-between gap-4">
             <h3 className="heading">Your Submission</h3>
 
-            <TTButton className="px-2" buttonStyle="primary" disabled={!hasDataChanged || !!submissionIssue} tooltip={submissionIssue} onClick={handleSubmit}>
+            <TTButton
+              className="px-2"
+              buttonStyle="primary"
+              disabled={!hasDataChanged || !!submissionIssue}
+              tooltip={submissionIssue}
+              onClick={handleSubmit}>
               {saveButtonText}
             </TTButton>
           </div>
@@ -260,7 +336,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
               className="w-full h-10"
               label="Comment (optional)"
               value={submissionComment}
-              onChange={(e) => setSubmissionComment(e.target.value)}
+              onChange={e => setSubmissionComment(e.target.value)}
             />
           </div>
         </div>
@@ -268,5 +344,5 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
 
       <TTToast />
     </TTBox>
-  )
+  );
 }

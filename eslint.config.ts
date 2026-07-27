@@ -1,37 +1,31 @@
-import eslintReact from "@eslint-react/eslint-plugin";
-import eslintJs from "@eslint/js";
-import { defineConfig } from "eslint/config";
-import tseslint from "typescript-eslint";
-import baseConfig from "./base.ts";
-import reactConfig from "./react.ts";
+import baseConfig from "./base";
+import reactConfig from "./react";
 
-export default defineConfig(
+export default [
+  { ignores: ["dist", "src/@types/*"] },
   {
-    files: ["**/*.ts", "**/*.tsx"],
-
-    extends: [
-      eslintJs.configs.recommended,
-      tseslint.configs.recommended,
-      eslintReact.configs["recommended-typescript"],
-    ],
-
-    // Configure language/parsing options
-    languageOptions: {
-      // Use TypeScript ESLint parser for TypeScript files
-      parser: tseslint.parser,
-      parserOptions: {
-        // Enable project service for better TypeScript integration
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-    ...baseConfig,
-    ...reactConfig,
-
-    // Custom rule overrides (modify rule levels or disable rules)
+    files: ["src/**/*.tsx"],
     rules: {
-      "@eslint-react/no-missing-key": "warn",
-      "@eslint-react/exhaustive-deps": "warn",
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: ".",
+              message: "Use absolute imports instead.",
+            },
+          ],
+        },
+      ],
     },
   },
-);
+  ...baseConfig,
+  ...reactConfig,
+  {
+    files: ["src/routes/**/*.tsx", "src/utils/router.ts"],
+    rules: {
+      "@typescript-eslint/only-throw-error": "off",
+      "react-refresh/only-export-components": "off",
+    },
+  },
+];

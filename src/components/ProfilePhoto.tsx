@@ -1,10 +1,14 @@
-import type {User} from "#/models/supabaseTables.ts";
 import React from "react";
-import {cn, getInitials} from "#/utils/utils.ts";
-
+import type { User } from "#/models/supabaseTables.ts";
+import { cn, getInitials } from "#/utils/utils.ts";
 
 const GRADIENTS = [
-  "#B55B00, #EDDD53", "#00B58E, #96ED53", "#04C7A6, #53A0ED", "#A378B3, #7187EB", "#F06262, #EB71D9", "#2B51C4, #9177D4"
+  "#B55B00, #EDDD53",
+  "#00B58E, #96ED53",
+  "#04C7A6, #53A0ED",
+  "#A378B3, #7187EB",
+  "#F06262, #EB71D9",
+  "#2B51C4, #9177D4",
 ];
 
 function getGradient(userId: string | null | undefined) {
@@ -25,9 +29,20 @@ interface PropsWithAvatar extends Props {
   user?: User | null | undefined;
   avatarUrl: string | null | undefined;
 }
-export default function ProfilePhoto({ user, avatarUrl, name, size, fontSize, className, style, ...props }: PropsWithUser | PropsWithAvatar) {
-
-  const photo = React.useMemo(() => user?.avatar || avatarUrl, [user?.avatar, avatarUrl]);
+export default function ProfilePhoto({
+  user,
+  avatarUrl,
+  name,
+  size,
+  fontSize,
+  className,
+  style,
+  ...props
+}: PropsWithUser | PropsWithAvatar) {
+  const photo = React.useMemo(
+    () => user?.avatar || avatarUrl,
+    [user?.avatar, avatarUrl],
+  );
   const gradient = React.useMemo(() => getGradient(user?.id), [user?.id]);
 
   if (photo) {
@@ -41,17 +56,26 @@ export default function ProfilePhoto({ user, avatarUrl, name, size, fontSize, cl
         style={{ minWidth: size, minHeight: size, zIndex: 1, ...style }}
         {...props}
       />
-    )
+    );
   }
   return (
     <div
-      className={cn("row justify-center items-center border-1 border-gray-300", className)}
-      style={{ background: `linear-gradient(45deg, ${gradient})`, minWidth: size, minHeight: size, ...style }}
-      {...props}
-    >
-      <p className="text-center text-surface font-bold select-none" style={{ fontSize }}>
+      className={cn(
+        "row justify-center items-center border-1 border-gray-300",
+        className,
+      )}
+      style={{
+        background: `linear-gradient(45deg, ${gradient})`,
+        minWidth: size,
+        minHeight: size,
+        ...style,
+      }}
+      {...props}>
+      <p
+        className="text-center text-surface font-bold select-none"
+        style={{ fontSize }}>
         {getInitials(user?.name || name)}
       </p>
     </div>
-  )
+  );
 }

@@ -1,10 +1,10 @@
 import * as React from "react";
-import {supabase} from "#/integrations/supabase/supabase.ts";
-import {useLoadScreen} from "#/state/loadscreenState.ts";
-import {useNavigate} from "@tanstack/react-router";
-import {useInsertUser, useUserData} from "#/api/users.ts";
-import {getContext} from "#/integrations/tanstack-query/root-provider.tsx";
-import {useCurrentUserId, useSessionToken} from "#/api/sessions.ts";
+import { useNavigate } from "@tanstack/react-router";
+import { useCurrentUserId, useSessionToken } from "#/api/sessions.ts";
+import { useInsertUser, useUserData } from "#/api/users.ts";
+import { supabase } from "#/integrations/supabase/supabase.ts";
+import { getContext } from "#/integrations/tanstack-query/root-provider.tsx";
+import { useLoadScreen } from "#/state/loadscreenState.ts";
 
 const { queryClient } = getContext();
 
@@ -19,7 +19,7 @@ export function useAuth() {
   const handleSignIn = React.useCallback(async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) return;
-    const currentUserData = users?.find((user) => user.id === data.user.id);
+    const currentUserData = users?.find(user => user.id === data.user.id);
     if (!currentUserData) {
       show("Signing up");
       try {
@@ -28,7 +28,12 @@ export function useAuth() {
         let avatar = "";
         if (data.user.app_metadata.provider === "discord") {
           const userdata = data.user.user_metadata;
-          name = userdata?.global_name ?? userdata?.custom_claims?.global_name ?? userdata?.full_name ?? userdata?.name ?? "";
+          name =
+            userdata?.global_name ??
+            userdata?.custom_claims?.global_name ??
+            userdata?.full_name ??
+            userdata?.name ??
+            "";
           avatar = userdata.avatar_url ?? userdata.picture ?? "";
         }
         insertUser({ id, name, avatar });
@@ -54,7 +59,9 @@ export function useAuth() {
     } finally {
       hide();
       if (isSuccessful) {
-        await queryClient.invalidateQueries({ queryKey: ["users", userToken, currentUserId] });
+        await queryClient.invalidateQueries({
+          queryKey: ["users", userToken, currentUserId],
+        });
         await navigate({ to: "/login" });
       }
     }

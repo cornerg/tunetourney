@@ -1,6 +1,7 @@
 import React from "react";
-import {cn} from "#/utils/utils.ts";
 import TTTooltip from "#/components/primitives/TTTooltip.tsx";
+import { cn } from "#/utils/utils.ts";
+
 import "@/styles/ttbutton.css";
 
 interface Props extends React.HTMLAttributes<HTMLButtonElement> {
@@ -8,7 +9,15 @@ interface Props extends React.HTMLAttributes<HTMLButtonElement> {
   disabled?: boolean | undefined;
   buttonStyle?: "primary" | "outline" | undefined;
 }
-export default function TTButton({ children, tooltip, className, style, disabled, buttonStyle = "primary", ...props }: Props) {
+export default function TTButton({
+  children,
+  tooltip,
+  className,
+  style,
+  disabled,
+  buttonStyle = "primary",
+  ...props
+}: Props) {
   const button = React.useMemo(() => {
     return (
       <button
@@ -20,15 +29,17 @@ export default function TTButton({ children, tooltip, className, style, disabled
             "ttbutton-disabled opacity-50 select-none cursor-auto": disabled,
             "cursor-pointer": !disabled,
           },
-          className
+          className,
         )}
-        style={{ transition: "border 150ms ease, color 150ms ease, background 150ms ease" }}
+        style={{
+          transition:
+            "border 150ms ease, color 150ms ease, background 150ms ease",
+        }}
         disabled={disabled}
-        {...props}
-      >
+        {...props}>
         {children}
       </button>
-    )
+    );
   }, [children, className, disabled, style, ...Object.values(props)]);
 
   if (!!tooltip?.trim()?.length) {
@@ -36,7 +47,7 @@ export default function TTButton({ children, tooltip, className, style, disabled
       <TTTooltip label={tooltip ?? ""} delay={100}>
         {button}
       </TTTooltip>
-    )
+    );
   }
-  return button
+  return button;
 }

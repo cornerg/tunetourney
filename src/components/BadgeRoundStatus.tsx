@@ -1,5 +1,5 @@
 import React from "react";
-import {getRoundStatus} from "#/models/RoundStatus.ts";
+import { getRoundStatus } from "#/models/RoundStatus.ts";
 
 interface Props extends React.HTMLProps<HTMLDivElement> {
   statusKey: number | null | undefined;
@@ -10,8 +10,12 @@ export default function BadgeRoundStatus({ statusKey }: Props) {
   }, [statusKey]);
 
   return (
-    <div className="w-max h-max py-0.5 px-2 rounded-full" style={{ backgroundColor: `${status.color}40` }}>
-      <p className="font-bold text-sm" style={{ color: `${status.color}` }}>{status.label}</p>
+    <div
+      className="w-max h-max py-0.5 px-2 rounded-full"
+      style={{ backgroundColor: `${status.color}40` }}>
+      <p className="font-bold text-sm" style={{ color: `${status.color}` }}>
+        {status.label}
+      </p>
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-import type {Round} from "#/models/supabaseTables.ts";
-import {useSubmissions} from "#/api/submissions.ts";
 import React from "react";
+import { useSubmissions } from "#/api/submissions.ts";
 import VoteReviewSubmission from "#/components/sections/VoteReviewSubmission.tsx";
+import type { Round } from "#/models/supabaseTables.ts";
 
 interface Props {
   round: Round;
@@ -22,16 +22,19 @@ export default function RoundVoteReview({ round }: Props) {
     <div className="column w-full gap-4">
       <div className="column w-full gap-2">
         <h3 className="heading">Submitted</h3>
-        <p className="text-dark">Thank you for voting! Feel free to enjoy the submissions until voting closes.</p>
+        <p className="text-dark">
+          Thank you for voting! Feel free to enjoy the submissions until voting
+          closes.
+        </p>
       </div>
 
       <div className="row w-full gap-4">
-        {sortedSubmissions.map((submission) => {
+        {sortedSubmissions.map(submission => {
           return (
             <VoteReviewSubmission key={submission.id} submission={submission} />
-          )
+          );
         })}
       </div>
     </div>
-  )
+  );
 }

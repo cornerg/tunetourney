@@ -1,4 +1,4 @@
-Welcome to your new TanStack Start app! 
+Welcome to your new TanStack Start app!
 
 # Getting Started
 
@@ -37,8 +37,6 @@ If you prefer not to use Tailwind CSS:
 2. Replace the Tailwind import in `src/styles.css` with your own styles
 3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
 4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
-
-
 
 ## Routing
 

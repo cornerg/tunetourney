@@ -1,14 +1,18 @@
 import React from "react";
-import {DropdownMenu} from "radix-ui";
+import { DropdownMenu } from "radix-ui";
+
 import "@/styles/TTDropdownMenu.css";
 
 interface Props {
-  options: React.ReactNode[],
-  triggerAsChild?: boolean,
-  children: React.ReactNode,
+  options: React.ReactNode[];
+  triggerAsChild?: boolean;
+  children: React.ReactNode;
 }
-export default function TTDropdownMenu({ options, triggerAsChild = true, children }: Props) {
-
+export default function TTDropdownMenu({
+  options,
+  triggerAsChild = true,
+  children,
+}: Props) {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild={triggerAsChild}>
@@ -22,5 +26,5 @@ export default function TTDropdownMenu({ options, triggerAsChild = true, childre
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
-  )
+  );
 }

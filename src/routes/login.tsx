@@ -1,39 +1,54 @@
-import {createFileRoute, redirect} from '@tanstack/react-router'
 import React from "react";
-import {getImageFromCollection} from "#/assets/imageCollections.ts";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { checkLogin } from "#/api/sessions.ts";
+import { getImageFromCollection } from "#/assets/imageCollections.ts";
 import HomeRight from "#/components/sections/HomeRight.tsx";
-import {checkLogin} from "#/api/sessions.ts";
 
 function Login() {
-  const backgroundImage = React.useMemo(() => getImageFromCollection("home"), []);
+  const backgroundImage = React.useMemo(
+    () => getImageFromCollection("home"),
+    [],
+  );
 
   return (
     <div className="row gap-0">
       <div
         className="relative column min-w-[50vw] min-h-[100vh] bg-cover"
-        style={{ backgroundImage: `url(${backgroundImage?.url ?? ""})` }}
-      >
-        <div className="absolute top-0 left-0 w-full h-full flex" style={{ zIndex: 0, backdropFilter: "blur(4px)" }} />
+        style={{ backgroundImage: `url(${backgroundImage?.url ?? ""})` }}>
+        <div
+          className="absolute top-0 left-0 w-full h-full flex"
+          style={{ zIndex: 0, backdropFilter: "blur(4px)" }}
+        />
 
-        <div className="absolute column justify-end top-0 left-0 w-full h-full flex p-2 pointer-events-none" style={{ zIndex: 2 }}>
+        <div
+          className="absolute column justify-end top-0 left-0 w-full h-full flex p-2 pointer-events-none"
+          style={{ zIndex: 2 }}>
           {!!backgroundImage?.creator && (
             <p className="w-max text-sm text-white text-shadow-sm text-shadow-black italic">
-              Image by <a href={backgroundImage.creditLink} target="_blank" className="pointer-events-auto cursor-pointer hover:underline">{backgroundImage.creator}</a>
+              Image by{" "}
+              <a
+                href={backgroundImage.creditLink}
+                target="_blank"
+                className="pointer-events-auto cursor-pointer hover:underline">
+                {backgroundImage.creator}
+              </a>
             </p>
           )}
         </div>
 
-        <div className="column w-full min-h-full p-4 justify-center items-center gap-2" style={{ zIndex: 1 }}>
+        <div
+          className="column w-full min-h-full p-4 justify-center items-center gap-2"
+          style={{ zIndex: 1 }}>
           <p className="text-5xl serif font-bold text-center">Content Left</p>
         </div>
       </div>
 
       <HomeRight />
     </div>
-  )
+  );
 }
 
-export const Route = createFileRoute('/login')({
+export const Route = createFileRoute("/login")({
   beforeLoad: async () => {
     const isLoggedIn = await checkLogin();
     if (isLoggedIn) {
@@ -46,5 +61,5 @@ export const Route = createFileRoute('/login')({
       throw redirect({ to: "/dashboard" });
     }
   },
-  component: Login
+  component: Login,
 });

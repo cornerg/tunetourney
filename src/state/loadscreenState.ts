@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
 interface LoadScreenState {
   text: string;
@@ -9,7 +9,7 @@ interface LoadScreenState {
   changeText: (text: string) => void;
 }
 
-export const useLoadScreen = create<LoadScreenState>()((set) => ({
+export const useLoadScreen = create<LoadScreenState>()(set => ({
   text: "Loading",
   visible: false,
   opacity: 0,
@@ -25,4 +25,4 @@ export const useLoadScreen = create<LoadScreenState>()((set) => ({
     set(() => ({ visible: false }));
   },
   changeText: (text: string) => set({ text }),
-}))
+}));

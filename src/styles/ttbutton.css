@@ -1,17 +1,25 @@
 .ttbutton-primary {
-    color: var(--color-surface);
-    background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
+  color: var(--color-surface);
+  background: linear-gradient(
+    45deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
 }
 .ttbutton-primary:hover:not(.ttbutton-disabled) {
-    background: linear-gradient(45deg, var(--color-secondary), var(--color-primary));
+  background: linear-gradient(
+    45deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
 }
 
 .ttbutton-outline {
-    color: var(--color-dark);
-    background: var(--color-surface);
-    border: 1px solid var(--color-dark);
+  color: var(--color-dark);
+  background: var(--color-surface);
+  border: 1px solid var(--color-dark);
 }
 .ttbutton-outline:hover:not(.ttbutton-disabled) {
-    border: 1px solid var(--color-primary);
-    color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
 }

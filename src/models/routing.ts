@@ -1,7 +1,7 @@
-import type {IconType} from "react-icons";
-import {MdOutlineSpaceDashboard} from "react-icons/md";
-import {HiOutlineUserGroup} from "react-icons/hi2";
-import {GrTrophy} from "react-icons/gr";
+import type { IconType } from "react-icons";
+import { GrTrophy } from "react-icons/gr";
+import { HiOutlineUserGroup } from "react-icons/hi2";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
 
 export interface RootPage {
   path: string;
@@ -19,7 +19,7 @@ export const pageDashboard: RootPage = {
   inSidebar: true,
   icon: MdOutlineSpaceDashboard,
   relativePaths: ["/dashboard"],
-}
+};
 
 export const pageClubs: RootPage = {
   path: "/clubs",
@@ -28,7 +28,7 @@ export const pageClubs: RootPage = {
   inSidebar: true,
   icon: HiOutlineUserGroup,
   relativePaths: ["/clubs", "/club"],
-}
+};
 
 export const pageTournaments: RootPage = {
   path: "/tournaments",
@@ -37,6 +37,10 @@ export const pageTournaments: RootPage = {
   inSidebar: true,
   icon: GrTrophy,
   relativePaths: ["/tournaments", "/tournament", "/round"],
-}
+};
 
-export const rootPages: RootPage[] = [pageDashboard, pageClubs, pageTournaments];
+export const rootPages: RootPage[] = [
+  pageDashboard,
+  pageClubs,
+  pageTournaments,
+];

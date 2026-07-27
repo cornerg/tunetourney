@@ -1,8 +1,12 @@
 import React from "react";
-import {cn} from "#/utils/utils.ts";
-import {useBreakpoints} from "#/hooks/utils.ts";
+import { useBreakpoints } from "#/hooks/utils.ts";
+import { cn } from "#/utils/utils.ts";
 
-export default function TTBox({ className, children, ...props }: React.HTMLProps<HTMLDivElement>) {
+export default function TTBox({
+  className,
+  children,
+  ...props
+}: React.HTMLProps<HTMLDivElement>) {
   const { isMobile } = useBreakpoints();
 
   return (
@@ -13,11 +17,10 @@ export default function TTBox({ className, children, ...props }: React.HTMLProps
           "p-4": !isMobile,
           "p-2": isMobile,
         },
-        className
+        className,
       )}
-      {...props}
-    >
+      {...props}>
       {children}
     </div>
-  )
+  );
 }

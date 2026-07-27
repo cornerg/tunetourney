@@ -1,11 +1,15 @@
 .sliderRoot > span:not(.sliderTrack) {
-    transition: transform 150ms ease-out, left 150ms ease-out;
+  transition:
+    transform 150ms ease-out,
+    left 150ms ease-out;
 }
 
 .sliderTrack > span {
-    transition: right 150ms ease-out, left 150ms ease-out;
+  transition:
+    right 150ms ease-out,
+    left 150ms ease-out;
 }
 
 .sliderThumb {
-    box-shadow: -1px 1px 2px 0 rgba(0, 0, 0, 0.6);
+  box-shadow: -1px 1px 2px 0 rgba(0, 0, 0, 0.6);
 }

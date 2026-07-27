@@ -1,5 +1,5 @@
 import React from "react";
-import {cn} from "#/utils/utils.ts";
+import { cn } from "#/utils/utils.ts";
 
 interface Props extends React.HTMLProps<HTMLInputElement> {
   background?: "surface" | "background";
@@ -7,7 +7,18 @@ interface Props extends React.HTMLProps<HTMLInputElement> {
   inputStyle?: React.CSSProperties | undefined;
   error?: string | undefined;
 }
-export default function TTInput({ label, className, style, inputClassName, inputStyle, background = "surface", error, onFocus, onBlur, ...props }: Props) {
+export default function TTInput({
+  label,
+  className,
+  style,
+  inputClassName,
+  inputStyle,
+  background = "surface",
+  error,
+  onFocus,
+  onBlur,
+  ...props
+}: Props) {
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
   return (
@@ -18,21 +29,20 @@ export default function TTInput({ label, className, style, inputClassName, input
           "border-primary": isFocused && !error,
           "border-red-700": !!error,
         },
-        className
+        className,
       )}
-      style={{ transition: "border-color 150ms ease", ...style }}
-    >
+      style={{ transition: "border-color 150ms ease", ...style }}>
       {label && (
-        <p className={cn(
-          `absolute text-xs z-[2] top-[-8px] left-2 px-1 bg-${background}`,
-          {
-            "text-primary": isFocused && !error,
-            "text-dark": !isFocused && !error,
-            "text-red-700": !!error,
-          }
-        )}
-           style={{ transition: "color 150ms ease" }}
-        >
+        <p
+          className={cn(
+            `absolute text-xs z-[2] top-[-8px] left-2 px-1 bg-${background}`,
+            {
+              "text-primary": isFocused && !error,
+              "text-dark": !isFocused && !error,
+              "text-red-700": !!error,
+            },
+          )}
+          style={{ transition: "color 150ms ease" }}>
           {label}
         </p>
       )}
@@ -40,25 +50,27 @@ export default function TTInput({ label, className, style, inputClassName, input
       {error && (
         <p
           className={`absolute text-xs text-right text-red-700 z-[2] bottom-[-8px] right-2 px-1 bg-${background}`}
-          style={{ transition: "color 150ms ease" }}
-        >
+          style={{ transition: "color 150ms ease" }}>
           {error}
         </p>
       )}
 
       <input
-        className={cn(`absolute w-full h-full top-0 left-0 py-1 px-2 text-sm text-dark bg-${background} border-0 outline-0 rounded-lg z-[1]`, inputClassName)}
+        className={cn(
+          `absolute w-full h-full top-0 left-0 py-1 px-2 text-sm text-dark bg-${background} border-0 outline-0 rounded-lg z-[1]`,
+          inputClassName,
+        )}
         style={inputStyle}
-        onFocus={(e) => {
+        onFocus={e => {
           if (onFocus) onFocus(e);
-          setIsFocused(true)
+          setIsFocused(true);
         }}
-        onBlur={(e) => {
+        onBlur={e => {
           if (onBlur) onBlur(e);
-          setIsFocused(false)
+          setIsFocused(false);
         }}
         {...props}
       />
     </div>
-  )
+  );
 }

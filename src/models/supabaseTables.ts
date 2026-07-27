@@ -1,4 +1,4 @@
-import type {SUPPORTED_PLATFORMS} from "#/models/SupportedPlatforms.ts";
+import type { SUPPORTED_PLATFORMS } from "#/models/SupportedPlatforms.ts";
 
 export interface Club {
   id: string;
@@ -44,7 +44,7 @@ export interface Tournament {
   title: string;
   default_round_time: number;
   round_count: number;
-  platform: SUPPORTED_PLATFORMS
+  platform: SUPPORTED_PLATFORMS;
   club_id?: string;
 }
 

@@ -1,14 +1,14 @@
-import {supabase} from "#/integrations/supabase/supabase.ts";
-import {useQuery} from "@tanstack/react-query";
-import type {Tournament} from "#/models/supabaseTables.ts";
-import {useCurrentUserId} from "#/api/sessions.ts";
 import React from "react";
-import type {TournamentScore} from "#/models/supabaseUtils.ts";
+import { useQuery } from "@tanstack/react-query";
+import { useCurrentUserId } from "#/api/sessions.ts";
+import { supabase } from "#/integrations/supabase/supabase.ts";
+import type { Tournament } from "#/models/supabaseTables.ts";
+import type { TournamentScore } from "#/models/supabaseUtils.ts";
 
 const oneHour = 1000 * 60 * 60;
 
 async function fetchTournaments() {
-  const { data, error } = await supabase.from('Tournaments').select('*');
+  const { data, error } = await supabase.from("Tournaments").select("*");
   if (error) {
     console.error("Error fetching tournaments. ", error);
     return [];
@@ -17,7 +17,11 @@ async function fetchTournaments() {
 }
 export function useTournaments() {
   const userToken = useCurrentUserId();
-  return useQuery({ queryKey: ["tournaments", userToken], queryFn: fetchTournaments, staleTime: oneHour });
+  return useQuery({
+    queryKey: ["tournaments", userToken],
+    queryFn: fetchTournaments,
+    staleTime: oneHour,
+  });
 }
 
 // Get One Tournament
@@ -26,7 +30,7 @@ export function useTournament(tournamentId: string | null | undefined) {
   const { data: tournaments, ...otherData } = useTournaments();
 
   React.useEffect(() => {
-    setTournament(tournaments?.find((t) => t.id === tournamentId) ?? null);
+    setTournament(tournaments?.find(t => t.id === tournamentId) ?? null);
   }, [tournamentId, tournaments]);
 
   return { data: tournament, ...otherData };
@@ -34,7 +38,7 @@ export function useTournament(tournamentId: string | null | undefined) {
 
 // Get Active Tournaments
 async function fetchActiveTournaments() {
-  const { data, error } = await supabase.rpc('get_active_tournaments');
+  const { data, error } = await supabase.rpc("get_active_tournaments");
   if (error) {
     console.error("Error fetching active tournaments. ", error);
     return [];
@@ -43,14 +47,20 @@ async function fetchActiveTournaments() {
 }
 export function useActiveTournaments() {
   const userToken = useCurrentUserId();
-  return useQuery({ queryKey: ["activeTournaments", userToken], queryFn: fetchActiveTournaments, staleTime: oneHour });
+  return useQuery({
+    queryKey: ["activeTournaments", userToken],
+    queryFn: fetchActiveTournaments,
+    staleTime: oneHour,
+  });
 }
 
 // Get total score across all completed rounds for selected tournaments
 async function fetchTournamentScores(tournamentid: string) {
   console.log("Fetch: ", tournamentid);
-  if (!tournamentid) return []
-  const { data, error } = await supabase.rpc('get_tournament_scores', { tournamentid });
+  if (!tournamentid) return [];
+  const { data, error } = await supabase.rpc("get_tournament_scores", {
+    tournamentid,
+  });
   if (error) {
     console.error("Error fetching tournament scores. ", error);
     return [];
@@ -59,6 +69,9 @@ async function fetchTournamentScores(tournamentid: string) {
 }
 export function useTournamentScores(tournamentId: string) {
   const userToken = useCurrentUserId();
-  return useQuery({ queryKey: ["tournamentScores", tournamentId, userToken], queryFn: () => fetchTournamentScores(tournamentId), staleTime: oneHour });
+  return useQuery({
+    queryKey: ["tournamentScores", tournamentId, userToken],
+    queryFn: () => fetchTournamentScores(tournamentId),
+    staleTime: oneHour,
+  });
 }
-

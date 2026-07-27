@@ -1,14 +1,14 @@
-import {supabase} from "#/integrations/supabase/supabase.ts";
-import {useMutation, useQuery} from "@tanstack/react-query";
-import {useCurrentUserId} from "#/api/sessions.ts";
-import type {Vote} from "#/models/supabaseTables.ts";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useCurrentUserId } from "#/api/sessions.ts";
+import { supabase } from "#/integrations/supabase/supabase.ts";
+import type { Vote } from "#/models/supabaseTables.ts";
 
 const oneHour = 1000 * 60 * 60;
 
 // Fetch votes
 async function fetchVotes(roundid: string | null | undefined) {
   if (!roundid) return [];
-  const { data, error } = await supabase.rpc('get_round_votes', { roundid });
+  const { data, error } = await supabase.rpc("get_round_votes", { roundid });
   if (error) {
     console.error("Error fetching submissions: ", error);
     return [];
@@ -21,13 +21,20 @@ async function fetchVotes(roundid: string | null | undefined) {
 
 export function useVotes(roundId: string | null | undefined) {
   const userId = useCurrentUserId();
-  return useQuery({ queryKey: ["votes", userId, roundId], queryFn: () => fetchVotes(roundId), staleTime: oneHour });
+  return useQuery({
+    queryKey: ["votes", userId, roundId],
+    queryFn: () => fetchVotes(roundId),
+    staleTime: oneHour,
+  });
 }
 
 // Create votes
 
 async function insertVotesFn(newEntries: Array<Partial<Vote>>) {
-  const { data, error } = await supabase.from('Votes').insert([ ...newEntries ]).select();
+  const { data, error } = await supabase
+    .from("Votes")
+    .insert([...newEntries])
+    .select();
   if (error) {
     console.error("Error adding votes", error);
     return [];
@@ -42,23 +49,24 @@ export function useInsertVotes() {
     onSuccess: (newEntries, _variables, _onMutateResult, context) => {
       const roundId = newEntries[0]?.round_id ?? "";
       const queryKey = ["votes", userId, roundId];
-      context.client.setQueryData(
-        queryKey,
-        (old: Vote[]) => {
-          if (Array.isArray(newEntries) && newEntries.length > 0) {
-            if (Array.isArray(old)) return [...old, ...newEntries];
-            return [newEntries];
-          }
+      context.client.setQueryData(queryKey, (old: Vote[]) => {
+        if (Array.isArray(newEntries) && newEntries.length > 0) {
+          if (Array.isArray(old)) return [...old, ...newEntries];
+          return [newEntries];
         }
-      )
+      });
       context.client.invalidateQueries({ queryKey });
-    }
-  })
+    },
+  });
 }
 
 // Update a vote
 async function updateVoteFn(id: string, vote: Partial<Vote>) {
-  const { data, error } = await supabase.from('Votes').update({ ...vote }).eq('id', id).select();
+  const { data, error } = await supabase
+    .from("Votes")
+    .update({ ...vote })
+    .eq("id", id)
+    .select();
   if (error) {
     console.error("Error updating vote", error);
     return null;
@@ -76,17 +84,14 @@ export function useUpdateVote() {
     onSuccess: (newEntry, variables, _onMutateResult, context) => {
       const roundId = newEntry?.round_id ?? "";
       const queryKey = ["votes", userId, roundId];
-      context.client.setQueryData(
-        queryKey,
-        (old: Vote[]) => {
-          const oldEntry = old?.find((row) => row.id === variables.id);
-          if (oldEntry?.id && newEntry?.id) {
-            const otherEntries = old.filter((row) => row.id !== variables.id);
-            return [...otherEntries, newEntry];
-          }
+      context.client.setQueryData(queryKey, (old: Vote[]) => {
+        const oldEntry = old?.find(row => row.id === variables.id);
+        if (oldEntry?.id && newEntry?.id) {
+          const otherEntries = old.filter(row => row.id !== variables.id);
+          return [...otherEntries, newEntry];
         }
-      )
+      });
       context.client.invalidateQueries({ queryKey });
-    }
-  })
+    },
+  });
 }

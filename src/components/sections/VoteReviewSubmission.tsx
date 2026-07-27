@@ -1,10 +1,10 @@
-import type {Submission} from "#/models/supabaseTables.ts";
-import TTBox from "#/components/primitives/TTBox.tsx";
 import React from "react";
-import {IoMusicalNotes} from "react-icons/io5";
-import YouTubeEmbed from "#/components/embeds/YouTubeEmbed.tsx";
 import SpotifyEmbed from "#/components/embeds/SpotifyEmbed.tsx";
-import {getPlatform, platformYouTube} from "#/models/SupportedPlatforms.ts";
+import YouTubeEmbed from "#/components/embeds/YouTubeEmbed.tsx";
+import TTBox from "#/components/primitives/TTBox.tsx";
+import type { Submission } from "#/models/supabaseTables.ts";
+import { getPlatform, platformYouTube } from "#/models/SupportedPlatforms.ts";
+import { IoMusicalNotes } from "react-icons/io5";
 
 interface Props {
   submission: Submission;
@@ -25,13 +25,20 @@ export default function VoteReviewSubmission({ submission }: Props) {
         {!submission.url_id && (
           <div
             className="row justify-center items-center rounded-xl"
-            style={{ background: "linear-gradient(45deg, #1C75BC, #33C8B4)", ...embedSize }}>
+            style={{
+              background: "linear-gradient(45deg, #1C75BC, #33C8B4)",
+              ...embedSize,
+            }}>
             <IoMusicalNotes size={64} color="white" />
           </div>
         )}
-        {!!submission.url_id && urlPlatform?.key === "youtube" && <YouTubeEmbed embedId={submission.url_id} {...embedSize} />}
-        {!!submission.url_id && urlPlatform?.key === "spotify" && <SpotifyEmbed embedId={submission.url_id} {...embedSize} />}
+        {!!submission.url_id && urlPlatform?.key === "youtube" && (
+          <YouTubeEmbed embedId={submission.url_id} {...embedSize} />
+        )}
+        {!!submission.url_id && urlPlatform?.key === "spotify" && (
+          <SpotifyEmbed embedId={submission.url_id} {...embedSize} />
+        )}
       </div>
     </TTBox>
-  )
+  );
 }

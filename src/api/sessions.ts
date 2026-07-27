@@ -1,6 +1,6 @@
 import React from "react";
-import {supabase} from "#/integrations/supabase/supabase.ts";
-import {createClient} from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
+import { supabase } from "#/integrations/supabase/supabase.ts";
 
 export function useSessionToken() {
   const [userToken, setUserToken] = React.useState<string>("");
@@ -32,11 +32,13 @@ export function useCurrentUserId() {
   return userId;
 }
 
-
 export async function checkLogin() {
   let supabaseClient = supabase;
   if (!supabaseClient) {
-    supabaseClient = createClient('https://uscaefcbuqsjyhtaisho.supabase.co', 'sb_publishable_iukQlefRIbzwtq0jv6MdEQ_VMBaQfl0');
+    supabaseClient = createClient(
+      "https://uscaefcbuqsjyhtaisho.supabase.co",
+      "sb_publishable_iukQlefRIbzwtq0jv6MdEQ_VMBaQfl0",
+    );
   }
   const { data, error } = await supabaseClient.auth.getUser();
   if (error) {

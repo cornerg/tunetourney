@@ -1,19 +1,16 @@
 {
-  "projectName": "tunetourney",
-  "mode": "file-router",
-  "typescript": true,
-  "packageManager": "npm",
-  "includeExamples": false,
-  "tailwind": true,
   "addOnOptions": {},
+  "chosenAddOns": ["tanstack-query", "table"],
   "envVarValues": {},
-  "git": true,
-  "install": true,
-  "routerOnly": false,
-  "version": 1,
   "framework": "react",
-  "chosenAddOns": [
-    "tanstack-query",
-    "table"
-  ]
+  "git": true,
+  "includeExamples": false,
+  "install": true,
+  "mode": "file-router",
+  "packageManager": "npm",
+  "projectName": "tunetourney",
+  "routerOnly": false,
+  "tailwind": true,
+  "typescript": true,
+  "version": 1
 }

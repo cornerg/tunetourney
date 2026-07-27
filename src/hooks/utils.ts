@@ -16,11 +16,11 @@ export function useBreakpoints() {
   React.useEffect(() => {
     if (!hasSetListener.current) {
       hasSetListener.current = true;
-      window.addEventListener('resize', () => {
+      window.addEventListener("resize", () => {
         setWidth(window.innerWidth);
       });
     }
-  })
+  });
 
   const breakpoints = React.useMemo(() => {
     const isMobile = width < BREAKPOINT_MOBILE;
@@ -33,6 +33,9 @@ export function useBreakpoints() {
 }
 
 export function getGradient(seed?: number) {
-  const number = typeof seed === "number" && !isNaN(seed) && seed > 0 ? seed : Math.round(Math.random() * gradients.length);
+  const number =
+    typeof seed === "number" && !isNaN(seed) && seed > 0
+      ? seed
+      : Math.round(Math.random() * gradients.length);
   return gradients[number % gradients.length];
 }

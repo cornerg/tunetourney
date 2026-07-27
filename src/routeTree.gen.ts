@@ -9,34 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TournamentsRouteImport } from './routes/tournaments'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as ClubsRouteImport } from './routes/clubs'
-import { Route as ClubRouteImport } from './routes/club'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TournamentTournamentIdRouteImport } from './routes/tournament/$tournamentId'
-import { Route as RoundRoundIdRouteImport } from './routes/round/$roundId'
+import { Route as ClubRouteImport } from './routes/club'
+import { Route as ClubsRouteImport } from './routes/clubs'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as TournamentsRouteImport } from './routes/tournaments'
 import { Route as ClubClubIdRouteImport } from './routes/club/$clubId'
+import { Route as RoundRoundIdRouteImport } from './routes/round/$roundId'
+import { Route as TournamentTournamentIdRouteImport } from './routes/tournament/$tournamentId'
 
-const TournamentsRoute = TournamentsRouteImport.update({
-  id: '/tournaments',
-  path: '/tournaments',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClubsRoute = ClubsRouteImport.update({
-  id: '/clubs',
-  path: '/clubs',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClubRoute = ClubRouteImport.update({
@@ -44,25 +29,40 @@ const ClubRoute = ClubRouteImport.update({
   path: '/club',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ClubsRoute = ClubsRouteImport.update({
+  id: '/clubs',
+  path: '/clubs',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TournamentTournamentIdRoute = TournamentTournamentIdRouteImport.update({
-  id: '/tournament/$tournamentId',
-  path: '/tournament/$tournamentId',
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RoundRoundIdRoute = RoundRoundIdRouteImport.update({
-  id: '/round/$roundId',
-  path: '/round/$roundId',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TournamentsRoute = TournamentsRouteImport.update({
+  id: '/tournaments',
+  path: '/tournaments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClubClubIdRoute = ClubClubIdRouteImport.update({
   id: '/$clubId',
   path: '/$clubId',
   getParentRoute: () => ClubRoute,
+} as any)
+const RoundRoundIdRoute = RoundRoundIdRouteImport.update({
+  id: '/round/$roundId',
+  path: '/round/$roundId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TournamentTournamentIdRoute = TournamentTournamentIdRouteImport.update({
+  id: '/tournament/$tournamentId',
+  path: '/tournament/$tournamentId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -148,32 +148,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/tournaments': {
-      id: '/tournaments'
-      path: '/tournaments'
-      fullPath: '/tournaments'
-      preLoaderRoute: typeof TournamentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/clubs': {
-      id: '/clubs'
-      path: '/clubs'
-      fullPath: '/clubs'
-      preLoaderRoute: typeof ClubsRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/club': {
@@ -183,25 +162,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClubRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/clubs': {
+      id: '/clubs'
+      path: '/clubs'
+      fullPath: '/clubs'
+      preLoaderRoute: typeof ClubsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tournament/$tournamentId': {
-      id: '/tournament/$tournamentId'
-      path: '/tournament/$tournamentId'
-      fullPath: '/tournament/$tournamentId'
-      preLoaderRoute: typeof TournamentTournamentIdRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/round/$roundId': {
-      id: '/round/$roundId'
-      path: '/round/$roundId'
-      fullPath: '/round/$roundId'
-      preLoaderRoute: typeof RoundRoundIdRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tournaments': {
+      id: '/tournaments'
+      path: '/tournaments'
+      fullPath: '/tournaments'
+      preLoaderRoute: typeof TournamentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/club/$clubId': {
@@ -210,6 +196,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/club/$clubId'
       preLoaderRoute: typeof ClubClubIdRouteImport
       parentRoute: typeof ClubRoute
+    }
+    '/round/$roundId': {
+      id: '/round/$roundId'
+      path: '/round/$roundId'
+      fullPath: '/round/$roundId'
+      preLoaderRoute: typeof RoundRoundIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tournament/$tournamentId': {
+      id: '/tournament/$tournamentId'
+      path: '/tournament/$tournamentId'
+      fullPath: '/tournament/$tournamentId'
+      preLoaderRoute: typeof TournamentTournamentIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }

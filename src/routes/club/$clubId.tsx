@@ -1,8 +1,8 @@
-import {createFileRoute} from '@tanstack/react-router'
-import {useClubs} from "#/api/clubs.ts";
 import React from "react";
-import ClubView from "#/components/sections/Club/ClubView.tsx";
+import { createFileRoute } from "@tanstack/react-router";
+import { useClubs } from "#/api/clubs.ts";
 import ClubEdit from "#/components/sections/Club/ClubEdit.tsx";
+import ClubView from "#/components/sections/Club/ClubView.tsx";
 
 function ClubPage() {
   const [edit, setEdit] = React.useState<boolean>(false);
@@ -24,7 +24,7 @@ function ClubPage() {
 
   const club = React.useMemo(() => {
     if (!clubId || clubId === "new") return;
-    return clubs?.find((cl) => cl.id === clubId);
+    return clubs?.find(cl => cl.id === clubId);
   }, [clubId, clubs]);
 
   return (
@@ -32,12 +32,10 @@ function ClubPage() {
       {!edit && !!club && <ClubView club={club} setEdit={setEdit} />}
 
       {!!edit && <ClubEdit sourceClub={club} setEdit={setEdit} />}
-
-
     </div>
-  )
+  );
 }
 
-export const Route = createFileRoute('/club/$clubId')({
+export const Route = createFileRoute("/club/$clubId")({
   component: ClubPage,
-})
+});
