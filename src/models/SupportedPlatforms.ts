@@ -17,8 +17,8 @@ export const platformYouTube: SupportedPlatform = {
 export const platformSpotify: SupportedPlatform = {
   key: "spotify",
   label: "Spotify",
-  pattern: new RegExp(/(?<=w{0,3}\.?\.youtube\.com\/watch\?v=|w{0,3}\.?youtu\.be\/|w{0,3}\.?youtube\.com\/shorts\/)[A-Za-z0-9-_]{10,12}/, "gm"),
-  urlTemplate: "https://www.youtube.com/watch?v=<submission_id>",
+  pattern: new RegExp(/(?<=spotify\.com\/track\/|spotify\.com\/embed\/track\/)\w{20,24}(?=\?|$)/, "gm"),
+  urlTemplate: "https://open.spotify.com/embed/track/<submission_id>?utm_source=generator",
 }
 
 export const allPlatforms: SupportedPlatform[] = [

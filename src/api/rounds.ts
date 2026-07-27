@@ -50,7 +50,7 @@ export function useUpdateRound() {
           }
         }
       )
-      context.client.invalidateQueries({ queryKey });
+      void context.client.invalidateQueries({ queryKey });
     }
   })
 }

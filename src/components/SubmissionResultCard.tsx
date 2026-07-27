@@ -8,6 +8,8 @@ import ProfilePhoto from "#/components/ProfilePhoto.tsx";
 import TTTooltip from "#/components/primitives/TTTooltip.tsx";
 import {useTournamentUsers} from "#/api/users.ts";
 import {FaChevronRight} from "react-icons/fa6";
+import SpotifyEmbed from "#/components/embeds/SpotifyEmbed.tsx";
+import {getPlatform, platformYouTube} from "#/models/SupportedPlatforms.ts";
 
 interface Props {
   submission: Submission;
@@ -24,8 +26,16 @@ export default function SubmissionResultCard({ submission, votes, placement, tou
   const sortedVotes = React.useMemo(() => {
     return [...votes].sort((a, b) => b.score - a.score);
   }, [votes]);
-  const urlId = React.useMemo(() => submission?.url_id ?? "", [submission?.url_id]);
   const submitter = React.useMemo(() => participants?.find((user) => user.id === submission.user_id), [participants, submission.user_id]);
+
+  const urlPlatform = React.useMemo(() => {
+    return getPlatform(submission.platform) ?? platformYouTube;
+  }, [submission.platform]);
+
+  const embedSize = React.useMemo(() => {
+    if (urlPlatform?.key === "spotify") return { width: 288, height: 152 };
+    return { width: 288, height: 162 };
+  }, [urlPlatform?.key]);
 
   const handleExpand = React.useCallback(() => {
     setIsExpanded(!isExpanded);
@@ -50,13 +60,16 @@ export default function SubmissionResultCard({ submission, votes, placement, tou
       </TTBox>
 
       <TTBox className="row w-full gap-4 pl-8">
-        <div className="row h-[162px] w-[288px] justify-center items-center aspect-video rounded-lg overflow-hidden" style={{ background: "linear-gradient(45deg, #1C75BC, #33C8B4)" }}>
-          {!urlId && <IoMusicalNotes size={64} color="white" />}
-          {!!urlId && (
-            <div className="h-[162px] w-[288px]">
-              {submission.platform === "youtube" && <YouTubeEmbed embedId={urlId} width={288} height={162} />}
+        <div className="row h-max w-max overflow-hidden">
+          {!submission.url_id && (
+            <div
+              className="row justify-center items-center rounded-xl"
+              style={{ background: "linear-gradient(45deg, #1C75BC, #33C8B4)", ...embedSize }}>
+              <IoMusicalNotes size={64} color="white" />
             </div>
           )}
+          {!!submission.url_id && urlPlatform?.key === "youtube" && <YouTubeEmbed embedId={submission.url_id} {...embedSize} />}
+          {!!submission.url_id && urlPlatform?.key === "spotify" && <SpotifyEmbed embedId={submission.url_id} {...embedSize} />}
         </div>
 
         <div className="column w-full flex-1 gap-2">

@@ -3,43 +3,35 @@ import TTBox from "#/components/primitives/TTBox.tsx";
 import React from "react";
 import {IoMusicalNotes} from "react-icons/io5";
 import YouTubeEmbed from "#/components/embeds/YouTubeEmbed.tsx";
-import {cn} from "#/utils/utils.ts";
+import SpotifyEmbed from "#/components/embeds/SpotifyEmbed.tsx";
+import {getPlatform, platformYouTube} from "#/models/SupportedPlatforms.ts";
 
 interface Props {
   submission: Submission;
-  placement: number;
 }
-export default function VoteReviewSubmission({ submission, placement }: Props) {
-  const urlId = React.useMemo(() => submission?.url_id ?? "", [submission?.url_id]);
+export default function VoteReviewSubmission({ submission }: Props) {
+  const urlPlatform = React.useMemo(() => {
+    return getPlatform(submission.platform) ?? platformYouTube;
+  }, [submission.platform]);
+
+  const embedSize = React.useMemo(() => {
+    if (urlPlatform?.key === "spotify") return { width: 288, height: 152 };
+    return { width: 288, height: 162 };
+  }, [urlPlatform?.key]);
 
   return (
-    <div className="relative row w-max h-max pl-6">
-      <TTBox className="absolute row w-12 h-12 top-4 left-0 p-0 justify-center items-center z-[2] rounded-full">
-        <p
-          className={cn(
-            "text-center mb-1 leading-none",
-            {
-              "text-4xl font-bold text-yellow-400": placement === 1,
-              "text-3xl font-bold text-gray-400": placement === 2,
-              "text-2xl font-bold text-amber-700": placement === 3,
-              "text-xl text-gray-800": placement >= 4,
-            }
-          )}
-        >
-          {placement}
-        </p>
-      </TTBox>
-
-      <TTBox className="w-max h-max pl-8">
-        <div className="row h-[162px] w-[288px] justify-center items-center aspect-video rounded-lg overflow-hidden" style={{ background: "linear-gradient(45deg, #1C75BC, #33C8B4)" }}>
-          {!urlId && <IoMusicalNotes size={64} color="white" />}
-          {!!urlId && (
-            <div className="h-[162px] w-[288px]">
-              {submission.platform === "youtube" && <YouTubeEmbed embedId={urlId} width={288} height={162} />}
-            </div>
-          )}
-        </div>
-      </TTBox>
-    </div>
+    <TTBox className="row w-max h-max min-h-[196px] items-center">
+      <div className="row h-max w-max overflow-hidden">
+        {!submission.url_id && (
+          <div
+            className="row justify-center items-center rounded-xl"
+            style={{ background: "linear-gradient(45deg, #1C75BC, #33C8B4)", ...embedSize }}>
+            <IoMusicalNotes size={64} color="white" />
+          </div>
+        )}
+        {!!submission.url_id && urlPlatform?.key === "youtube" && <YouTubeEmbed embedId={submission.url_id} {...embedSize} />}
+        {!!submission.url_id && urlPlatform?.key === "spotify" && <SpotifyEmbed embedId={submission.url_id} {...embedSize} />}
+      </div>
+    </TTBox>
   )
 }

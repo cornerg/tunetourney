@@ -2,6 +2,8 @@ import eslintReact from "@eslint-react/eslint-plugin";
 import eslintJs from "@eslint/js";
 import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
+import baseConfig from "./base.ts";
+import reactConfig from "./react.ts";
 
 export default defineConfig(
   {
@@ -23,6 +25,8 @@ export default defineConfig(
         tsconfigRootDir: import.meta.dirname,
       },
     },
+    ...baseConfig,
+    ...reactConfig,
 
     // Custom rule overrides (modify rule levels or disable rules)
     rules: {

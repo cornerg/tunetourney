@@ -5,6 +5,8 @@ import React from "react";
 import {IoMusicalNotes} from "react-icons/io5";
 import ScoreSlider from "#/components/primitives/ScoreSlider.tsx";
 import TTInput from "#/components/primitives/TTInput.tsx";
+import {getPlatform, platformYouTube} from "#/models/SupportedPlatforms.ts";
+import SpotifyEmbed from "#/components/embeds/SpotifyEmbed.tsx";
 
 interface Props {
   submission: Submission;
@@ -14,22 +16,32 @@ interface Props {
   handleComment: (comment: string) => void;
 }
 export default function SubmissionVote({ submission, score, handleScore, comment, handleComment }: Props) {
-  const urlId = React.useMemo(() => submission?.url_id, [submission?.url_id]);
+  const urlPlatform = React.useMemo(() => {
+    return getPlatform(submission.platform) ?? platformYouTube;
+  }, [submission.platform]);
+
+  const embedSize = React.useMemo(() => {
+    if (urlPlatform?.key === "spotify") return { width: 288, height: 152 };
+    return { width: 288, height: 162 };
+  }, [urlPlatform?.key]);
 
   return (
     <TTBox className="w-full row gap-4">
-      <div className="row h-[162px] w-[288px] justify-center items-center aspect-video rounded-lg overflow-hidden" style={{ background: "linear-gradient(45deg, #1C75BC, #33C8B4)" }}>
-        {!urlId && <IoMusicalNotes size={64} color="white" />}
-        {!!urlId && (
-          <div className="h-[162px] w-[288px]">
-            {submission.platform === "youtube" && <YouTubeEmbed embedId={urlId} width={288} height={162} />}
+      <div className="row h-max w-max overflow-hidden">
+        {!submission.url_id && (
+          <div
+            className="row justify-center items-center rounded-xl"
+            style={{ background: "linear-gradient(45deg, #1C75BC, #33C8B4)", ...embedSize }}>
+            <IoMusicalNotes size={64} color="white" />
           </div>
         )}
+        {!!submission.url_id && urlPlatform?.key === "youtube" && <YouTubeEmbed embedId={submission.url_id} {...embedSize} />}
+        {!!submission.url_id && urlPlatform?.key === "spotify" && <SpotifyEmbed embedId={submission.url_id} {...embedSize} />}
       </div>
 
-      <div className="column w-full h-[162px] flex-1 gap-2">
+      <div className="column w-full h-max justify-between flex-1 gap-2" style={{ minHeight: embedSize.height }}>
         <p className={submission?.comment?.trim()?.length ? undefined : "opacity-50 italic"}>{submission?.comment || "No notes"}</p>
-        <hr className="w-full text-gray-300 mb-2" />
+        <hr className="w-full text-gray-300" />
 
         <div className="column w-full h-full flex-1 justify-evenly gap-0">
           <div className="row w-full gap-2">

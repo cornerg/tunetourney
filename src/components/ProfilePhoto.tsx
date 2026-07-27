@@ -13,13 +13,21 @@ function getGradient(userId: string | null | undefined) {
 }
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
-  user: User | null | undefined;
   size?: number;
   fontSize?: number | string;
+  name?: string | null | undefined;
 }
-export default function ProfilePhoto({ user, size, fontSize, className, style, ...props }: Props) {
+interface PropsWithUser extends Props {
+  user: User | null | undefined;
+  avatarUrl?: string | null | undefined;
+}
+interface PropsWithAvatar extends Props {
+  user?: User | null | undefined;
+  avatarUrl: string | null | undefined;
+}
+export default function ProfilePhoto({ user, avatarUrl, name, size, fontSize, className, style, ...props }: PropsWithUser | PropsWithAvatar) {
 
-  const photo = React.useMemo(() => user?.avatar, [user?.avatar]);
+  const photo = React.useMemo(() => user?.avatar || avatarUrl, [user?.avatar, avatarUrl]);
   const gradient = React.useMemo(() => getGradient(user?.id), [user?.id]);
 
   if (photo) {
@@ -42,7 +50,7 @@ export default function ProfilePhoto({ user, size, fontSize, className, style, .
       {...props}
     >
       <p className="text-center text-surface font-bold select-none" style={{ fontSize }}>
-        {getInitials(user?.name)}
+        {getInitials(user?.name || name)}
       </p>
     </div>
   )

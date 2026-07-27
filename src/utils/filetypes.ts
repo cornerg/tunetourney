@@ -1,0 +1,1 @@
+export const imageTypeRegex = new RegExp(/(?<=[\/.])(?:jpg|jpeg|png|apng|gif|webp|avif)$/, "g");

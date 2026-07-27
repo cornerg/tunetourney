@@ -25,7 +25,7 @@ export default function ScoreSlider({ value, setValue, className, ...props }: Pr
             setValue(values[0])
           }}
         >
-          <Slider.Track className="sliderTrack relative bg-dark grow h-3">
+          <Slider.Track className="sliderTrack relative bg-dark grow h-3 cursor-pointer">
             <Slider.Range className="absolute bg-primary h-full" />
           </Slider.Track>
           <Slider.Thumb className="sliderThumb block w-4 h-8 bg-secondary rounded-xl cursor-pointer hover:border-4 hover:border-secondary" aria-label="Score" />

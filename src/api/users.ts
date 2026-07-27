@@ -7,8 +7,10 @@ import React from "react";
 const oneHour = 1000 * 60 * 60;
 
 async function fetchUsers(userIds: string | string[] | null | undefined) {
+  console.log("Fetch Users: ", userIds);
   if (!userIds?.length) return [];
   const userIdList = Array.isArray(userIds) ? userIds : [userIds];
+  console.log("Get Users: ", userIdList);
   const { data, error } = await supabase.from('Users').select('*').in('id', userIdList);
   console.log("Users data: ", data);
   if (error) {
@@ -21,6 +23,7 @@ async function fetchUsers(userIds: string | string[] | null | undefined) {
 export function useUserData(userIds?: string | string[] | null | undefined) {
   const userToken = useSessionToken();
   const currentUserId = useCurrentUserId();
+  console.log("Use User Data", userIds);
   const getUserIds = React.useMemo(() => !!userIds?.length ? userIds : currentUserId, [userIds, currentUserId]);
   return useQuery({ queryKey: ["users", userToken, getUserIds], queryFn: () => fetchUsers(getUserIds), staleTime: oneHour });
 }
@@ -28,7 +31,6 @@ export function useUserData(userIds?: string | string[] | null | undefined) {
 // Get Current User
 async function fetchCurrentUser(userId: string) {
   if (!userId) {
-    console.error("No user ID");
     return null;
   }
   const { data, error } = await supabase.from('Users').select('*').eq('id', userId);

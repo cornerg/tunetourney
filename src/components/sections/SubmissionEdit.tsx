@@ -10,6 +10,7 @@ import {useInsertSubmission, useUpdateSubmission} from "#/api/submissions.ts";
 import {useCurrentUserId} from "#/api/sessions.ts";
 import TTBox from "#/components/primitives/TTBox.tsx";
 import {useTTToast} from "#/components/primitives/TTToast.tsx";
+import SpotifyEmbed from "#/components/embeds/SpotifyEmbed.tsx";
 
 interface Props {
   round: Round | null | undefined;
@@ -38,6 +39,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
     return allPlatforms.filter((plat) => tournament?.platform === plat.key)
   }, [tournament?.platform]);
 
+  // Use the newly entered URL value to set the URL ID, platform, and error states
   const handleUrl = React.useCallback((value: string) => {
     if (!value) {
       setUrlId("");
@@ -60,6 +62,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
     }
   }, [supportedPlatforms]);
 
+  // If the input is deselected, cancel the change confirmation timer and handle it right away
   const handleUrlBlur = React.useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     if (urlChangeTimeout.current) {
       clearTimeout(urlChangeTimeout.current);
@@ -69,6 +72,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
     event.currentTarget.blur();
   }, [handleUrl]);
 
+  // Whenever the entered value of the URL input changes, set a timer. If the value isn't changed in that time, the value will be handled
   const handleUrlChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setSubmissionUrl(event.target.value);
     if (urlChangeTimeout.current) {
@@ -80,19 +84,24 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
     }, 3000);
   }, []);
 
-  React.useEffect(() => {
-    if (presetSubmissionId.current !== savedSubmission?.id) {
-      if (handleUrl && supportedPlatforms?.length) {
-        presetSubmissionId.current = savedSubmission?.id ?? "";
-        setUrlId(savedSubmission?.url_id ?? "");
-        setSubmissionComment(savedSubmission?.comment ?? "");
-        if (savedSubmission?.url_id) {
-          const initialPlatform = getPlatform(savedSubmission?.platform);
-          if (initialPlatform) {
-            handleUrl(initialPlatform.urlTemplate.replace("<submission_id>", savedSubmission?.url_id));
-          }
-        }
+  // Handle updating states to match the saved data received from the database
+  const syncWithSaved = React.useCallback((saved: Submission) => {
+    presetSubmissionId.current = saved.id;
+    if (saved.url_id && saved.platform) {
+      const platform = getPlatform(saved.platform);
+      if (platform) {
+        setUrlPlatform(platform);
+        setSubmissionUrl(platform.urlTemplate.replace("<submission_id>", saved.url_id));
+        setUrlId(saved.url_id);
       }
+    }
+    setSubmissionComment(saved.comment ?? "");
+  }, [presetSubmissionId.current]);
+
+  // Check for new saved data being received, and call the sync function
+  React.useEffect(() => {
+    if (savedSubmission?.id && presetSubmissionId.current !== (savedSubmission?.id ?? "")) {
+      syncWithSaved(savedSubmission);
     }
   }, [savedSubmission, handleUrl, supportedPlatforms]);
 
@@ -156,6 +165,23 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
     }
   }, [urlId, currentUserId, round, savedSubmission, insert, update, submissionComment]);
 
+  const embedSize = React.useMemo(() => {
+    if (urlPlatform?.key === "spotify") return { width: 288, height: 152 };
+    return { width: 288, height: 162 };
+  }, [urlPlatform?.key]);
+
+  const saveButtonText = React.useMemo(() => {
+    if (!!savedSubmission?.id) {
+      if (urlId === savedSubmission.url_id) {
+        return "Saved";
+      } else {
+        return "Update";
+      }
+    } else {
+      return "Submit";
+    }
+  }, [savedSubmission]);
+
   React.useEffect(() => {
     if (isInserting || isUpdating) {
       if (isInserting && !isInsertPending) {
@@ -199,25 +225,28 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
   return (
     <TTBox className="column w-full">
       <div className="row w-full gap-4">
-        <div className="row h-[162px] w-[288px] justify-center items-center aspect-video rounded-lg overflow-hidden" style={{ background: "linear-gradient(45deg, #1C75BC, #33C8B4)" }}>
-          {!urlId && <IoMusicalNotes size={64} color="white" />}
-          {!!urlId && (
-            <div className="h-[162px] w-[288px]">
-              {urlPlatform?.key === "youtube" && <YouTubeEmbed embedId={urlId} width={288} height={162} />}
+        <div className="row h-max w-max overflow-hidden">
+          {!urlId && (
+            <div
+              className="row justify-center items-center rounded-xl"
+              style={{ background: "linear-gradient(45deg, #1C75BC, #33C8B4)", ...embedSize }}>
+              <IoMusicalNotes size={64} color="white" />
             </div>
           )}
+          {!!urlId && urlPlatform?.key === "youtube" && <YouTubeEmbed embedId={urlId} {...embedSize} />}
+          {!!urlId && urlPlatform?.key === "spotify" && <SpotifyEmbed embedId={urlId} {...embedSize} />}
         </div>
 
-        <div className="column h-[162px] w-full justify-between gap-2 flex-1">
+        <div className="column h-max w-full justify-between gap-2 flex-1" style={{ minHeight: embedSize.height }}>
           <div className="row w-full justify-between gap-4">
             <h3 className="heading">Your Submission</h3>
 
             <TTButton className="px-2" buttonStyle="primary" disabled={!hasDataChanged || !!submissionIssue} tooltip={submissionIssue} onClick={handleSubmit}>
-              {!!savedSubmission && !hasDataChanged ? "Saved" : "Submit"}
+              {saveButtonText}
             </TTButton>
           </div>
 
-          <div className="column w-full gap-4">
+          <div className="column w-full h-max justify-end flex-1 gap-3">
             <TTInput
               className="w-full h-10"
               label={fieldLabel}

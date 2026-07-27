@@ -22,9 +22,9 @@ function TournamentsPage() {
       <div className="column w-full gap-0">
         <h1 className="title text-primary">Tournaments</h1>
         <p className="text-black text-base">
-          Current or past contests you've been involved in. Narrow it down by certain clubs, view the latest contests, or review your performance in past tournaments.
+          Challenge your friends, colleagues, or worst enemies from your clubs to see who has the best taste in music!
           <br/>
-          You can customize your club as much or as little as you like to welcome members with a unique vibe all your own.
+          Tournaments are broken up into rounds, in which everyone submits their music and votes to find a winner.
         </p>
       </div>
 

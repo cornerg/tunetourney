@@ -29,19 +29,25 @@ export default function RoundResults({ round }: Props) {
 
   return (
     <div className="column w-full gap-4">
-      {sortedSubmissions.map((submission, i) => {
-        const submissionVotes = (votes ?? []).filter((vote) => vote.submission_id === submission.id);
+      <div className="row w-full justify-between gap-4">
+        <h3 className="heading w-max">Round Complete</h3>
+      </div>
 
-        return (
-          <SubmissionResultCard
-            key={submission.id}
-            submission={submission}
-            votes={submissionVotes}
-            placement={i + 1}
-            tournamentId={round.tournament_id ?? ""}
-          />
-        )
-      })}
+      <div className="column w-full gap-4">
+        {sortedSubmissions.map((submission, i) => {
+          const submissionVotes = (votes ?? []).filter((vote) => vote.submission_id === submission.id);
+
+          return (
+            <SubmissionResultCard
+              key={submission.id}
+              submission={submission}
+              votes={submissionVotes}
+              placement={i + 1}
+              tournamentId={round.tournament_id ?? ""}
+            />
+          )
+        })}
+      </div>
     </div>
   )
 }

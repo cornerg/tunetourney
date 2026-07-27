@@ -4,12 +4,16 @@ import {Link} from "@tanstack/react-router";
 import {useCurrentUser} from "#/api/users.ts";
 import ButtonDiscordLogin from "#/components/ButtonDiscordLogin.tsx";
 import ProfilePhoto from "#/components/ProfilePhoto.tsx";
+import TTDropdownMenu from "#/components/primitives/TTDropdownMenu.tsx";
+import {DropdownMenu} from "radix-ui";
+import {useAuth} from "#/hooks/auth.tsx";
 
 export const HEADER_HEIGHT = 52;
 
 export default function Header() {
   const { isMobile } = useBreakpoints();
   const { data: currentUser, isLoading: isUserLoading } = useCurrentUser();
+  const { signOut } = useAuth();
 
   return (
     <>
@@ -22,14 +26,18 @@ export default function Header() {
         <div className="row justify-end items-center gap-2 w-full flex-1">
           {!currentUser && !isUserLoading && <ButtonDiscordLogin />}
 
-          {currentUser?.avatar && (
-            <div className="group relative w-8 h-8 cursor-pointer">
-              <ProfilePhoto user={currentUser} size={32} fontSize={16} className="absolute top-0 left-0 bg-surface rounded-full overflow-hidden" />
-              <div
-                className="absolute top-0.5 left-0.5 w-7 h-7 m-auto rounded-full border-2 border-primary z-0 group-hover:w-10 group-hover:h-10 group-hover:top-[-4px] group-hover:left-[-4px]"
-                style={{ transition: "width 200ms ease, height 200ms ease, top 200ms ease, left 200ms ease" }}
-              />
-            </div>
+          {currentUser?.id && (
+            <TTDropdownMenu options={[
+              <DropdownMenu.Item key="signout" className="dropdownMenuItem" onClick={signOut}>Log Out</DropdownMenu.Item>
+            ]}>
+              <div className="group relative w-8 h-8 cursor-pointer">
+                <ProfilePhoto user={currentUser} size={32} fontSize={16} className="absolute top-0 left-0 bg-surface rounded-full overflow-hidden" />
+                <div
+                  className="absolute top-0.5 left-0.5 w-7 h-7 m-auto rounded-full border-2 border-primary z-0 group-hover:w-10 group-hover:h-10 group-hover:top-[-4px] group-hover:left-[-4px]"
+                  style={{ transition: "width 200ms ease, height 200ms ease, top 200ms ease, left 200ms ease" }}
+                />
+              </div>
+            </TTDropdownMenu>
           )}
         </div>
       </header>

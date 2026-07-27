@@ -9,7 +9,7 @@ interface Props extends Omit<React.HTMLProps<HTMLDivElement>, "width" | "height"
 export default function YouTubeEmbed({ embedId, className, width, height, ...props }: Props) {
 
   return (
-    <div className={cn(`relative w-[${width}px] h-[${height}px] overflow-hidden border-1 border-dark`)} {...props}>
+    <div className={cn(`relative w-[${width}px] h-[${height}px] rounded-xl border-1 border-dark overflow-hidden`)} {...props}>
       <iframe
         className={`absolute top-0 left-0`}
         width={width.toString()}

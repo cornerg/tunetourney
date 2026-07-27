@@ -3,6 +3,7 @@ import {useQuery} from "@tanstack/react-query";
 import type {Tournament} from "#/models/supabaseTables.ts";
 import {useCurrentUserId} from "#/api/sessions.ts";
 import React from "react";
+import type {TournamentScore} from "#/models/supabaseUtils.ts";
 
 const oneHour = 1000 * 60 * 60;
 
@@ -14,7 +15,6 @@ async function fetchTournaments() {
   }
   return data as Tournament[];
 }
-
 export function useTournaments() {
   const userToken = useCurrentUserId();
   return useQuery({ queryKey: ["tournaments", userToken], queryFn: fetchTournaments, staleTime: oneHour });
@@ -41,8 +41,24 @@ async function fetchActiveTournaments() {
   }
   return data as Tournament[];
 }
-
 export function useActiveTournaments() {
   const userToken = useCurrentUserId();
   return useQuery({ queryKey: ["activeTournaments", userToken], queryFn: fetchActiveTournaments, staleTime: oneHour });
 }
+
+// Get total score across all completed rounds for selected tournaments
+async function fetchTournamentScores(tournamentid: string) {
+  console.log("Fetch: ", tournamentid);
+  if (!tournamentid) return []
+  const { data, error } = await supabase.rpc('get_tournament_scores', { tournamentid });
+  if (error) {
+    console.error("Error fetching tournament scores. ", error);
+    return [];
+  }
+  return data as TournamentScore[];
+}
+export function useTournamentScores(tournamentId: string) {
+  const userToken = useCurrentUserId();
+  return useQuery({ queryKey: ["tournamentScores", tournamentId, userToken], queryFn: () => fetchTournamentScores(tournamentId), staleTime: oneHour });
+}
+

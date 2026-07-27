@@ -1,10 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router'
+import {createFileRoute, useNavigate} from '@tanstack/react-router'
 import React from "react";
 import ClubCard from "#/components/ClubCard.tsx";
 import {useClubs} from "#/api/clubs.ts";
+import TTButton from "#/components/primitives/TTButton.tsx";
 
 function Clubs() {
   const { data: clubs } = useClubs();
+  const navigate = useNavigate();
 
   const sortedClubs = React.useMemo(() => {
     if (!clubs || (clubs?.length ?? 0) <= 0) return [];
@@ -20,9 +22,20 @@ function Clubs() {
   return (
     <div className="column w-full gap-4">
       <div className="column w-full gap-0">
-        <h1 className="title text-primary">Clubs</h1>
+        <div className="row w-full justify-between items-center gap-4">
+          <h1 className="title text-primary">Clubs</h1>
+
+          <TTButton
+            className="px-2 min-h-10"
+            buttonStyle="primary"
+            tooltip="Start a new club"
+            onClick={() => navigate({ to: "/club/$clubId", params: { clubId: "new" } })}
+          >
+            New Club
+          </TTButton>
+        </div>
         <p className="text-black text-base">
-          Clubs are your first stop for experiencing Tune Tourney! Create a club, invite your friends, colleagues, or peers, and create tournaments through a club.
+          Clubs are your first stop for experiencing Tune Tourney! Create a club, invite your friends, colleagues, or peers, and create tournaments.
           <br/>
           You can customize your club as much or as little as you like to welcome members with a unique vibe all your own.
         </p>

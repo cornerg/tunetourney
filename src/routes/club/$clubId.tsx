@@ -1,74 +1,39 @@
-import { createFileRoute } from '@tanstack/react-router'
-import {useClubs, useClubUsers} from "#/api/clubs.ts";
+import {createFileRoute} from '@tanstack/react-router'
+import {useClubs} from "#/api/clubs.ts";
 import React from "react";
-import {GoPencil} from "react-icons/go";
-import {FiTrash2} from "react-icons/fi";
-import {RiLogoutBoxRLine} from "react-icons/ri";
-import TTButton from "#/components/primitives/TTButton.tsx";
-import ClubLogo from "#/components/ClubLogo.tsx";
-import {IoCloseSharp} from "react-icons/io5";
-import {LuSave} from "react-icons/lu";
-import ClubInfoView from "#/components/sections/ClubInfoView.tsx";
-import {useBreakpoints} from "#/hooks/utils.ts";
-import {cn} from "#/utils/utils.ts";
+import ClubView from "#/components/sections/Club/ClubView.tsx";
+import ClubEdit from "#/components/sections/Club/ClubEdit.tsx";
 
 function ClubPage() {
   const [edit, setEdit] = React.useState<boolean>(false);
 
-  const { isMobile } = useBreakpoints();
   const { clubId } = Route.useParams();
   const { data: clubs } = useClubs();
-  const { data: members } = useClubUsers(clubId);
-  console.log(`Members of club ${clubId}: `, members);
+  const handledRoute = React.useRef<string>("");
+
+  React.useEffect(() => {
+    if (clubId !== handledRoute.current) {
+      if (clubId === "new" && !edit) {
+        setEdit(true);
+      } else if (edit) {
+        setEdit(false);
+      }
+      handledRoute.current = clubId;
+    }
+  }, [clubId, edit, handledRoute.current]);
 
   const club = React.useMemo(() => {
+    if (!clubId || clubId === "new") return;
     return clubs?.find((cl) => cl.id === clubId);
   }, [clubId, clubs]);
 
   return (
-    <div className="column w-full h-[100vh] rounded-3xl rounded-tr-xl overflow-hidden bg-surface border border-gray-400">
-      <div className="row w-full h-64 justify-end gap-1 bg-cover bg-center p-2" style={{ backgroundImage: `url(${club?.banner})` }}>
-        {!edit && (
-          <>
-            <TTButton buttonStyle="outline" className="w-8 h-8" tooltip="Edit club" onClick={() => setEdit(true)}>
-              <GoPencil size={22} />
-            </TTButton>
+    <div className="column w-full h-max rounded-3xl rounded-tr-xl overflow-hidden bg-surface border border-gray-400">
+      {!edit && !!club && <ClubView club={club} setEdit={setEdit} />}
 
-            <TTButton buttonStyle="outline" className="w-8 h-8" tooltip="Delete club">
-              <FiTrash2 size={22} />
-            </TTButton>
+      {!!edit && <ClubEdit sourceClub={club} setEdit={setEdit} />}
 
-            <TTButton buttonStyle="outline" className="w-8 h-8" tooltip="Delete club">
-              <RiLogoutBoxRLine size={22} />
-            </TTButton>
-          </>
-        )}
 
-        {edit && (
-          <>
-            <TTButton buttonStyle="outline" className="w-8 h-8" tooltip="Save">
-              <LuSave size={22} onClick={() => setEdit(false)} />
-            </TTButton>
-
-            <TTButton buttonStyle="outline" className="w-8 h-8" tooltip="Cancel">
-              <IoCloseSharp size={22} onClick={() => setEdit(false)} />
-            </TTButton>
-          </>
-        )}
-      </div>
-
-      <div className={cn("column w-full gap-4 pb-6", { "px-8": !isMobile, "px-4": isMobile })}>
-        <div className="row w-full h-[110px] items-end gap-4 mt-[-55px]">
-          <ClubLogo club={club} className="rounded-2xl h-[110px]" />
-          <div className="row h-[110px] w-full flex-1 pt-[55px] items-center">
-            <h2 className="subtitle">{club?.title}</h2>
-          </div>
-        </div>
-
-        <div className="w-full h-[50vh]">
-          {!edit && !!club && <ClubInfoView club={club} />}
-        </div>
-      </div>
     </div>
   )
 }

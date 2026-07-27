@@ -3,6 +3,7 @@ import ClubLogo from "#/components/ClubLogo.tsx";
 import {Link, type LinkProps} from "@tanstack/react-router";
 import React from "react";
 import type {Club} from "#/models/supabaseTables.ts";
+import {useClubUsers} from "#/api/clubs.ts";
 
 type ElementProps = LinkProps & React.HTMLAttributes<HTMLAnchorElement>;
 
@@ -10,6 +11,8 @@ interface Props extends ElementProps {
   club: Club;
 }
 export default function ClubCard({ club, className, style, ...props }: Props) {
+  const { data: members } = useClubUsers(club.id);
+
   return (
     <Link
       to="/club/$clubId"
@@ -24,7 +27,7 @@ export default function ClubCard({ club, className, style, ...props }: Props) {
         <div className="row w-full justify-between gap-4">
           <div className="column w-full flex-1 gap-0">
             <h3 className="heading">{club.title}</h3>
-            <p className="text-xs">8 members</p>
+            <p className="text-xs">{members?.length ?? 0} member{members?.length === 1 ? "" : "s"}</p>
           </div>
         </div>
 

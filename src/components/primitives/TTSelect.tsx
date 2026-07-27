@@ -1,13 +1,13 @@
 import React from "react";
 import {cn} from "#/utils/utils.ts";
 
-interface Props extends React.HTMLProps<HTMLInputElement> {
+interface Props extends React.HTMLProps<HTMLSelectElement> {
   background?: "surface" | "background";
-  inputClassName?: string | undefined;
-  inputStyle?: React.CSSProperties | undefined;
+  selectClassName?: string | undefined;
+  selectStyle?: React.CSSProperties | undefined;
   error?: string | undefined;
 }
-export default function TTInput({ label, className, style, inputClassName, inputStyle, background = "surface", error, onFocus, onBlur, ...props }: Props) {
+export default function TTSelect({ label, className, style, selectClassName, selectStyle, background = "surface", error, onFocus, onBlur, ...props }: Props) {
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
   return (
@@ -46,9 +46,9 @@ export default function TTInput({ label, className, style, inputClassName, input
         </p>
       )}
 
-      <input
-        className={cn(`absolute w-full h-full top-0 left-0 py-1 px-2 text-sm text-dark bg-${background} border-0 outline-0 rounded-lg z-[1]`, inputClassName)}
-        style={inputStyle}
+      <select
+        className={cn(`absolute w-full h-full top-0 left-0 py-1 px-2 text-sm text-dark bg-${background} border-0 outline-0 rounded-lg z-[1]`, selectClassName)}
+        style={selectStyle}
         onFocus={(e) => {
           if (onFocus) onFocus(e);
           setIsFocused(true)

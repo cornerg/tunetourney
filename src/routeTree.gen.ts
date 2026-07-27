@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TournamentsRouteImport } from './routes/tournaments'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ClubsRouteImport } from './routes/clubs'
+import { Route as ClubRouteImport } from './routes/club'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TournamentTournamentIdRouteImport } from './routes/tournament/$tournamentId'
 import { Route as RoundRoundIdRouteImport } from './routes/round/$roundId'
@@ -22,6 +24,11 @@ const TournamentsRoute = TournamentsRouteImport.update({
   path: '/tournaments',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -30,6 +37,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const ClubsRoute = ClubsRouteImport.update({
   id: '/clubs',
   path: '/clubs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClubRoute = ClubRouteImport.update({
+  id: '/club',
+  path: '/club',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -48,15 +60,17 @@ const RoundRoundIdRoute = RoundRoundIdRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClubClubIdRoute = ClubClubIdRouteImport.update({
-  id: '/club/$clubId',
-  path: '/club/$clubId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$clubId',
+  path: '/$clubId',
+  getParentRoute: () => ClubRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/club': typeof ClubRouteWithChildren
   '/clubs': typeof ClubsRoute
   '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
   '/tournaments': typeof TournamentsRoute
   '/club/$clubId': typeof ClubClubIdRoute
   '/round/$roundId': typeof RoundRoundIdRoute
@@ -64,8 +78,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/club': typeof ClubRouteWithChildren
   '/clubs': typeof ClubsRoute
   '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
   '/tournaments': typeof TournamentsRoute
   '/club/$clubId': typeof ClubClubIdRoute
   '/round/$roundId': typeof RoundRoundIdRoute
@@ -74,8 +90,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/club': typeof ClubRouteWithChildren
   '/clubs': typeof ClubsRoute
   '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
   '/tournaments': typeof TournamentsRoute
   '/club/$clubId': typeof ClubClubIdRoute
   '/round/$roundId': typeof RoundRoundIdRoute
@@ -85,8 +103,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/club'
     | '/clubs'
     | '/dashboard'
+    | '/login'
     | '/tournaments'
     | '/club/$clubId'
     | '/round/$roundId'
@@ -94,8 +114,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/club'
     | '/clubs'
     | '/dashboard'
+    | '/login'
     | '/tournaments'
     | '/club/$clubId'
     | '/round/$roundId'
@@ -103,8 +125,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/club'
     | '/clubs'
     | '/dashboard'
+    | '/login'
     | '/tournaments'
     | '/club/$clubId'
     | '/round/$roundId'
@@ -113,10 +137,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ClubRoute: typeof ClubRouteWithChildren
   ClubsRoute: typeof ClubsRoute
   DashboardRoute: typeof DashboardRoute
+  LoginRoute: typeof LoginRoute
   TournamentsRoute: typeof TournamentsRoute
-  ClubClubIdRoute: typeof ClubClubIdRoute
   RoundRoundIdRoute: typeof RoundRoundIdRoute
   TournamentTournamentIdRoute: typeof TournamentTournamentIdRoute
 }
@@ -128,6 +153,13 @@ declare module '@tanstack/react-router' {
       path: '/tournaments'
       fullPath: '/tournaments'
       preLoaderRoute: typeof TournamentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -142,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/clubs'
       fullPath: '/clubs'
       preLoaderRoute: typeof ClubsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/club': {
+      id: '/club'
+      path: '/club'
+      fullPath: '/club'
+      preLoaderRoute: typeof ClubRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -167,20 +206,31 @@ declare module '@tanstack/react-router' {
     }
     '/club/$clubId': {
       id: '/club/$clubId'
-      path: '/club/$clubId'
+      path: '/$clubId'
       fullPath: '/club/$clubId'
       preLoaderRoute: typeof ClubClubIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ClubRoute
     }
   }
 }
 
+interface ClubRouteChildren {
+  ClubClubIdRoute: typeof ClubClubIdRoute
+}
+
+const ClubRouteChildren: ClubRouteChildren = {
+  ClubClubIdRoute: ClubClubIdRoute,
+}
+
+const ClubRouteWithChildren = ClubRoute._addFileChildren(ClubRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ClubRoute: ClubRouteWithChildren,
   ClubsRoute: ClubsRoute,
   DashboardRoute: DashboardRoute,
+  LoginRoute: LoginRoute,
   TournamentsRoute: TournamentsRoute,
-  ClubClubIdRoute: ClubClubIdRoute,
   RoundRoundIdRoute: RoundRoundIdRoute,
   TournamentTournamentIdRoute: TournamentTournamentIdRoute,
 }
@@ -189,10 +239,11 @@ export const routeTree = rootRouteImport
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }

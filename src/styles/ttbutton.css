@@ -13,4 +13,5 @@
 }
 .ttbutton-outline:hover:not(.ttbutton-disabled) {
     border: 1px solid var(--color-primary);
+    color: var(--color-primary);
 }

@@ -70,6 +70,7 @@ export default function Sidebar() {
 
                     return (
                       <Link
+                        key={club.id}
                         to="/club/$clubId"
                         params={{ clubId: club.id }}
                         className={cn(
@@ -92,6 +93,7 @@ export default function Sidebar() {
 
                     return (
                       <Link
+                        key={tourney.id}
                         to="/tournament/$tournamentId"
                         params={{ tournamentId: tourney.id }}
                         className={cn(
