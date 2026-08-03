@@ -1,7 +1,7 @@
-export type SUPPORTED_PLATFORMS = "youtube" | "spotify" | "all";
+export type SupportedPlatformKey = "youtube" | "spotify" | "all";
 
-export interface SupportedPlatform {
-  key: SUPPORTED_PLATFORMS;
+export type SupportedPlatform = {
+  key: SupportedPlatformKey;
   label: string;
   pattern: RegExp;
   urlTemplate: string;

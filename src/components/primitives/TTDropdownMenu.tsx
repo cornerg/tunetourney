@@ -3,7 +3,7 @@ import { DropdownMenu } from "radix-ui";
 
 import "@/styles/TTDropdownMenu.css";
 
-interface Props {
+type Props = {
   options: React.ReactNode[];
   triggerAsChild?: boolean;
   children: React.ReactNode;

@@ -8,17 +8,19 @@ import TTTooltip from "#/components/primitives/TTTooltip.tsx";
 import ProfilePhoto from "#/components/ProfilePhoto.tsx";
 import CreateClubInvites from "#/components/sections/CreateClubInvites.tsx";
 import { getGradient, useBreakpoints } from "#/hooks/utils.ts";
-import type { Club, User } from "#/models/supabaseTables.ts";
+import type { Club } from "#/models/supabaseTables.ts";
 import { cn } from "#/utils/utils.ts";
 import { FiTrash2 } from "react-icons/fi";
 import { GoPencil } from "react-icons/go";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { RxPlus } from "react-icons/rx";
 
-interface Props extends React.HTMLAttributes<HTMLDivElement> {
+const now = Date.now();
+
+type Props = {
   club: Club;
   setEdit: (newState: boolean) => void;
-}
+} & React.HTMLAttributes<HTMLDivElement>
 export default function ClubView({ club, setEdit, className }: Props) {
   const [inviteDialogOpen, setInviteDialogOpen] =
     React.useState<boolean>(false);
@@ -29,7 +31,7 @@ export default function ClubView({ club, setEdit, className }: Props) {
 
   const gradient = React.useMemo(() => {
     const seed = parseInt(
-      new Date(club?.created_at ?? Date.now()).getTime().toString().slice(-1),
+      new Date(club?.created_at ?? now).getTime().toString().slice(-1),
     );
     return getGradient(seed);
   }, [club]);
@@ -43,14 +45,14 @@ export default function ClubView({ club, setEdit, className }: Props) {
   const members = React.useMemo(() => {
     return [...(allMembers ?? [])]
       .filter(u => !u.is_owner && !!u.userData)
-      .map(clubUser => clubUser.userData as User)
+      .map(clubUser => clubUser.userData!)
       .sort((a, b) => (a.name === b.name ? 0 : a.name > b.name ? 1 : -1));
   }, [allMembers]);
 
   const owners = React.useMemo(() => {
     return [...(allMembers ?? [])]
       .filter(u => u.is_owner && !!u.userData)
-      .map(clubUser => clubUser.userData as User)
+      .map(clubUser => clubUser.userData!)
       .sort((a, b) => (a.name === b.name ? 0 : a.name > b.name ? 1 : -1));
   }, [allMembers]);
 

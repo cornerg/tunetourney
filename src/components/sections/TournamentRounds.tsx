@@ -4,7 +4,7 @@ import { useTournamentRounds } from "#/hooks/roundHooks.ts";
 import { ROUND_STATUS } from "#/models/RoundStatus.ts";
 import { RxChevronRight } from "react-icons/rx";
 
-interface Props {
+type Props = {
   tournamentId: string | null | undefined;
 }
 export default function TournamentRounds({ tournamentId }: Props) {

@@ -1,12 +1,12 @@
 import React from "react";
 import { cn } from "#/utils/utils.ts";
 
-interface Props extends React.HTMLProps<HTMLSelectElement> {
+type Props = {
   background?: "surface" | "background";
   selectClassName?: string | undefined;
   selectStyle?: React.CSSProperties | undefined;
   error?: string | undefined;
-}
+} & React.HTMLProps<HTMLSelectElement>
 export default function TTSelect({
   label,
   className,

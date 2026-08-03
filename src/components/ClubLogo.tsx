@@ -3,10 +3,12 @@ import { getGradient } from "#/hooks/utils.ts";
 import type { Club } from "#/models/supabaseTables.ts";
 import { cn, getInitials } from "#/utils/utils.ts";
 
-interface Props extends React.HTMLAttributes<HTMLDivElement> {
+const now = Date.now();
+
+type Props = {
   club: Club | null | undefined;
   placeholderClassName?: string;
-}
+} & React.HTMLAttributes<HTMLDivElement>
 export default function ClubLogo({
   club,
   className,
@@ -16,7 +18,7 @@ export default function ClubLogo({
 }: Props) {
   const gradient = React.useMemo(() => {
     const seed = parseInt(
-      new Date(club?.created_at ?? Date.now()).getTime().toString().slice(-1),
+      new Date(club?.created_at ?? now).getTime().toString().slice(-1),
     );
     return getGradient(seed);
   }, [club]);

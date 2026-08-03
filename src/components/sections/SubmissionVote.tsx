@@ -8,7 +8,7 @@ import type { Submission } from "#/models/supabaseTables.ts";
 import { getPlatform, platformYouTube } from "#/models/SupportedPlatforms.ts";
 import { IoMusicalNotes } from "react-icons/io5";
 
-interface Props {
+type Props = {
   submission: Submission;
   score: number | undefined;
   handleScore: (score: number) => void;

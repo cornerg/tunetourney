@@ -29,7 +29,7 @@ function Login() {
               <a
                 href={backgroundImage.creditLink}
                 target="_blank"
-                className="pointer-events-auto cursor-pointer hover:underline">
+                className="pointer-events-auto cursor-pointer hover:underline" rel="noreferrer">
                 {backgroundImage.creator}
               </a>
             </p>

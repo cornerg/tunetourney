@@ -6,15 +6,17 @@ import type { Club } from "#/models/supabaseTables.ts";
 import { cn } from "#/utils/utils.ts";
 import { MdAdd, MdClose } from "react-icons/md";
 
-interface InviteRow {
+const description = "Send invitations to one or more Tune Tourney users to join this club. If the users exist, they'll be notified and given the choice to accept or decline.";
+
+type InviteRow = {
   identity: string;
   isOwner: boolean;
 }
 
-interface Props extends React.HTMLAttributes<HTMLDivElement> {
+type Props = {
   club: Club;
   closeDialog: () => void;
-}
+} & React.HTMLAttributes<HTMLDivElement>
 export default function CreateClubInvites({
   club,
   closeDialog,
@@ -48,16 +50,12 @@ export default function CreateClubInvites({
   );
 
   const handleSubmit = React.useCallback((sendInvites: InviteRow[]) => {
-    console.log("Send: ", sendInvites);
+    console.log("Send: ", sendInvites); // ToDo: send invitations
   }, []);
 
   return (
     <div className={cn("column w-full gap-4")} {...props}>
-      <p className="text-sm text-dark">
-        Send invitations to one or more Tune Tourney users to join this club. If
-        the users exist, they'll' be notified and given the choice to accept or
-        decline.
-      </p>
+      <p className="text-sm text-dark">{description}</p>
 
       <div className="row w-full items-end gap-2">
         <TTInput

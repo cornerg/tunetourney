@@ -1,4 +1,4 @@
-interface Props {
+type Props = {
   min: number;
   max: number;
   limit: number;

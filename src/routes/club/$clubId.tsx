@@ -20,7 +20,7 @@ function ClubPage() {
       }
       handledRoute.current = clubId;
     }
-  }, [clubId, edit, handledRoute.current]);
+  }, [clubId, edit, handledRoute]);
 
   const club = React.useMemo(() => {
     if (!clubId || clubId === "new") return;

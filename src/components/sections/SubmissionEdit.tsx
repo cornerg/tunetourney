@@ -16,7 +16,7 @@ import {
 } from "#/models/SupportedPlatforms.ts";
 import { IoMusicalNotes } from "react-icons/io5";
 
-interface Props {
+type Props = {
   round: Round | null | undefined;
   savedSubmission?: Submission | undefined;
 }
@@ -149,7 +149,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
       return "Spotify Track URL";
     }
     return "Submission URL";
-  }, [supportedPlatforms, submissionUrl]);
+  }, [supportedPlatforms]);
 
   const cleanUrl = React.useMemo(() => {
     if (!urlId || !urlPlatform) return;
@@ -158,7 +158,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
 
   const submissionIssue = React.useMemo(() => {
     if (!urlId) return "Please enter a submission URL.";
-    if (!!urlError) return urlError;
+    if (urlError) return urlError;
     if (
       !urlPlatform ||
       !supportedPlatforms.map(plat => plat.key).includes(urlPlatform.key)
@@ -189,8 +189,8 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
       return;
     }
 
-    if (!!savedSubmission?.id) {
-      let saveData: Partial<Submission> = {};
+    if (savedSubmission?.id) {
+      const saveData: Partial<Submission> = {};
       if (urlId !== savedSubmission.url_id) {
         saveData.url_id = urlId;
       }
@@ -224,7 +224,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
   }, [urlPlatform?.key]);
 
   const saveButtonText = React.useMemo(() => {
-    if (!!savedSubmission?.id) {
+    if (savedSubmission?.id) {
       if (urlId === savedSubmission.url_id) {
         return "Saved";
       } else {
@@ -233,7 +233,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
     } else {
       return "Submit";
     }
-  }, [savedSubmission]);
+  }, [savedSubmission?.id, savedSubmission?.url_id, urlId]);
 
   React.useEffect(() => {
     if (isInserting || isUpdating) {
@@ -273,16 +273,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
         setIsUpdating(false);
       }
     }
-  }, [
-    isInserting,
-    isUpdating,
-    isInsertPending,
-    isInsertError,
-    isInsertSuccess,
-    isUpdatePending,
-    isUpdateError,
-    isUpdateSuccess,
-  ]);
+  }, [isInserting, isUpdating, isInsertPending, isInsertError, isInsertSuccess, isUpdatePending, isUpdateError, isUpdateSuccess, toast]);
 
   return (
     <TTBox className="column w-full">

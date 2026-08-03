@@ -12,13 +12,13 @@ import type { Round, Vote } from "#/models/supabaseTables.ts";
 const dialogueDescription =
   "Are you sure you want to save your votes as shown? You cannot edit your votes after they've been submitted.";
 
-interface StoredVote {
+type StoredVote = {
   score: number;
   comment: string;
   submissionId: string;
 }
 
-interface Props {
+type Props = {
   round: Round | null | undefined;
 }
 export default function RoundVoting({ round }: Props) {
@@ -27,7 +27,7 @@ export default function RoundVoting({ round }: Props) {
 
   const { data: submissions } = useSubmissions(round?.id ?? "");
   const currentUserId = useCurrentUserId();
-  const { mutate: insert, isPending, isError, isSuccess } = useInsertVotes();
+  const { mutate: insert, isPending, isError, isSuccess } = useInsertVotes(); // ToDo: replace mutate with mutateAsync
   const { TTToast, toast } = useTTToast();
 
   const updateVote = React.useCallback(
@@ -101,7 +101,7 @@ export default function RoundVoting({ round }: Props) {
         console.error("An error occurred: ", error);
       }
     },
-    [insert],
+    [currentUserId, insert, round?.id, submissions],
   );
 
   React.useEffect(() => {
@@ -122,7 +122,7 @@ export default function RoundVoting({ round }: Props) {
       }
       setIsInserting(false);
     }
-  }, [isInserting, isPending, isError, isSuccess]);
+  }, [isInserting, isPending, isError, isSuccess, toast]);
 
   const totalScoreRange = React.useMemo(() => {
     const min = (submissions?.length ?? 0) * 5;

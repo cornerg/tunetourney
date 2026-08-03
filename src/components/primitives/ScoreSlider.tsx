@@ -6,10 +6,10 @@ import "@/styles/ScoreSlider.css";
 
 const VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-interface Props extends React.HTMLAttributes<HTMLDivElement> {
+type Props = {
   value: number | undefined;
   setValue: (value: number) => void;
-}
+} & React.HTMLAttributes<HTMLDivElement>
 export default function ScoreSlider({
   value,
   setValue,

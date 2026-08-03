@@ -1,6 +1,7 @@
-import type { SUPPORTED_PLATFORMS } from "#/models/SupportedPlatforms.ts";
+import type { SupportedPlatformKey } from "#/models/SupportedPlatforms.ts";
+import type { ROUND_STATUS } from "#/models/RoundStatus.ts";
 
-export interface Club {
+export type Club = {
   id: string;
   created_at: string;
   title: string;
@@ -9,7 +10,7 @@ export interface Club {
   description: string;
 }
 
-export interface ClubUser {
+export type ClubUser = {
   id: string;
   created_at: string;
   club_id?: string;
@@ -17,38 +18,38 @@ export interface ClubUser {
   is_owner: boolean;
 }
 
-export interface Round {
+export type Round = {
   id: string;
   created_at: string;
   title: string;
   description: string | null;
   start_time: string;
   end_time: string;
-  status: number;
+  status: ROUND_STATUS;
   tournament_id?: string | null;
 }
 
-export interface Submission {
+export type Submission = {
   id: string;
   created_at: string;
   url_id?: string;
   user_id?: string;
   round_id?: string;
   comment?: string;
-  platform?: SUPPORTED_PLATFORMS;
+  platform?: SupportedPlatformKey;
 }
 
-export interface Tournament {
+export type Tournament = {
   id: string;
   created_at: string;
   title: string;
   default_round_time: number;
   round_count: number;
-  platform: SUPPORTED_PLATFORMS;
+  platform: SupportedPlatformKey;
   club_id?: string;
 }
 
-export interface TournamentUser {
+export type TournamentUser = {
   id: string;
   created_at: string;
   is_owner: boolean;
@@ -56,14 +57,14 @@ export interface TournamentUser {
   user_id?: string;
 }
 
-export interface User {
+export type User = {
   id: string;
   created_at: string;
   name: string;
   avatar: string;
 }
 
-export interface Vote {
+export type Vote = {
   id: string;
   created_at: string;
   score: number;

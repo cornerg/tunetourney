@@ -38,9 +38,9 @@ async function updateRoundFn(id: string, round: Partial<Round>) {
   return data?.[0] as Round | undefined;
 }
 
-interface InsertParams extends Partial<Omit<Round, "id">> {
+type InsertParams = {
   id: string;
-}
+} & Partial<Omit<Round, "id">>
 export function useUpdateRound() {
   const userId = useCurrentUserId();
   return useMutation({

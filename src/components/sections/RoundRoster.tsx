@@ -11,7 +11,7 @@ import ProfilePhoto from "#/components/ProfilePhoto.tsx";
 import { ROUND_STATUS } from "#/models/RoundStatus.ts";
 import type { Round } from "#/models/supabaseTables.ts";
 
-interface Props {
+type Props = {
   round: Round;
 }
 export default function RoundRoster({ round }: Props) {
@@ -38,7 +38,7 @@ export default function RoundRoster({ round }: Props) {
         return true;
       }) ?? []
     );
-  }, [otherUsers, round?.status, submissions, votedUsers]);
+  }, [otherUsers, round.status, submissions, votedUsers]);
 
   const uncompletedUsers = React.useMemo(() => {
     return (

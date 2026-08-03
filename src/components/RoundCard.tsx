@@ -7,9 +7,9 @@ import { cn } from "#/utils/utils.ts";
 
 type ElementProps = LinkProps & React.HTMLAttributes<HTMLAnchorElement>;
 
-interface Props extends ElementProps {
+type Props = {
   round: Round;
-}
+} & ElementProps
 export default function RoundCard({
   round,
   className,

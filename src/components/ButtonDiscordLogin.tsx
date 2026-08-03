@@ -16,7 +16,7 @@ export default function ButtonDiscordLogin() {
 
   return (
     <div
-      className={`row justify-between items-center gap-2 w-max h-max px-3 py-1 rounded-full cursor-pointer bg-[#5865F2] hover:bg-[#31358E] transition-colors`}>
+      className="row justify-between items-center gap-2 w-max h-max px-3 py-1 rounded-full cursor-pointer bg-[#5865F2] hover:bg-[#31358E] transition-colors">
       <p className="text-white font-bold text-sm" onClick={handleLogin}>
         Log in with Discord
       </p>

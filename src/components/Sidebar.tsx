@@ -43,12 +43,12 @@ export default function Sidebar() {
 
   return (
     <div
-      className={`fixed top-[3.25rem] left-0 column w-48 bg-surface p-2 shadow z-[9] border-t border-t-gray-200`}
+      className="fixed top-[3.25rem] left-0 column w-48 bg-surface p-2 shadow z-[9] border-t border-t-gray-200"
       style={{ height: `calc(100vh - ${HEADER_HEIGHT}px)` }}>
       <div className="column gap-2">
         {pages.map(page => {
           const Icon = page.icon;
-          const pathExp = new RegExp(/(?<=^)\/[^\/]*?(?=\/|$)/, "g");
+          const pathExp = new RegExp(/(?<=^)\/[^/]*?(?=\/|$)/, "g");
           const isActive = page.relativePaths.includes(
             location.pathname.match(pathExp)?.[0] ?? "-",
           );

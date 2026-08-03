@@ -16,19 +16,19 @@ function getGradient(userId: string | null | undefined) {
   return GRADIENTS[key % GRADIENTS.length];
 }
 
-interface Props extends React.HTMLAttributes<HTMLDivElement> {
+type Props = {
   size?: number;
   fontSize?: number | string;
   name?: string | null | undefined;
-}
-interface PropsWithUser extends Props {
+} & React.HTMLAttributes<HTMLDivElement>
+type PropsWithUser = {
   user: User | null | undefined;
   avatarUrl?: string | null | undefined;
-}
-interface PropsWithAvatar extends Props {
+} & Props
+type PropsWithAvatar = {
   user?: User | null | undefined;
   avatarUrl: string | null | undefined;
-}
+} & Props
 export default function ProfilePhoto({
   user,
   avatarUrl,

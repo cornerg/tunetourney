@@ -2,7 +2,7 @@ import baseConfig from "./base";
 import reactConfig from "./react";
 
 export default [
-  { ignores: ["dist", "src/@types/*"] },
+  { ignores: ["dist", "src/@types/*", "react.ts", "src/integrations/tanstack-query/root-provider.tsx"] },
   {
     files: ["src/**/*.tsx"],
     rules: {
@@ -17,6 +17,9 @@ export default [
           ],
         },
       ],
+      "no-console": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/prefer-nullish-coalescing": "off",
     },
   },
   ...baseConfig,

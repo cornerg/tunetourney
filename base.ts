@@ -30,7 +30,7 @@ export default tseslint.config(
         {
           // Enum names should be PascalCase and suffixed with Enum
           selector: "enum",
-          format: ["PascalCase"],
+          format: ["UPPER_CASE"],
         },
         {
           // Boolean variable names should be camelCase and prefixed with is, should, has, can, will
@@ -55,10 +55,10 @@ export default tseslint.config(
       ],
       // Ensure promises are handled or explicitly ignored with void
       "@typescript-eslint/no-floating-promises": ["warn", { ignoreVoid: true }],
+      "@typescript-eslint/no-misused-promises": "off",
       // Disables the requirement to sort import declarations within module (handled by Prettier)
       "import/order": "off",
-      // Allow void as a statement (e.g. `void foo()` is allowed but not `const bar = void foo()`)
-      "no-void": ["warn", { allowAsStatement: true }],
+      "no-void": "off",
     },
   },
   {

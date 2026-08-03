@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface LoadScreenState {
+type LoadScreenState = {
   text: string;
   visible: boolean;
   opacity: number;

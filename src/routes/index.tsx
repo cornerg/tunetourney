@@ -5,7 +5,7 @@ function Home() {
 }
 
 export const Route = createFileRoute("/")({
-  beforeLoad: async () => {
+  beforeLoad: () => {
     throw redirect({ to: "/login", replace: true });
   },
   component: Home,

@@ -7,9 +7,9 @@ import { cn } from "#/utils/utils.ts";
 
 type ElementProps = LinkProps & React.HTMLAttributes<HTMLAnchorElement>;
 
-interface Props extends ElementProps {
+type Props = {
   club: Club;
-}
+} & ElementProps
 export default function ClubCard({ club, className, style, ...props }: Props) {
   const { data: members } = useClubUsers(club.id);
 

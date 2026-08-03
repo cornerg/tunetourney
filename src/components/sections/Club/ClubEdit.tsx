@@ -11,11 +11,14 @@ import { cn } from "#/utils/utils.ts";
 import { FaRegImage } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 import { LuSave } from "react-icons/lu";
+import { useTTToast } from "#/components/primitives/TTToast.tsx";
 
-interface Props extends React.HTMLAttributes<HTMLDivElement> {
+const now = Date.now();
+
+type Props = {
   sourceClub?: Club | null | undefined;
   setEdit: (newState: boolean) => void;
-}
+} & React.HTMLAttributes<HTMLDivElement>
 export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
   const [localClub, setLocalClub] = React.useState<Partial<Club>>({});
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
@@ -33,6 +36,7 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
   const bannerInputRef = React.useRef<HTMLInputElement>(null);
   const logoInputRef = React.useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { TTToast, toast } = useTTToast();
 
   // When source data changes, sync local data with source data
   React.useEffect(() => {
@@ -43,7 +47,7 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
 
   const gradient = React.useMemo(() => {
     const seed = parseInt(
-      new Date(localClub?.created_at ?? Date.now())
+      new Date(localClub?.created_at ?? now)
         .getTime()
         .toString()
         .slice(-1),
@@ -60,7 +64,7 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
 
   const handleClickBannerUploader = React.useCallback(
     () => bannerInputRef.current?.click(),
-    [bannerInputRef.current],
+    [],
   );
   const handleBanner = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
@@ -79,7 +83,7 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
 
   const handleClickLogoUploader = React.useCallback(
     () => logoInputRef.current?.click(),
-    [logoInputRef.current],
+    [],
   );
   const handleLogo = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
@@ -95,12 +99,12 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
   );
 
   const handleCancel = React.useCallback(async () => {
-    if (!!sourceClub?.id) {
+    if (sourceClub?.id) {
       setEdit(false);
     } else {
       await navigate({ to: "/clubs" });
     }
-  }, [sourceClub, navigate]);
+  }, [sourceClub?.id, setEdit, navigate]);
 
   const handleSave = React.useCallback(async () => {
     setIsSaving(true);
@@ -108,7 +112,7 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
     const saveData = { ...localClub };
 
     // Iterate through properties to remove unchanged fields
-    for (const key of Object.keys(saveData) as Array<keyof Club>) {
+    for (const key of Object.keys(saveData) as (keyof Club)[]) {
       if (
         !!sourceClub?.[key] &&
         sourceClub?.[key] === saveData[key] &&
@@ -152,7 +156,7 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
       }
 
       // Save club
-      if (!!saveId) {
+      if (saveId) {
         response = await updateClub({ id: saveId, ...saveData });
       } else {
         response = await insertClub({ ...saveData });
@@ -166,8 +170,12 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
           console.log(deletedFiles);
         }
 
-        console.log("Club saved"); // ToDo: add toast
-        if (!!saveId) {
+        toast({
+          title: "Round Saved",
+          message: "The round status has been updated.",
+          type: "success",
+        });
+        if (saveId) {
           setEdit(false);
         } else {
           await navigate({
@@ -181,7 +189,7 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
     } finally {
       setIsSaving(false);
     }
-  }, [sourceClub, localClub, insertClub, updateClub, navigate]);
+  }, [sourceClub, localClub, uploadFile, updateClub, insertClub, toast, deleteFile, setEdit, navigate]);
 
   return (
     <div className={cn("column w-full", className)}>
@@ -246,9 +254,9 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
           "px-8": !isMobile,
           "px-4": isMobile,
         })}>
-        <div className="row w-full h-[110px] items-end gap-4 mt-[-55px]">
+        <div className="row w-full h-27.5 items-end gap-4 -mt-13.75">
           <div
-            className="row w-[110px] h-[110px] rounded-2xl border border-gray-400 bg-contain bg-center shadow-[1px_-2px_8px_0px] shadow-black/50 overflow-hidden z-2"
+            className="row w-27.5 h-27.5 rounded-2xl border border-gray-400 bg-contain bg-center shadow-[1px_-2px_8px_0px] shadow-black/50 overflow-hidden z-2"
             style={
               logo
                 ? { backgroundImage: `url(${logo})` }
@@ -275,7 +283,7 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
             </div>
           </div>
 
-          <div className="row h-[110px] w-full flex-1 pt-[55px] items-center">
+          <div className="row h-27.5 w-full flex-1 pt-13.75 items-center">
             <TTInput
               className="w-full max-w-96 h-10"
               inputClassName="text-xl"
@@ -293,6 +301,8 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
           onChange={e => editLocal({ description: e.target.value })}
         />
       </div>
+
+      <TTToast />
     </div>
   );
 }

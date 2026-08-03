@@ -7,7 +7,7 @@ export type FileUploadResponse =
       fullPath: string;
     };
 
-export interface TournamentScore {
+export type TournamentScore = {
   id: string;
   name: string | null | undefined;
   avatar: string | null | undefined;

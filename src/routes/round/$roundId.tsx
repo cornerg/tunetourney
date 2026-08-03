@@ -39,20 +39,20 @@ function PageRound() {
   }, [votedUsers, currentUserId]);
 
   const showSection = React.useMemo(() => {
-    if (!round || !round?.status) return;
-    if (round.status === ROUND_STATUS.pending) {
+    if (!(typeof round?.status !== "number")) return;
+    if (round?.status === ROUND_STATUS.pending) {
       return "pending";
     }
-    if (round.status === ROUND_STATUS.submitting) {
+    if (round?.status === ROUND_STATUS.submitting) {
       return "submitting";
     }
-    if (round.status === ROUND_STATUS.voting) {
+    if (round?.status === ROUND_STATUS.voting) {
       if (hasVoted) {
         return "voted";
       }
       return "voting";
     }
-    if (round.status === ROUND_STATUS.closed) {
+    if (round?.status === ROUND_STATUS.closed) {
       return "closed";
     }
   }, [round, hasVoted]);

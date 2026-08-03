@@ -3,7 +3,7 @@ import { cn } from "#/utils/utils.ts";
 import { Dialog } from "radix-ui";
 import { MdClose } from "react-icons/md";
 
-interface Props {
+type Props = {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   title?: string | undefined;

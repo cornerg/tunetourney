@@ -1,9 +1,9 @@
 import React from "react";
 import { getRoundStatus } from "#/models/RoundStatus.ts";
 
-interface Props extends React.HTMLProps<HTMLDivElement> {
+type Props = {
   statusKey: number | null | undefined;
-}
+} & React.HTMLProps<HTMLDivElement>
 export default function BadgeRoundStatus({ statusKey }: Props) {
   const status = React.useMemo(() => {
     return getRoundStatus(statusKey);

@@ -3,7 +3,7 @@ import { GrTrophy } from "react-icons/gr";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 
-export interface RootPage {
+export type RootPage = {
   path: string;
   title: string;
   internal: boolean;

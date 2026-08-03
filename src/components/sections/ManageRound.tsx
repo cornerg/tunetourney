@@ -8,7 +8,7 @@ import { useTTToast } from "#/components/primitives/TTToast.tsx";
 import { ROUND_STATUS } from "#/models/RoundStatus.ts";
 import type { Round } from "#/models/supabaseTables.ts";
 
-interface Props {
+type Props = {
   round: Round;
 }
 export default function ManageRound({ round }: Props) {
@@ -78,10 +78,10 @@ export default function ManageRound({ round }: Props) {
       return "outline";
     }
     return "primary";
-  }, [round?.status, areAllSubmitted]);
+  }, [round.status, areAllSubmitted]);
 
   const handleAdvance = React.useCallback(
-    async (advanceRound: Round | undefined) => {
+    (advanceRound: Round | undefined) => {
       if (!advanceRound?.id) {
         console.error("No round to advance");
         return;
@@ -92,7 +92,6 @@ export default function ManageRound({ round }: Props) {
       }
 
       const nextStatus = advanceRound.status + 1;
-      console.log("Set Status: ", nextStatus);
       try {
         setIsUpdating(true);
         updateRound({ id: advanceRound.id, status: nextStatus });
@@ -100,7 +99,7 @@ export default function ManageRound({ round }: Props) {
         console.error("Something went wrong updating the round. ", e);
       }
     },
-    [],
+    [updateRound],
   );
 
   React.useEffect(() => {
@@ -141,16 +140,7 @@ export default function ManageRound({ round }: Props) {
         setIsUpdating(false);
       }
     }
-  }, [
-    isUpdating,
-    isUpdating,
-    isPending,
-    isError,
-    isSuccess,
-    isPending,
-    isError,
-    isSuccess,
-  ]);
+  }, [isUpdating, isPending, isError, isSuccess, toast]);
 
   return (
     <div className="row justify-end w-max gap-2">

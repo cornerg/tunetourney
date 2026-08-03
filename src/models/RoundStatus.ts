@@ -1,13 +1,13 @@
 export type RoundStatusLabel = "pending" | "submitting" | "voting" | "closed";
 
 export enum ROUND_STATUS {
-  pending,
-  submitting,
-  voting,
-  closed,
+  pending = 0,
+  submitting = 1,
+  voting = 2,
+  closed = 3,
 }
 
-export interface RoundStatus {
+export type RoundStatus = {
   number: ROUND_STATUS;
   label: RoundStatusLabel;
   color: string;
@@ -45,7 +45,7 @@ export const allRoundStatuses: RoundStatus[] = [
 ];
 
 export function getRoundStatus(
-  key: string | number | null | undefined,
+  key: string | ROUND_STATUS | null | undefined,
 ): RoundStatus {
   let result: RoundStatus = roundStatusClosed;
   if (typeof key === "number") {

@@ -30,7 +30,7 @@ export function useAuth() {
           const userdata = data.user.user_metadata;
           name =
             userdata?.global_name ??
-            userdata?.custom_claims?.global_name ??
+            (userdata?.custom_claims as { global_name?: string | undefined })?.global_name ??
             userdata?.full_name ??
             userdata?.name ??
             "";
@@ -65,7 +65,7 @@ export function useAuth() {
         await navigate({ to: "/login" });
       }
     }
-  }, [navigate, show, hide]);
+  }, [show, hide, userToken, currentUserId, navigate]);
 
   return { signIn: handleSignIn, signOut: handleSignout };
 }

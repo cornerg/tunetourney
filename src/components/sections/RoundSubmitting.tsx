@@ -4,7 +4,7 @@ import { useCurrentUser } from "#/api/users.ts";
 import SubmissionEdit from "#/components/sections/SubmissionEdit.tsx";
 import type { Round } from "#/models/supabaseTables.ts";
 
-interface Props {
+type Props = {
   round: Round | null | undefined;
 }
 export default function RoundSubmitting({ round }: Props) {
@@ -19,14 +19,14 @@ export default function RoundSubmitting({ round }: Props) {
 
   const mySubmission = React.useMemo(() => {
     return submissions?.find(sub => sub.user_id === currentUser?.id);
-  }, [submissions]);
+  }, [currentUser?.id, submissions]);
 
   const hasCurrentUserSubmitted = React.useMemo(() => {
     return (
       !isCurrentUserLoading &&
       !!submittedIds.find(userId => userId === currentUser?.id)
     );
-  }, [submittedIds]);
+  }, [currentUser?.id, isCurrentUserLoading, submittedIds]);
 
   return (
     <div className="column w-full gap-4">

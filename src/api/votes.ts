@@ -30,7 +30,7 @@ export function useVotes(roundId: string | null | undefined) {
 
 // Create votes
 
-async function insertVotesFn(newEntries: Array<Partial<Vote>>) {
+async function insertVotesFn(newEntries: Partial<Vote>[]) {
   const { data, error } = await supabase
     .from("Votes")
     .insert([...newEntries])
@@ -45,7 +45,7 @@ async function insertVotesFn(newEntries: Array<Partial<Vote>>) {
 export function useInsertVotes() {
   const userId = useCurrentUserId();
   return useMutation({
-    mutationFn: (votes: Array<Partial<Vote>>) => insertVotesFn(votes),
+    mutationFn: (votes: Partial<Vote>[]) => insertVotesFn(votes),
     onSuccess: (newEntries, _variables, _onMutateResult, context) => {
       const roundId = newEntries[0]?.round_id ?? "";
       const queryKey = ["votes", userId, roundId];
@@ -55,7 +55,7 @@ export function useInsertVotes() {
           return [newEntries];
         }
       });
-      context.client.invalidateQueries({ queryKey });
+      void context.client.invalidateQueries({ queryKey });
     },
   });
 }
@@ -74,9 +74,9 @@ async function updateVoteFn(id: string, vote: Partial<Vote>) {
   return data?.[0] as Vote | undefined;
 }
 
-interface InsertParams extends Partial<Omit<Vote, "id">> {
+type InsertParams = {
   id: string;
-}
+} & Partial<Omit<Vote, "id">>
 export function useUpdateVote() {
   const userId = useCurrentUserId();
   return useMutation({
@@ -91,7 +91,7 @@ export function useUpdateVote() {
           return [...otherEntries, newEntry];
         }
       });
-      context.client.invalidateQueries({ queryKey });
+      void context.client.invalidateQueries({ queryKey });
     },
   });
 }

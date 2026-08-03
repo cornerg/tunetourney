@@ -6,9 +6,9 @@ import { cn } from "#/utils/utils.ts";
 
 type ElementProps = LinkProps & React.HTMLAttributes<HTMLAnchorElement>;
 
-interface Props extends ElementProps {
+type Props = {
   tournament: Tournament;
-}
+} & ElementProps
 export default function TournamentCard({
   tournament,
   className,

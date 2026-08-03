@@ -33,7 +33,7 @@ function Clubs() {
             buttonStyle="primary"
             tooltip="Start a new club"
             onClick={() =>
-              navigate({ to: "/club/$clubId", params: { clubId: "new" } })
+              void navigate({ to: "/club/$clubId", params: { clubId: "new" } })
             }>
             New Club
           </TTButton>

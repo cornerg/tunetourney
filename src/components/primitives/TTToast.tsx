@@ -5,7 +5,7 @@ import "@/styles/TTToast.css";
 
 type ToastType = "success" | "warning" | "error" | "default";
 
-interface ToastProps {
+type ToastProps = {
   title?: string;
   message?: string;
   type?: ToastType;

@@ -11,8 +11,8 @@ export function useSessionToken() {
   }, []);
 
   React.useEffect(() => {
-    getUserToken();
-  }, []);
+    void getUserToken();
+  }, [getUserToken]);
 
   return userToken;
 }
@@ -26,8 +26,8 @@ export function useCurrentUserId() {
   }, []);
 
   React.useEffect(() => {
-    getUserToken();
-  }, []);
+    void getUserToken();
+  }, [getUserToken]);
 
   return userId;
 }

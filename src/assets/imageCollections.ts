@@ -3,13 +3,13 @@ import homeBGRoom from "./images/bg-sampleRoom.jpg";
 
 type ImageCollectionKey = "home";
 
-interface CollectionImage {
+type CollectionImage = {
   url: string;
   creator: string;
   creditLink: string;
 }
 
-interface ImageCollection {
+type ImageCollection = {
   key: string;
   images: CollectionImage[];
 }

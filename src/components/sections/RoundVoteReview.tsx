@@ -3,7 +3,7 @@ import { useSubmissions } from "#/api/submissions.ts";
 import VoteReviewSubmission from "#/components/sections/VoteReviewSubmission.tsx";
 import type { Round } from "#/models/supabaseTables.ts";
 
-interface Props {
+type Props = {
   round: Round;
 }
 export default function RoundVoteReview({ round }: Props) {

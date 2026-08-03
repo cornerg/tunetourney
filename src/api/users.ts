@@ -23,12 +23,12 @@ async function fetchUsers(userIds: string | string[] | null | undefined) {
   return data as User[];
 }
 
-export function useUserData(userIds?: string | string[] | null | undefined) {
+export function useUserData(userIds?: string | string[] | null  ) {
   const userToken = useSessionToken();
   const currentUserId = useCurrentUserId();
   console.log("Use User Data", userIds);
   const getUserIds = React.useMemo(
-    () => (!!userIds?.length ? userIds : currentUserId),
+    () => (userIds?.length ? userIds : currentUserId),
     [userIds, currentUserId],
   );
   return useQuery({
@@ -79,8 +79,8 @@ async function fetchTournamentUsers(tournamentid: string | null | undefined) {
   }
   if (
     typeof data === "object" &&
-    data !== undefined &&
-    Object.hasOwn(data, "id")
+    data !== null &&
+    Object.hasOwn(data as object, "id")
   ) {
     return [data] as User[];
   }
@@ -114,8 +114,8 @@ async function fetchTournamentOwners(tournamentid: string | null | undefined) {
   }
   if (
     typeof data === "object" &&
-    data !== undefined &&
-    Object.hasOwn(data, "id")
+    data !== null &&
+    Object.hasOwn(data as object, "id")
   ) {
     return [data] as User[];
   }
@@ -147,8 +147,8 @@ async function fetchVotedUsers(roundid: string | null | undefined) {
   }
   if (
     typeof data === "object" &&
-    data !== undefined &&
-    Object.hasOwn(data, "id")
+    data !== null &&
+    Object.hasOwn(data as object, "id")
   ) {
     return [data] as string[];
   }
@@ -168,13 +168,13 @@ export function useVotedUsers(roundId: string | null | undefined) {
 }
 
 // Insert User
-interface insertProps {
+type InsertProps = {
   id: string;
   name: string | null | undefined;
   avatar: string | null | undefined;
 }
 
-async function insertUserFn({ id, name, avatar }: insertProps) {
+async function insertUserFn({ id, name, avatar }: InsertProps) {
   const { data, error } = await supabase
     .from("Users")
     .insert([{ id, name, avatar }])
@@ -188,6 +188,6 @@ async function insertUserFn({ id, name, avatar }: insertProps) {
 
 export function useInsertUser() {
   return useMutation({
-    mutationFn: (params: insertProps) => insertUserFn(params),
+    mutationFn: (params: InsertProps) => insertUserFn(params),
   });
 }

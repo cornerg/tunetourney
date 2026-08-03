@@ -2,11 +2,11 @@ import { useMutation } from "@tanstack/react-query";
 import { supabase } from "#/integrations/supabase/supabase.ts";
 import { imageTypeRegex } from "#/utils/filetypes.ts";
 
-interface uploadData {
+type UploadData = {
   tag: string;
   url: string;
 }
-async function fileUploadFn({ tag, url }: uploadData) {
+async function fileUploadFn({ tag, url }: UploadData) {
   try {
     const blob = await fetch(url).then(r => r.blob());
     const name = `${tag}-${crypto.randomUUID()}.${blob.type.match(imageTypeRegex)?.[0]}`;
@@ -29,15 +29,15 @@ async function fileUploadFn({ tag, url }: uploadData) {
 }
 export function useFileUpload() {
   return useMutation({
-    mutationFn: (data: uploadData) => fileUploadFn(data),
+    mutationFn: (data: UploadData) => fileUploadFn(data),
   });
 }
 
-interface deleteData {
+type DeleteData = {
   urls: string | string[];
   bucket?: string | undefined;
 }
-async function fileDeleteFn({ urls, bucket }: deleteData) {
+async function fileDeleteFn({ urls, bucket }: DeleteData) {
   const pathRegex = new RegExp(`(?<=/public/${bucket ?? "user_data/"}).+`);
   const paths = (Array.isArray(urls) ? urls : [urls])
     .map(url => url.match(pathRegex)?.[0])
@@ -53,6 +53,6 @@ async function fileDeleteFn({ urls, bucket }: deleteData) {
 }
 export function useFileDelete() {
   return useMutation({
-    mutationFn: (data: deleteData) => fileDeleteFn(data),
+    mutationFn: (data: DeleteData) => fileDeleteFn(data),
   });
 }

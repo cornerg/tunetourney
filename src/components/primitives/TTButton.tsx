@@ -4,11 +4,11 @@ import { cn } from "#/utils/utils.ts";
 
 import "@/styles/ttbutton.css";
 
-interface Props extends React.HTMLAttributes<HTMLButtonElement> {
+type Props = {
   tooltip?: string | undefined;
   disabled?: boolean | undefined;
   buttonStyle?: "primary" | "outline" | undefined;
-}
+} & React.HTMLAttributes<HTMLButtonElement>
 export default function TTButton({
   children,
   tooltip,
@@ -40,9 +40,9 @@ export default function TTButton({
         {children}
       </button>
     );
-  }, [children, className, disabled, style, ...Object.values(props)]);
+  }, [buttonStyle, children, className, disabled, props]);
 
-  if (!!tooltip?.trim()?.length) {
+  if (tooltip?.trim()?.length) {
     return (
       <TTTooltip label={tooltip ?? ""} delay={100}>
         {button}

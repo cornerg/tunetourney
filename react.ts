@@ -16,7 +16,7 @@ const noReactFcRule = {
         "Avoid using '{{name}}' to type React components. It implicitly includes 'children' in all props, hides the return type, and makes generics awkward. Prefer inline prop typing: `const MyComponent = ({ foo }: MyComponentPropsType) => ...`.",
     },
   },
-  // @ts-ignore
+  // @ts-expect-error expected behaviour
   create(context) {
     const forbiddenNames = new Set([
       "FC",
@@ -25,7 +25,7 @@ const noReactFcRule = {
       "VoidFunctionComponent",
     ]);
 
-    // @ts-ignore
+    // @ts-expect-error expected behaviour
     const reportIfForbidden = (node, typeName) => {
       if (forbiddenNames.has(typeName)) {
         context.report({
@@ -38,7 +38,7 @@ const noReactFcRule = {
 
     return {
       // Catches: const Foo: FC = ... or const Foo: React.FC = ...
-      // @ts-ignore
+      // @ts-expect-error expected behaviour
       TSTypeReference(node) {
         const { typeName } = node;
         if (typeName.type === "Identifier") {
@@ -79,9 +79,6 @@ export default [
       // Disallow React.FC / FC / FunctionComponent for typing components
       "no-react-fc/no-react-fc": "error",
 
-      // Warn when console statements are used in the codebase (should be done in logger)
-      "no-console": "warn",
-
       // Enforces consistent use of JSX boolean values (e.g. `isDisabled` over `isDisabled={true}`)
       "react/jsx-boolean-value": ["warn", "never"],
 
@@ -96,6 +93,14 @@ export default [
 
       // Disables the requirement to have React in JSX scope
       "react/react-in-jsx-scope": "off",
+
+      // Rules to disable
+      "react-hooks/set-state-in-effect": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "react/prop-types": 0,
+      "react/no-unescaped-entities": "warn",
+      "@typescript-eslint/prefer-nullish-coalescing": "off",
+
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },

@@ -21,7 +21,7 @@ export default function LoadScreen() {
   if (visible) {
     return (
       <div
-        className={`fixed column top-0 left-0 w-[100vw] h-[100vh] justify-center items-center z-[15]`}
+        className="fixed column top-0 left-0 w-[100vw] h-[100vh] justify-center items-center z-[15]"
         style={{
           backdropFilter: "blur(8px)",
           background: BG_COLOR,

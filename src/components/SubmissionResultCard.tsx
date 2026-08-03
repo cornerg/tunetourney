@@ -11,7 +11,7 @@ import { cn } from "#/utils/utils.ts";
 import { FaChevronRight } from "react-icons/fa6";
 import { IoMusicalNotes } from "react-icons/io5";
 
-interface Props {
+type Props = {
   submission: Submission;
   votes: Vote[];
   placement: number;

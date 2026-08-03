@@ -56,7 +56,7 @@ export function useInsertSubmission() {
           return [newEntry];
         }
       });
-      context.client.invalidateQueries({ queryKey });
+      void context.client.invalidateQueries({ queryKey });
     },
   });
 }
@@ -75,9 +75,9 @@ async function updateSubmissionFn(id: string, submission: Partial<Submission>) {
   return data?.[0] as Submission | undefined;
 }
 
-interface InsertParams extends Partial<Omit<Submission, "id">> {
+type InsertParams = {
   id: string;
-}
+} & Partial<Omit<Submission, "id">>
 export function useUpdateSubmission() {
   const userId = useCurrentUserId();
   return useMutation({
@@ -93,7 +93,7 @@ export function useUpdateSubmission() {
           return [...otherEntries, newEntry];
         }
       });
-      context.client.invalidateQueries({ queryKey });
+      void context.client.invalidateQueries({ queryKey });
     },
   });
 }

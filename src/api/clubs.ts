@@ -5,9 +5,9 @@ import type { Club, ClubUser, User } from "#/models/supabaseTables.ts";
 
 const oneHour = 1000 * 60 * 60;
 
-export interface ClubUserWithData extends ClubUser {
+export type ClubUserWithData = {
   userData?: User;
-}
+} & ClubUser
 
 async function fetchClubs() {
   const { data, error } = await supabase.from("Clubs").select("*");
@@ -69,13 +69,13 @@ export function useInsertClub() {
     mutationFn: (data: Partial<Club>) => insertClubFn(data),
     onSuccess: (newEntry, _variables, _onMutateResult, context) => {
       const queryKey = ["clubs", currentUserId];
-      context.client.setQueryData(queryKey, (old: Club[]) => {
+      void context.client.setQueryData(queryKey, (old: Club[]) => {
         if (newEntry?.id) {
           if (Array.isArray(old)) return [...old, newEntry];
           return [newEntry];
         }
       });
-      context.client.invalidateQueries({ queryKey });
+      void context.client.invalidateQueries({ queryKey });
     },
   });
 }
@@ -94,9 +94,9 @@ async function updateClubFn(id: string, club: Partial<Club>) {
   return data?.[0] as Club | undefined;
 }
 
-interface InsertParams extends Partial<Omit<Club, "id">> {
+type InsertParams = {
   id: string;
-}
+} & Partial<Omit<Club, "id">>
 export function useUpdateClub() {
   const currentUserId = useCurrentUserId();
   return useMutation({
@@ -109,7 +109,7 @@ export function useUpdateClub() {
           return [...otherEntries, newEntry];
         }
       });
-      context.client.invalidateQueries({ queryKey });
+      void context.client.invalidateQueries({ queryKey });
     },
   });
 }

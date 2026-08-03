@@ -4,7 +4,7 @@ import { useVotes } from "#/api/votes.ts";
 import SubmissionResultCard from "#/components/SubmissionResultCard.tsx";
 import type { Round } from "#/models/supabaseTables.ts";
 
-interface Props {
+type Props = {
   round: Round;
 }
 export default function RoundResults({ round }: Props) {

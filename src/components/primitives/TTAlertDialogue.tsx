@@ -4,7 +4,7 @@ import { AlertDialog } from "radix-ui";
 
 import "@/styles/TTDialogue.css";
 
-interface Props {
+type Props = {
   title: string;
   description?: string;
   buttonText: string;

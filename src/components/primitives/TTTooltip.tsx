@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Tooltip } from "radix-ui";
 
-interface Props {
+type Props = {
   children?: ReactNode | undefined;
   label: string;
   delay?: number | undefined;

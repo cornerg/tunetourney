@@ -1,14 +1,14 @@
 import React from "react";
 import { cn } from "#/utils/utils.ts";
 
-interface Props extends Omit<
-  React.HTMLProps<HTMLDivElement>,
-  "width" | "height"
-> {
+type Props = {
   embedId: string;
   width: number;
   height: number;
-}
+} & Omit<
+  React.HTMLProps<HTMLDivElement>,
+  "width" | "height"
+>
 export default function YouTubeEmbed({
   embedId,
   className,
@@ -19,11 +19,11 @@ export default function YouTubeEmbed({
   return (
     <div
       className={cn(
-        `relative w-[${width}px] h-[${height}px] rounded-xl border-1 border-dark overflow-hidden`,
+        `relative w-[${width}px] h-[${height}px] rounded-xl border border-dark overflow-hidden`,
       )}
       {...props}>
       <iframe
-        className={`absolute top-0 left-0`}
+        className="absolute top-0 left-0"
         width={width.toString()}
         height={height.toString()}
         src={`https://www.youtube.com/embed/${embedId}`}

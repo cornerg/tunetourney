@@ -1,12 +1,12 @@
 import React from "react";
 import { cn } from "#/utils/utils.ts";
 
-interface Props extends React.HTMLProps<HTMLInputElement> {
+type Props = {
   background?: "surface" | "background";
   inputClassName?: string | undefined;
   inputStyle?: React.CSSProperties | undefined;
   error?: string | undefined;
-}
+} & React.HTMLProps<HTMLInputElement>
 export default function TTInput({
   label,
   className,
