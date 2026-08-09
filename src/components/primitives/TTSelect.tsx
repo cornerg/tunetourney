@@ -1,0 +1,76 @@
+import React from "react";
+import { cn } from "#/utils/utils.ts";
+
+type Props = {
+  background?: "surface" | "background";
+  selectClassName?: string | undefined;
+  selectStyle?: React.CSSProperties | undefined;
+  error?: string | undefined;
+} & React.HTMLProps<HTMLSelectElement>
+export default function TTSelect({
+  label,
+  className,
+  style,
+  selectClassName,
+  selectStyle,
+  background = "surface",
+  error,
+  onFocus,
+  onBlur,
+  ...props
+}: Props) {
+  const [isFocused, setIsFocused] = React.useState<boolean>(false);
+
+  return (
+    <div
+      className={cn(
+        "row relative mt-2 rounded-lg border border-dark",
+        {
+          "border-primary": isFocused && !error,
+          "border-red-700": !!error,
+        },
+        className,
+      )}
+      style={{ transition: "border-color 150ms ease", ...style }}>
+      {label && (
+        <p
+          className={cn(
+            `absolute text-xs z-2 -top-2 left-2 px-1 bg-${background}`,
+            {
+              "text-primary": isFocused && !error,
+              "text-dark": !isFocused && !error,
+              "text-red-700": !!error,
+            },
+          )}
+          style={{ transition: "color 150ms ease" }}>
+          {label}
+        </p>
+      )}
+
+      {error && (
+        <p
+          className={`absolute text-xs text-right text-red-700 z-2 -bottom-2 right-2 px-1 bg-${background}`}
+          style={{ transition: "color 150ms ease" }}>
+          {error}
+        </p>
+      )}
+
+      <select
+        className={cn(
+          `absolute w-full h-full top-0 left-0 py-1 px-2 text-sm text-dark bg-${background} border-0 outline-0 rounded-lg z-1`,
+          selectClassName,
+        )}
+        style={selectStyle}
+        onFocus={e => {
+          if (onFocus) onFocus(e);
+          setIsFocused(true);
+        }}
+        onBlur={e => {
+          if (onBlur) onBlur(e);
+          setIsFocused(false);
+        }}
+        {...props}
+      />
+    </div>
+  );
+}

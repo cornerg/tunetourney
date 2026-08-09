@@ -1,9 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Quicksand:wght@300..700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
 
 body {
-    font-family: 'Quicksand', sans-serif;
+  font-family: "Raleway", sans-serif;
 }
 
 .serif {
-    font-family: 'Cormorant Garamond', serif;
+  font-family: "Cormorant Garamond", serif;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 800;
+}
+
+.subtitle {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.subheading {
+  font-size: 1.2rem;
+  font-weight: 500;
 }

@@ -2,6 +2,13 @@ import React from "react";
 
 const BREAKPOINT_MOBILE = 576;
 const BREAKPOINT_DESKTOP = 1024;
+export type Gradient = { start: string, end: string };
+const gradients: Gradient[] = [
+  { start: "#1C75BC", end: "#33C8B4" },
+  { start: "#ffa070", end: "#fffa70" },
+  { start: "#ffaaf2", end: "#a78eff" },
+  { start: "#e5ea5b", end: "#6ad87c" },
+];
 
 export function useBreakpoints() {
   const [width, setWidth] = React.useState<number>(1920);
@@ -10,11 +17,11 @@ export function useBreakpoints() {
   React.useEffect(() => {
     if (!hasSetListener.current) {
       hasSetListener.current = true;
-      window.addEventListener('resize', () => {
+      window.addEventListener("resize", () => {
         setWidth(window.innerWidth);
       });
     }
-  })
+  });
 
   const breakpoints = React.useMemo(() => {
     const isMobile = width < BREAKPOINT_MOBILE;
@@ -24,4 +31,12 @@ export function useBreakpoints() {
   }, [width]);
 
   return { ...breakpoints };
+}
+
+export function getGradient(seed?: number) {
+  const number =
+    typeof seed === "number" && !isNaN(seed) && seed > 0
+      ? seed
+      : Math.round(Math.random() * gradients.length);
+  return gradients[number % gradients.length];
 }
