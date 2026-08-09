@@ -1,10 +1,12 @@
 import React from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTournaments } from "#/api/tournaments.ts";
+import TTButton from "#/components/primitives/TTButton.tsx";
 import TournamentCard from "#/components/TournamentCard.tsx";
 
 function TournamentsPage() {
   const { data: tournaments } = useTournaments();
+  const navigate = useNavigate();
 
   const sortedTournaments = React.useMemo(() => {
     if (!tournaments || (tournaments?.length ?? 0) <= 0) return [];
@@ -23,7 +25,20 @@ function TournamentsPage() {
   return (
     <div className="column w-full gap-4">
       <div className="column w-full gap-0">
-        <h1 className="title text-primary">Tournaments</h1>
+        <div className="row w-full justify-between items-center gap-4">
+          <h1 className="title text-primary">Tournaments</h1>
+
+          <TTButton
+            className="px-2 min-h-10"
+            buttonStyle="primary"
+            tooltip="Start a new club"
+            onClick={() =>
+              void navigate({ to: "/tournament/$tournamentId", params: { tournamentId: "new" } })
+            }>
+            New Tournament
+          </TTButton>
+        </div>
+
         <p className="text-black text-base">
           Challenge your friends, colleagues, or worst enemies from your clubs
           to see who has the best taste in music!

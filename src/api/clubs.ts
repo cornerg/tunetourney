@@ -17,7 +17,6 @@ async function fetchClubs() {
   }
   return data as Club[];
 }
-
 export function useClubs() {
   const currentUserId = useCurrentUserId();
   return useQuery({
@@ -40,7 +39,6 @@ async function fetchClubUsers(clubIds: string | string[] | null | undefined) {
   }
   return data as ClubUserWithData[];
 }
-
 export function useClubUsers(clubIds: string | string[] | null | undefined) {
   const currentUserId = useCurrentUserId();
   return useQuery({
@@ -50,19 +48,33 @@ export function useClubUsers(clubIds: string | string[] | null | undefined) {
   });
 }
 
+// Get clubs owned by the current user
+async function fetchOwnedClubsFn() {
+  const { data, error } = await supabase.rpc("get_owned_clubs");
+  if (error) {
+    console.error("Error fetching owned clubs. ", error);
+    return [];
+  }
+  return data as Club[];
+}
+export function useOwnedClubs() {
+  const currentUserId = useCurrentUserId();
+  return useQuery({
+    queryKey: ["ownedClubs", currentUserId],
+    queryFn: fetchOwnedClubsFn,
+    staleTime: oneHour,
+  });
+}
+
 // Create a Club
 async function insertClubFn(newEntry: Partial<Club>) {
-  const { data, error } = await supabase
-    .from("Clubs")
-    .insert([{ ...newEntry }])
-    .select();
+  const { data, error } = await supabase.rpc("create_club", { ...newEntry });
   if (error) {
     console.error("Error adding Club", error);
     return null;
   }
-  return data?.[0] as Club | undefined;
+  return data as Club | undefined;
 }
-
 export function useInsertClub() {
   const currentUserId = useCurrentUserId();
   return useMutation({
@@ -80,7 +92,7 @@ export function useInsertClub() {
   });
 }
 
-// Update a submission
+// Update a club
 async function updateClubFn(id: string, club: Partial<Club>) {
   const { data, error } = await supabase
     .from("Clubs")

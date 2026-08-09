@@ -12,3 +12,8 @@ export function getInitials(text: string | null | undefined): string {
     ? letters
     : letters.slice(0, 1) + letters.slice(-1);
 }
+
+export function toTitleCase(text: string | null | undefined) {
+  const firstLetter = new RegExp(/(?<=^|[ _-])\w/, "g");
+  return (text ?? "").replace(firstLetter, (match) => match.toUpperCase());
+}

@@ -36,7 +36,7 @@ export const pageTournaments: RootPage = {
   internal: true,
   inSidebar: true,
   icon: GrTrophy,
-  relativePaths: ["/tournaments", "/tournament", "/round"],
+  relativePaths: ["/tournaments", "/tournament"],
 };
 
 export const rootPages: RootPage[] = [

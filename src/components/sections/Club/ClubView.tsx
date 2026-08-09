@@ -95,14 +95,14 @@ export default function ClubView({ club, setEdit, className }: Props) {
           "px-8": !isMobile,
           "px-4": isMobile,
         })}>
-        <div className="row w-full h-[110px] items-end gap-4 mt-[-55px]">
+        <div className="row w-full h-27.5 items-end gap-4 -mt-13.75">
           <ClubLogo
             club={club}
             placeholderClassName="text-4xl font-semibold"
-            className="rounded-2xl h-[110px] shadow-[1px_-2px_8px_0px] shadow-black/50"
+            className="rounded-2xl h-27.5 shadow-[1px_-2px_8px_0px] shadow-black/50"
           />
 
-          <div className="row h-[110px] w-full flex-1 pt-[55px] items-center">
+          <div className="row h-27.5 w-full flex-1 pt-13.75 items-center">
             <h2 className="subtitle">{club?.title}</h2>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function ClubView({ club, setEdit, className }: Props) {
                         user={user}
                         size={48}
                         fontSize={18}
-                        className="rounded-full bg-surface border-1"
+                        className="rounded-full bg-surface border"
                       />
                     </TTTooltip>
                   </div>
@@ -158,7 +158,7 @@ export default function ClubView({ club, setEdit, className }: Props) {
                         user={user}
                         size={48}
                         fontSize={18}
-                        className="rounded-full bg-surface border-1"
+                        className="rounded-full bg-surface border"
                       />
                     </TTTooltip>
                   </div>

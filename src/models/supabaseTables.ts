@@ -23,8 +23,6 @@ export type Round = {
   created_at: string;
   title: string;
   description: string | null;
-  start_time: string;
-  end_time: string;
   status: ROUND_STATUS;
   tournament_id?: string | null;
 }
@@ -43,7 +41,6 @@ export type Tournament = {
   id: string;
   created_at: string;
   title: string;
-  default_round_time: number;
   round_count: number;
   platform: SupportedPlatformKey;
   club_id?: string;

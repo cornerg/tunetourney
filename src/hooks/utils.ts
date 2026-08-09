@@ -2,7 +2,8 @@ import React from "react";
 
 const BREAKPOINT_MOBILE = 576;
 const BREAKPOINT_DESKTOP = 1024;
-const gradients = [
+export type Gradient = { start: string, end: string };
+const gradients: Gradient[] = [
   { start: "#1C75BC", end: "#33C8B4" },
   { start: "#ffa070", end: "#fffa70" },
   { start: "#ffaaf2", end: "#a78eff" },

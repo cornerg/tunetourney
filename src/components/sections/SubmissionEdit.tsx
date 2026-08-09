@@ -1,7 +1,6 @@
 import React from "react";
 import { useCurrentUserId } from "#/api/sessions.ts";
 import { useInsertSubmission, useUpdateSubmission } from "#/api/submissions.ts";
-import { useTournament } from "#/api/tournaments.ts";
 import SpotifyEmbed from "#/components/embeds/SpotifyEmbed.tsx";
 import YouTubeEmbed from "#/components/embeds/YouTubeEmbed.tsx";
 import TTBox from "#/components/primitives/TTBox.tsx";
@@ -15,6 +14,7 @@ import {
   type SupportedPlatform,
 } from "#/models/SupportedPlatforms.ts";
 import { IoMusicalNotes } from "react-icons/io5";
+import { useTournament } from "#/hooks/tournamentHooks.ts";
 
 type Props = {
   round: Round | null | undefined;
@@ -34,7 +34,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
   const presetSubmissionId = React.useRef<string>("");
   const urlChangeTimeout = React.useRef<NodeJS.Timeout | number>(-1);
 
-  const { data: tournament } = useTournament(round?.tournament_id);
+  const { tournament } = useTournament(round?.tournament_id);
   const currentUserId = useCurrentUserId();
   const {
     mutate: insert,

@@ -4,14 +4,15 @@ import { useInsertClub, useUpdateClub } from "#/api/clubs.ts";
 import { useFileDelete, useFileUpload } from "#/api/files.ts";
 import TTButton from "#/components/primitives/TTButton";
 import TTInput from "#/components/primitives/TTInput.tsx";
-import { getGradient, useBreakpoints } from "#/hooks/utils.ts";
+import { useTTToast } from "#/components/primitives/TTToast.tsx";
+import { getGradient, useBreakpoints, type Gradient } from "#/hooks/utils.ts";
 import type { Club } from "#/models/supabaseTables.ts";
+import { useLoadScreen } from "#/state/loadscreenState.ts";
 import { imageTypeRegex } from "#/utils/filetypes.ts";
 import { cn } from "#/utils/utils.ts";
 import { FaRegImage } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 import { LuSave } from "react-icons/lu";
-import { useTTToast } from "#/components/primitives/TTToast.tsx";
 
 const now = Date.now();
 
@@ -19,9 +20,10 @@ type Props = {
   sourceClub?: Club | null | undefined;
   setEdit: (newState: boolean) => void;
 } & React.HTMLAttributes<HTMLDivElement>
-export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
+export default function ClubEdit({ sourceClub, setEdit, className, ...props }: Props) {
   const [localClub, setLocalClub] = React.useState<Partial<Club>>({});
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
+  const [gradient, setGradient] = React.useState<Gradient | undefined>();
 
   const { title, logo, banner, description } = React.useMemo(
     () => localClub,
@@ -36,24 +38,25 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
   const bannerInputRef = React.useRef<HTMLInputElement>(null);
   const logoInputRef = React.useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { show, hide, changeText } = useLoadScreen();
   const { TTToast, toast } = useTTToast();
 
   // When source data changes, sync local data with source data
   React.useEffect(() => {
-    if (localClub.id !== (sourceClub?.id ?? "")) {
+    if ((localClub.id ?? "") !== (sourceClub?.id ?? "")) {
       setLocalClub({ ...sourceClub });
     }
   }, [localClub, sourceClub]);
 
-  const gradient = React.useMemo(() => {
-    const seed = parseInt(
-      new Date(localClub?.created_at ?? now)
-        .getTime()
-        .toString()
-        .slice(-1),
-    );
-    return getGradient(seed);
-  }, [localClub]);
+  // Once per page load, select a placeholder gradient
+  React.useEffect(() => {
+    if (!gradient) {
+      const seed = parseInt(
+        new Date(localClub?.created_at ?? now).getTime().toString().slice(-1),
+      );
+      setGradient(getGradient(seed));
+    }
+  }, [gradient, localClub?.created_at]);
 
   const editLocal = React.useCallback(
     (newData: Partial<Club>) => {
@@ -74,11 +77,15 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
         if (validFiletype) {
           editLocal({ banner: URL.createObjectURL(file) });
         } else {
-          console.error("Invalid file type"); // ToDo: add toast
+          toast({
+            title: "Invalid filetype",
+            message: "The file type is not permitted for banners.",
+            type: "error",
+          });
         }
       }
     },
-    [editLocal],
+    [editLocal, toast],
   );
 
   const handleClickLogoUploader = React.useCallback(
@@ -92,10 +99,16 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
         const validFiletype = file.type.match(imageTypeRegex)?.[0];
         if (validFiletype) {
           editLocal({ logo: URL.createObjectURL(file) });
+        } else {
+          toast({
+            title: "Invalid filetype",
+            message: "The file type is not permitted for logos.",
+            type: "error",
+          });
         }
       }
     },
-    [editLocal],
+    [editLocal, toast],
   );
 
   const handleCancel = React.useCallback(async () => {
@@ -121,47 +134,59 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
         delete saveData[key];
     }
     if (!Object.keys(saveData).length) {
-      console.error("No changes to save"); // ToDo: add toast
+      toast({
+        title: "No Unsaved Changes",
+        message: "No changes to this club were found to save.",
+        type: "warning",
+      });
       return;
     }
 
     let response: Club | null | undefined;
     try {
+      show("Preparing");
       const toDelete: string[] = []; // Store a list of files that are being replaced.
 
       // Upload new files to storage
-      if (saveData?.logo) {
-        const newLogoUrl = await uploadFile({
-          url: saveData.logo,
-          tag: "logo",
-        });
-        if (newLogoUrl) {
-          saveData.logo = newLogoUrl;
-          if (sourceClub?.logo) {
-            toDelete.push(sourceClub?.logo);
+      if (saveData?.logo || saveData?.banner) {
+        changeText("Uploading images");
+        if (saveData?.logo) {
+          const newLogoUrl = await uploadFile({
+            url: saveData.logo,
+            tag: "logo",
+          });
+          if (newLogoUrl) {
+            saveData.logo = newLogoUrl;
+            if (sourceClub?.logo) {
+              toDelete.push(sourceClub?.logo);
+            }
           }
         }
-      }
-      if (saveData?.banner) {
-        const newBannerUrl = await uploadFile({
-          url: saveData.banner,
-          tag: "banner",
-        });
-        if (newBannerUrl) {
-          saveData.banner = newBannerUrl;
-          if (sourceClub?.banner) {
-            toDelete.push(sourceClub?.banner);
+        if (saveData?.banner) {
+          const newBannerUrl = await uploadFile({
+            url: saveData.banner,
+            tag: "banner",
+          });
+          if (newBannerUrl) {
+            saveData.banner = newBannerUrl;
+            if (sourceClub?.banner) {
+              toDelete.push(sourceClub?.banner);
+            }
           }
         }
       }
 
       // Save club
       if (saveId) {
+        changeText("Updating club");
         response = await updateClub({ id: saveId, ...saveData });
       } else {
+        changeText("Creating club");
         response = await insertClub({ ...saveData });
       }
+
       if (!response?.id) {
+        hide();
         throw new Error("Invalid mutation response");
       } else {
         // Data safely saved; if files were replaced, delete the old files
@@ -170,9 +195,10 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
           console.log(deletedFiles);
         }
 
+        hide();
         toast({
-          title: "Round Saved",
-          message: "The round status has been updated.",
+          title: "Club Saved",
+          message: "The club has been saved.",
           type: "success",
         });
         if (saveId) {
@@ -185,14 +211,20 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
         }
       }
     } catch (error) {
-      console.error("An error occurred saving Club: ", error); // ToDo: add toast
+      console.error("An error occurred saving Club: ", error);
+      hide();
+      toast({
+        title: "An Error Occurred",
+        message: "Your club couldn't be saved. Please try again.",
+        type: "error",
+      });
     } finally {
       setIsSaving(false);
     }
-  }, [sourceClub, localClub, uploadFile, updateClub, insertClub, toast, deleteFile, setEdit, navigate]);
+  }, [sourceClub, localClub, toast, show, changeText, uploadFile, updateClub, insertClub, hide, deleteFile, setEdit, navigate]);
 
   return (
-    <div className={cn("column w-full", className)}>
+    <div className={cn("column w-full", className)} {...props}>
       <div className="relative row w-full h-64 justify-center gap-1 bg-cover bg-center">
         <div
           className="row w-full h-full justify-center items-center bg-cover bg-center"
@@ -200,7 +232,7 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
             banner
               ? { backgroundImage: `url(${banner})` }
               : {
-                  background: `linear-gradient(45deg, ${gradient.start}, ${gradient.end})`,
+                  background: `linear-gradient(45deg, ${gradient?.start}, ${gradient?.end})`,
                 }
           }>
           <input
@@ -261,7 +293,7 @@ export default function ClubEdit({ sourceClub, setEdit, className }: Props) {
               logo
                 ? { backgroundImage: `url(${logo})` }
                 : {
-                    background: `linear-gradient(45deg, ${gradient.start}, ${gradient.end})`,
+                    background: `linear-gradient(45deg, ${gradient?.start}, ${gradient?.end})`,
                   }
             }>
             <input

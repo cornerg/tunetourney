@@ -1,5 +1,5 @@
 import React from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useClubs } from "#/api/clubs.ts";
 import ClubEdit from "#/components/sections/Club/ClubEdit.tsx";
 import ClubView from "#/components/sections/Club/ClubView.tsx";
@@ -13,12 +13,12 @@ function ClubPage() {
 
   React.useEffect(() => {
     if (clubId !== handledRoute.current) {
+      handledRoute.current = clubId;
       if (clubId === "new" && !edit) {
         setEdit(true);
       } else if (edit) {
         setEdit(false);
       }
-      handledRoute.current = clubId;
     }
   }, [clubId, edit, handledRoute]);
 
@@ -31,11 +31,16 @@ function ClubPage() {
     <div className="column w-full h-max rounded-3xl rounded-tr-xl overflow-hidden bg-surface border border-gray-400">
       {!edit && !!club && <ClubView club={club} setEdit={setEdit} />}
 
-      {!!edit && <ClubEdit sourceClub={club} setEdit={setEdit} />}
+      {edit && <ClubEdit sourceClub={club} setEdit={setEdit} />}
     </div>
   );
 }
 
 export const Route = createFileRoute("/club/$clubId")({
+  beforeLoad: (context) => {
+    if ((context.params?.clubId?.length ?? 0) <= 0) {
+      throw redirect({ to: "/club/$clubId", params: { clubId: "new" } })
+    }
+  },
   component: ClubPage,
 });

@@ -38,13 +38,13 @@ async function updateRoundFn(id: string, round: Partial<Round>) {
   return data?.[0] as Round | undefined;
 }
 
-type InsertParams = {
+type UpdateParams = {
   id: string;
 } & Partial<Omit<Round, "id">>
 export function useUpdateRound() {
   const userId = useCurrentUserId();
   return useMutation({
-    mutationFn: ({ id, ...round }: InsertParams) => updateRoundFn(id, round),
+    mutationFn: ({ id, ...round }: UpdateParams) => updateRoundFn(id, round),
     onSuccess: (updated, variables, _onMutateResult, context) => {
       const roundId = updated?.id ?? "";
       const queryKey = ["rounds", userId];
@@ -53,6 +53,32 @@ export function useUpdateRound() {
         if (oldEntry?.id && roundId) {
           const otherEntries = old.filter(row => row.id !== variables.id);
           return [...otherEntries, updated];
+        }
+      });
+      void context.client.invalidateQueries({ queryKey });
+    },
+  });
+}
+
+// Insert a round
+async function insertRoundFn(round: Partial<Round>) {
+  console.log("Insert round: ", round);
+  const { data, error } = await supabase.from("Rounds").insert(round).select();
+  if (error) {
+    console.error("Error inserting round", error);
+    return null;
+  }
+  return data?.[0] as Round;
+}
+export function useInsertRound() {
+  const currentUserId = useCurrentUserId();
+  return useMutation({
+    mutationFn: (roundData: Partial<Round>) => insertRoundFn(roundData),
+    onSuccess: (result, _v, _i, context) => {
+      const queryKey = ["rounds", currentUserId];
+      void context.client.setQueryData(queryKey, (old: Round[]) => {
+        if (result?.id) {
+          return Array.isArray(old) ? [...old, result] : [result];
         }
       });
       void context.client.invalidateQueries({ queryKey });

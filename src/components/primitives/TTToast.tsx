@@ -11,13 +11,15 @@ type ToastProps = {
   type?: ToastType;
 }
 
+export type ToastFn = (params: ToastProps) => void;
+
 export function useTTToast() {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [title, setTitle] = React.useState<string>("");
   const [message, setMessage] = React.useState<string>("");
   const [toastType, setToastType] = React.useState<ToastType>("default");
 
-  const toast = React.useCallback(
+  const toast: ToastFn = React.useCallback(
     ({
       title: newTitle,
       message: newMessage,

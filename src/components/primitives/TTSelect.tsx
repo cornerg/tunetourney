@@ -24,7 +24,7 @@ export default function TTSelect({
   return (
     <div
       className={cn(
-        "row relative mt-2 rounded-lg border-1 border-dark",
+        "row relative mt-2 rounded-lg border border-dark",
         {
           "border-primary": isFocused && !error,
           "border-red-700": !!error,
@@ -35,7 +35,7 @@ export default function TTSelect({
       {label && (
         <p
           className={cn(
-            `absolute text-xs z-[2] top-[-8px] left-2 px-1 bg-${background}`,
+            `absolute text-xs z-2 -top-2 left-2 px-1 bg-${background}`,
             {
               "text-primary": isFocused && !error,
               "text-dark": !isFocused && !error,
@@ -49,7 +49,7 @@ export default function TTSelect({
 
       {error && (
         <p
-          className={`absolute text-xs text-right text-red-700 z-[2] bottom-[-8px] right-2 px-1 bg-${background}`}
+          className={`absolute text-xs text-right text-red-700 z-2 -bottom-2 right-2 px-1 bg-${background}`}
           style={{ transition: "color 150ms ease" }}>
           {error}
         </p>
@@ -57,7 +57,7 @@ export default function TTSelect({
 
       <select
         className={cn(
-          `absolute w-full h-full top-0 left-0 py-1 px-2 text-sm text-dark bg-${background} border-0 outline-0 rounded-lg z-[1]`,
+          `absolute w-full h-full top-0 left-0 py-1 px-2 text-sm text-dark bg-${background} border-0 outline-0 rounded-lg z-1`,
           selectClassName,
         )}
         style={selectStyle}

@@ -1,18 +1,20 @@
 import React from "react";
+import { useNavigate } from "@tanstack/react-router";
+import TTButton from "#/components/primitives/TTButton.tsx";
 import RoundCard from "#/components/RoundCard.tsx";
-import { useTournamentRounds } from "#/hooks/roundHooks.ts";
 import { ROUND_STATUS } from "#/models/RoundStatus.ts";
+import type { Round, Tournament } from "#/models/supabaseTables.ts";
 import { RxChevronRight } from "react-icons/rx";
 
 type Props = {
-  tournamentId: string | null | undefined;
+  tournament: Tournament;
+  rounds: Round[];
 }
-export default function TournamentRounds({ tournamentId }: Props) {
+export default function TournamentRounds({ tournament, rounds }: Props) {
   const [expandUpcoming, setExpandUpcoming] = React.useState<boolean>(false);
   const [expandCompleted, setExpandCompleted] = React.useState<boolean>(false);
 
-  const { rounds } = useTournamentRounds(tournamentId);
-
+  const navigate = useNavigate();
   const pendingRounds = React.useMemo(() => {
     return rounds.filter(round => round.status === ROUND_STATUS.pending);
   }, [rounds]);
@@ -27,15 +29,33 @@ export default function TournamentRounds({ tournamentId }: Props) {
     return rounds.filter(round => round.status === ROUND_STATUS.closed);
   }, [rounds]);
 
+  const hasAllRounds = React.useMemo(() => {
+    return rounds.length >= tournament.round_count
+  }, [rounds, tournament]);
+
   return (
     <div className="column w-full h-max gap-2 rounded-3xl">
       <div className="row w-full h-max justify-between gap-4">
         <h3 className="heading">Rounds</h3>
+
+        <TTButton
+          className="px-2 min-h-10"
+          buttonStyle="primary"
+          tooltip="Add a round"
+          disabled={hasAllRounds}
+          onClick={() =>
+            void navigate({
+              to: "/tournament/$tournamentId/round/$roundId",
+              params: { tournamentId: tournament.id, roundId: "new" },
+            })
+          }>
+          New Round
+        </TTButton>
       </div>
 
       {!!nextRound && (
         <div className="row w-full flex-wrap gap-4 pb-2">
-          <RoundCard round={nextRound} />
+          <RoundCard round={nextRound} tournament={tournament} />
         </div>
       )}
 
@@ -62,7 +82,7 @@ export default function TournamentRounds({ tournamentId }: Props) {
               overflow: expandUpcoming ? "visible" : "hidden",
             }}>
             {pendingRounds.map(round => {
-              return <RoundCard key={round.id} round={round} />;
+              return <RoundCard key={round.id} round={round} tournament={tournament} />;
             })}
           </div>
         </div>
@@ -91,7 +111,7 @@ export default function TournamentRounds({ tournamentId }: Props) {
               overflow: expandCompleted ? "visible" : "hidden",
             }}>
             {closedRounds.map(round => {
-              return <RoundCard key={round.id} round={round} />;
+              return <RoundCard key={round.id} round={round} tournament={tournament} />;
             })}
           </div>
         </div>

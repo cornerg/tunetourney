@@ -4,28 +4,9 @@
   "bracketSpacing": true,
   "tabWidth": 2,
   "trailingComma": "all",
-  "plugins": ["@ianvs/prettier-plugin-sort-imports"],
-  "importOrder": [
-    "^(react/(.*)$)|^(react$)|^(react-native$)",
-    "^(expo|@expo)",
-    "^(fastify|@fastify)",
-    "<THIRD_PARTY_MODULES>",
-    "",
-    "^@(apps|libs|tooling)/(.*)$",
-    "^@/(.*)$",
-    "",
-    "^[../]",
-    "^[./]"
-  ],
-  "importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy"],
-  "importOrderTypeScriptVersion": "5.8.2",
   "overrides": [
     {
-      "files": ["**/*.json"],
-      "options": {
-        "plugins": ["prettier-plugin-sort-json"],
-        "jsonRecursiveSort": true
-      }
+      "files": ["**/*.json"]
     }
   ]
 }

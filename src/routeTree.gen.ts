@@ -16,8 +16,8 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as TournamentsRouteImport } from './routes/tournaments'
 import { Route as ClubClubIdRouteImport } from './routes/club/$clubId'
-import { Route as RoundRoundIdRouteImport } from './routes/round/$roundId'
-import { Route as TournamentTournamentIdRouteImport } from './routes/tournament/$tournamentId'
+import { Route as TournamentTournamentIdIndexRouteImport } from './routes/tournament/$tournamentId/index'
+import { Route as TournamentTournamentIdRoundRoundIdRouteImport } from './routes/tournament/$tournamentId/round/$roundId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -54,16 +54,18 @@ const ClubClubIdRoute = ClubClubIdRouteImport.update({
   path: '/$clubId',
   getParentRoute: () => ClubRoute,
 } as any)
-const RoundRoundIdRoute = RoundRoundIdRouteImport.update({
-  id: '/round/$roundId',
-  path: '/round/$roundId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TournamentTournamentIdRoute = TournamentTournamentIdRouteImport.update({
-  id: '/tournament/$tournamentId',
-  path: '/tournament/$tournamentId',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const TournamentTournamentIdIndexRoute =
+  TournamentTournamentIdIndexRouteImport.update({
+    id: '/tournament/$tournamentId/',
+    path: '/tournament/$tournamentId/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TournamentTournamentIdRoundRoundIdRoute =
+  TournamentTournamentIdRoundRoundIdRouteImport.update({
+    id: '/tournament/$tournamentId/round/$roundId',
+    path: '/tournament/$tournamentId/round/$roundId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -73,8 +75,8 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/tournaments': typeof TournamentsRoute
   '/club/$clubId': typeof ClubClubIdRoute
-  '/round/$roundId': typeof RoundRoundIdRoute
-  '/tournament/$tournamentId': typeof TournamentTournamentIdRoute
+  '/tournament/$tournamentId/': typeof TournamentTournamentIdIndexRoute
+  '/tournament/$tournamentId/round/$roundId': typeof TournamentTournamentIdRoundRoundIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -84,8 +86,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/tournaments': typeof TournamentsRoute
   '/club/$clubId': typeof ClubClubIdRoute
-  '/round/$roundId': typeof RoundRoundIdRoute
-  '/tournament/$tournamentId': typeof TournamentTournamentIdRoute
+  '/tournament/$tournamentId': typeof TournamentTournamentIdIndexRoute
+  '/tournament/$tournamentId/round/$roundId': typeof TournamentTournamentIdRoundRoundIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -96,8 +98,8 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/tournaments': typeof TournamentsRoute
   '/club/$clubId': typeof ClubClubIdRoute
-  '/round/$roundId': typeof RoundRoundIdRoute
-  '/tournament/$tournamentId': typeof TournamentTournamentIdRoute
+  '/tournament/$tournamentId/': typeof TournamentTournamentIdIndexRoute
+  '/tournament/$tournamentId/round/$roundId': typeof TournamentTournamentIdRoundRoundIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -109,8 +111,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/tournaments'
     | '/club/$clubId'
-    | '/round/$roundId'
-    | '/tournament/$tournamentId'
+    | '/tournament/$tournamentId/'
+    | '/tournament/$tournamentId/round/$roundId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -120,8 +122,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/tournaments'
     | '/club/$clubId'
-    | '/round/$roundId'
     | '/tournament/$tournamentId'
+    | '/tournament/$tournamentId/round/$roundId'
   id:
     | '__root__'
     | '/'
@@ -131,8 +133,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/tournaments'
     | '/club/$clubId'
-    | '/round/$roundId'
-    | '/tournament/$tournamentId'
+    | '/tournament/$tournamentId/'
+    | '/tournament/$tournamentId/round/$roundId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -142,8 +144,8 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
   TournamentsRoute: typeof TournamentsRoute
-  RoundRoundIdRoute: typeof RoundRoundIdRoute
-  TournamentTournamentIdRoute: typeof TournamentTournamentIdRoute
+  TournamentTournamentIdIndexRoute: typeof TournamentTournamentIdIndexRoute
+  TournamentTournamentIdRoundRoundIdRoute: typeof TournamentTournamentIdRoundRoundIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -197,18 +199,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClubClubIdRouteImport
       parentRoute: typeof ClubRoute
     }
-    '/round/$roundId': {
-      id: '/round/$roundId'
-      path: '/round/$roundId'
-      fullPath: '/round/$roundId'
-      preLoaderRoute: typeof RoundRoundIdRouteImport
+    '/tournament/$tournamentId/': {
+      id: '/tournament/$tournamentId/'
+      path: '/tournament/$tournamentId'
+      fullPath: '/tournament/$tournamentId/'
+      preLoaderRoute: typeof TournamentTournamentIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tournament/$tournamentId': {
-      id: '/tournament/$tournamentId'
-      path: '/tournament/$tournamentId'
-      fullPath: '/tournament/$tournamentId'
-      preLoaderRoute: typeof TournamentTournamentIdRouteImport
+    '/tournament/$tournamentId/round/$roundId': {
+      id: '/tournament/$tournamentId/round/$roundId'
+      path: '/tournament/$tournamentId/round/$roundId'
+      fullPath: '/tournament/$tournamentId/round/$roundId'
+      preLoaderRoute: typeof TournamentTournamentIdRoundRoundIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -231,8 +233,9 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
   TournamentsRoute: TournamentsRoute,
-  RoundRoundIdRoute: RoundRoundIdRoute,
-  TournamentTournamentIdRoute: TournamentTournamentIdRoute,
+  TournamentTournamentIdIndexRoute: TournamentTournamentIdIndexRoute,
+  TournamentTournamentIdRoundRoundIdRoute:
+    TournamentTournamentIdRoundRoundIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

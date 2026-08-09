@@ -7,22 +7,18 @@ import TTButton from "#/components/primitives/TTButton.tsx";
 import { useTTToast } from "#/components/primitives/TTToast.tsx";
 import { ROUND_STATUS } from "#/models/RoundStatus.ts";
 import type { Round } from "#/models/supabaseTables.ts";
+import { useLoadScreen } from "#/state/loadscreenState.ts";
 
 type Props = {
   round: Round;
 }
 export default function ManageRound({ round }: Props) {
-  const [isUpdating, setIsUpdating] = React.useState<boolean>(false);
 
   const { data: participants } = useTournamentUsers(round?.tournament_id ?? "");
   const { data: submissions } = useSubmissions(round?.id ?? "");
   const { data: votedUsers } = useVotedUsers(round?.id ?? "");
-  const {
-    mutate: updateRound,
-    isPending,
-    isError,
-    isSuccess,
-  } = useUpdateRound();
+  const { mutateAsync: updateRound } = useUpdateRound();
+  const { show, hide } = useLoadScreen();
   const { TTToast, toast } = useTTToast();
 
   const areAllSubmitted = React.useMemo(() => {
@@ -81,7 +77,7 @@ export default function ManageRound({ round }: Props) {
   }, [round.status, areAllSubmitted]);
 
   const handleAdvance = React.useCallback(
-    (advanceRound: Round | undefined) => {
+    async (advanceRound: Round | undefined) => {
       if (!advanceRound?.id) {
         console.error("No round to advance");
         return;
@@ -93,54 +89,25 @@ export default function ManageRound({ round }: Props) {
 
       const nextStatus = advanceRound.status + 1;
       try {
-        setIsUpdating(true);
-        updateRound({ id: advanceRound.id, status: nextStatus });
+        show("Updating round");
+        await updateRound({ id: advanceRound.id, status: nextStatus });
+        hide();
+        toast({
+          title: "Submission Saved",
+          message: "Your submission has been saved.",
+          type: "success",
+        });
       } catch (e) {
         console.error("Something went wrong updating the round. ", e);
+        toast({
+          title: "An Error Occurred",
+          message: "An error occurred while saving your submission.",
+          type: "error",
+        });
       }
     },
-    [updateRound],
+    [show, updateRound, hide, toast],
   );
-
-  React.useEffect(() => {
-    if (isUpdating || isUpdating) {
-      if (isUpdating && !isPending) {
-        if (isError) {
-          toast({
-            title: "An Error Occurred",
-            message: "An error occurred while saving your submission.",
-            type: "error",
-          });
-        }
-        if (isSuccess) {
-          toast({
-            title: "Submission Saved",
-            message: "Your submission has been saved.",
-            type: "success",
-          });
-        }
-        setIsUpdating(false);
-      }
-
-      if (isUpdating && !isPending) {
-        if (isError) {
-          toast({
-            title: "An Error Occurred",
-            message: "An error occurred while updating the round.",
-            type: "error",
-          });
-        }
-        if (isSuccess) {
-          toast({
-            title: "Round Saved",
-            message: "The round status has been updated.",
-            type: "success",
-          });
-        }
-        setIsUpdating(false);
-      }
-    }
-  }, [isUpdating, isPending, isError, isSuccess, toast]);
 
   return (
     <div className="row justify-end w-max gap-2">

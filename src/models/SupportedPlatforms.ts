@@ -1,4 +1,5 @@
 export type SupportedPlatformKey = "youtube" | "spotify" | "all";
+export const allPlatformKeys: SupportedPlatformKey[] = ["all", "youtube", "spotify"];
 
 export type SupportedPlatform = {
   key: SupportedPlatformKey;
