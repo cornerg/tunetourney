@@ -1,5 +1,7 @@
 import type { SupportedPlatformKey } from "#/models/SupportedPlatforms.ts";
 import type { ROUND_STATUS } from "#/models/RoundStatus.ts";
+import type { NotificationTypeKey } from "#/models/enums/NotificationType.ts";
+import type { NotifDataClubInvite } from "#/models/NotificationData.ts";
 
 export type Club = {
   id: string;
@@ -69,4 +71,16 @@ export type Vote = {
   user_id?: string;
   submission_id?: string;
   round_id?: string;
+}
+
+export type Notification = {
+  id: string;
+  created_at: string;
+  user_id: string;
+  type: NotificationTypeKey;
+  title: string;
+  description: string;
+  is_read: boolean;
+  is_handled: boolean;
+  metadata?: NotifDataClubInvite | null | undefined;
 }

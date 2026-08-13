@@ -48,6 +48,10 @@
   background: var(--color-primary);
 }
 
+.dropdownMenuArrow {
+  fill: var(--color-gray-400);
+}
+
 @keyframes slideUpAndFade {
   from {
     opacity: 0;

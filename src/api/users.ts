@@ -26,7 +26,6 @@ async function fetchUsers(userIds: string | string[] | null | undefined) {
 export function useUserData(userIds?: string | string[] | null  ) {
   const userToken = useSessionToken();
   const currentUserId = useCurrentUserId();
-  console.log("Use User Data", userIds);
   const getUserIds = React.useMemo(
     () => (userIds?.length ? userIds : currentUserId),
     [userIds, currentUserId],

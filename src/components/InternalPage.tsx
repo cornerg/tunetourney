@@ -1,5 +1,5 @@
 import React from "react";
-import { HEADER_HEIGHT } from "#/components/Header.tsx";
+import { HEADER_HEIGHT } from "#/components/sections/header/Header.tsx";
 
 export default function InternalPage({
   children,

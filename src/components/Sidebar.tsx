@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useClubs } from "#/api/clubs.ts";
 import { useActiveTournaments } from "#/api/tournaments.ts";
-import { HEADER_HEIGHT } from "#/components/Header.tsx";
+import { HEADER_HEIGHT } from "#/components/sections/header/Header.tsx";
 import { rootPages } from "#/models/routing.ts";
 import { cn } from "#/utils/utils.ts";
 

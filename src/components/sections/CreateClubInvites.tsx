@@ -5,6 +5,8 @@ import TTSelect from "#/components/primitives/TTSelect.tsx";
 import type { Club } from "#/models/supabaseTables.ts";
 import { cn } from "#/utils/utils.ts";
 import { MdAdd, MdClose } from "react-icons/md";
+import { type CreateNotificationInput, useCreateNotifications } from "#/api/notifications.ts";
+import { useTTToast } from "#/components/primitives/TTToast.tsx";
 
 const description = "Send invitations to one or more Tune Tourney users to join this club. If the users exist, they'll be notified and given the choice to accept or decline.";
 
@@ -15,7 +17,7 @@ type InviteRow = {
 
 type Props = {
   club: Club;
-  closeDialog: () => void;
+  closeDialog: (success?: boolean) => void;
 } & React.HTMLAttributes<HTMLDivElement>
 export default function CreateClubInvites({
   club,
@@ -26,6 +28,10 @@ export default function CreateClubInvites({
   const [invites, setInvites] = React.useState<InviteRow[]>([]);
   const [inputValue, setInputValue] = React.useState<string>("");
   const [isOwnerMode, setIsOwnerMode] = React.useState<boolean>(false);
+  const [isSending, setIsSending] = React.useState<boolean>(false);
+
+  const { mutateAsync: createNotifications } = useCreateNotifications();
+  const { toast, TTToast } = useTTToast();
 
   const handleToggleMode = React.useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -49,9 +55,38 @@ export default function CreateClubInvites({
     [invites],
   );
 
-  const handleSubmit = React.useCallback((sendInvites: InviteRow[]) => {
-    console.log("Send: ", sendInvites); // ToDo: send invitations
-  }, []);
+  const handleSubmit = React.useCallback(async (sendInvites: InviteRow[]) => {
+    setIsSending(true);
+    try {
+      const inputs: CreateNotificationInput[] = [];
+      for (const invite of sendInvites) {
+        inputs.push({
+          identity: invite.identity,
+          title: "Invited to Club",
+          description: `You've been invited to join ${club.title} as ${invite.isOwner ? "an owner" : "a member"}.`,
+          type: "invited-to-club",
+          metadata: {
+            club_id: club.id,
+            is_owner: invite.isOwner,
+          }
+        })
+      }
+      const result = await createNotifications(inputs);
+      if (!result) {
+        throw new Error("Failed to create notifications");
+      }
+      closeDialog(true);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "An error occurred",
+        message: "Sorry, your notifications could not be sent",
+        type: "error",
+      })
+    } finally {
+      setIsSending(false);
+    }
+  }, [closeDialog, club.id, club.title, createNotifications, toast]);
 
   return (
     <div className={cn("column w-full gap-4")} {...props}>
@@ -121,14 +156,15 @@ export default function CreateClubInvites({
         <TTButton
           className="px-2 min-h-10"
           buttonStyle="outline"
-          onClick={closeDialog}>
+          disabled={isSending}
+          onClick={() => closeDialog()}>
           Cancel
         </TTButton>
 
         <TTButton
           className="px-2 min-h-10"
           buttonStyle="primary"
-          disabled={!invites.length}
+          disabled={!invites.length || isSending}
           tooltip={
             !invites.length
               ? "Please add at least one invite"
@@ -138,6 +174,8 @@ export default function CreateClubInvites({
           Send
         </TTButton>
       </div>
+      
+      <TTToast />
     </div>
   );
 }
