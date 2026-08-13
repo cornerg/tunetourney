@@ -10,7 +10,7 @@ import "../styles/theme.css";
 import * as React from "react";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
-import Header, { HEADER_HEIGHT } from "#/components/Header.tsx";
+import Header, { HEADER_HEIGHT } from "#/components/sections/header/Header.tsx";
 import InternalPage from "#/components/InternalPage.tsx";
 import LoadScreen from "#/components/LoadScreen.tsx";
 import Sidebar from "#/components/Sidebar.tsx";

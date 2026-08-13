@@ -7,7 +7,6 @@ const oneHour = 1000 * 60 * 60;
 
 async function fetchMyPoints() {
   const { data, error } = await supabase.rpc("get_my_points");
-  console.log("Data from fetchMyPoints", data);
   if (error) {
     console.error("Error fetching total points: ", error);
     return 0;
