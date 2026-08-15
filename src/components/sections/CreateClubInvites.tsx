@@ -6,7 +6,7 @@ import type { Club } from "#/models/supabaseTables.ts";
 import { cn } from "#/utils/utils.ts";
 import { MdAdd, MdClose } from "react-icons/md";
 import { type CreateNotificationInput, useCreateNotifications } from "#/api/notifications.ts";
-import { useTTToast } from "#/components/primitives/TTToast.tsx";
+import { useToast } from "#/state/toastStore.ts";
 
 const description = "Send invitations to one or more Tune Tourney users to join this club. If the users exist, they'll be notified and given the choice to accept or decline.";
 
@@ -31,7 +31,7 @@ export default function CreateClubInvites({
   const [isSending, setIsSending] = React.useState<boolean>(false);
 
   const { mutateAsync: createNotifications } = useCreateNotifications();
-  const { toast, TTToast } = useTTToast();
+  const { showToast } = useToast();
 
   const handleToggleMode = React.useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -75,10 +75,16 @@ export default function CreateClubInvites({
       if (!result) {
         throw new Error("Failed to create notifications");
       }
+      const isSingle = inputs.length === 1;
+      showToast({
+        title: `Invite${isSingle ? "" : "s"} Sent!`,
+        message: `If the user${isSingle ? "" : "s"} exist${isSingle ? "s" : ""}, they will be notified.`,
+        type: "success",
+      });
       closeDialog(true);
     } catch (error) {
       console.error(error);
-      toast({
+      showToast({
         title: "An error occurred",
         message: "Sorry, your notifications could not be sent",
         type: "error",
@@ -86,7 +92,7 @@ export default function CreateClubInvites({
     } finally {
       setIsSending(false);
     }
-  }, [closeDialog, club.id, club.title, createNotifications, toast]);
+  }, [closeDialog, club.id, club.title, createNotifications, showToast]);
 
   return (
     <div className={cn("column w-full gap-4")} {...props}>
@@ -174,8 +180,6 @@ export default function CreateClubInvites({
           Send
         </TTButton>
       </div>
-      
-      <TTToast />
     </div>
   );
 }

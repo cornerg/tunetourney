@@ -4,10 +4,10 @@ import { useSubmissions } from "#/api/submissions.ts";
 import { useInsertVotes } from "#/api/votes.ts";
 import TTAlertDialogue from "#/components/primitives/TTAlertDialogue.tsx";
 import TTButton from "#/components/primitives/TTButton.tsx";
-import { useTTToast } from "#/components/primitives/TTToast.tsx";
 import SubmissionVote from "#/components/sections/SubmissionVote.tsx";
 import TotalScoreBar from "#/components/TotalScoreBar.tsx";
 import type { Round, Vote } from "#/models/supabaseTables.ts";
+import { useToast } from "#/state/toastStore.ts";
 
 const dialogueDescription =
   "Are you sure you want to save your votes as shown? You cannot edit your votes after they've been submitted.";
@@ -27,8 +27,8 @@ export default function RoundVoting({ round }: Props) {
 
   const { data: submissions } = useSubmissions(round?.id ?? "");
   const currentUserId = useCurrentUserId();
-  const { mutate: insert, isPending, isError, isSuccess } = useInsertVotes(); // ToDo: replace mutate with mutateAsync
-  const { TTToast, toast } = useTTToast();
+  const { mutateAsync: insert } = useInsertVotes();
+  const { showToast } = useToast();
 
   const updateVote = React.useCallback(
     ({
@@ -70,7 +70,7 @@ export default function RoundVoting({ round }: Props) {
 
   // Save votes; they cannot be updated
   const handleSubmit = React.useCallback(
-    (votes: StoredVote[], roundId: string, userId: string) => {
+    async (votes: StoredVote[], roundId: string, userId: string) => {
       if (!currentUserId) {
         console.error("No user ID to save to");
         return;
@@ -96,33 +96,28 @@ export default function RoundVoting({ round }: Props) {
             comment: vote?.comment ?? "",
           };
         });
-        insert([...newEntries]);
+        const response = await insert([...newEntries]);
+        if (!response || !Array.isArray(response) || !response.length) {
+          throw new Error("Invalid response from vote creation.");
+        }
+        showToast({
+          title: "Votes Saved!",
+          message: "Your votes have been submitted! Stay tuned for the results.",
+          type: "success",
+        });
       } catch (error) {
         console.error("An error occurred: ", error);
-      }
-    },
-    [currentUserId, insert, round?.id, submissions],
-  );
-
-  React.useEffect(() => {
-    if (isInserting && !isPending) {
-      if (isError) {
-        toast({
+        showToast({
           title: "An Error Occurred",
           message: "An error occurred while saving your votes.",
           type: "error",
         });
+      } finally {
+        setIsInserting(false);
       }
-      if (isSuccess) {
-        toast({
-          title: "Votes Saved",
-          message: "Your votes have been saved.",
-          type: "success",
-        });
-      }
-      setIsInserting(false);
-    }
-  }, [isInserting, isPending, isError, isSuccess, toast]);
+    },
+    [currentUserId, insert, round?.id, submissions],
+  );
 
   const totalScoreRange = React.useMemo(() => {
     const min = (submissions?.length ?? 0) * 5;
@@ -136,6 +131,7 @@ export default function RoundVoting({ round }: Props) {
   }, [votes]);
 
   const canSubmit = React.useMemo(() => {
+    if (isInserting) return false;
     const voteCount = votes?.length ?? 0;
     const submissionCount = submissions?.length ?? 0;
     const totalScore = votes?.reduce((total, cur) => total + cur.score, 0) ?? 0;
@@ -193,8 +189,6 @@ export default function RoundVoting({ round }: Props) {
           );
         })}
       </div>
-
-      <TTToast />
     </div>
   );
 }

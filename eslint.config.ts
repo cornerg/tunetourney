@@ -39,6 +39,7 @@ export default [
     plugins: {
       react,
       "react-hooks": reactHooks,
+      "react-hooks/refs": "off",
       "react-refresh": reactRefresh,
     },
     settings: {

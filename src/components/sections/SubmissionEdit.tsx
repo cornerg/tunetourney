@@ -6,7 +6,6 @@ import YouTubeEmbed from "#/components/embeds/YouTubeEmbed.tsx";
 import TTBox from "#/components/primitives/TTBox.tsx";
 import TTButton from "#/components/primitives/TTButton.tsx";
 import TTInput from "#/components/primitives/TTInput.tsx";
-import { useTTToast } from "#/components/primitives/TTToast.tsx";
 import type { Round, Submission } from "#/models/supabaseTables.ts";
 import {
   allPlatforms,
@@ -15,6 +14,7 @@ import {
 } from "#/models/SupportedPlatforms.ts";
 import { IoMusicalNotes } from "react-icons/io5";
 import { useTournament } from "#/hooks/tournamentHooks.ts";
+import { useToast } from "#/state/toastStore.ts";
 
 type Props = {
   round: Round | null | undefined;
@@ -48,7 +48,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
     isError: isUpdateError,
     isSuccess: isUpdateSuccess,
   } = useUpdateSubmission();
-  const { TTToast, toast } = useTTToast();
+  const { showToast } = useToast();
 
   const supportedPlatforms = React.useMemo(() => {
     if (tournament?.platform === "all") return allPlatforms;
@@ -239,14 +239,14 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
     if (isInserting || isUpdating) {
       if (isInserting && !isInsertPending) {
         if (isInsertError) {
-          toast({
+          showToast({
             title: "An Error Occurred",
             message: "An error occurred while saving your submission.",
             type: "error",
           });
         }
         if (isInsertSuccess) {
-          toast({
+          showToast({
             title: "Submission Saved",
             message: "Your submission has been saved.",
             type: "success",
@@ -257,14 +257,14 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
 
       if (isUpdating && !isUpdatePending) {
         if (isUpdateError) {
-          toast({
+          showToast({
             title: "An Error Occurred",
             message: "An error occurred while updating your submission.",
             type: "error",
           });
         }
         if (isUpdateSuccess) {
-          toast({
+          showToast({
             title: "Submission Saved",
             message: "Your submission has been updated.",
             type: "success",
@@ -273,7 +273,7 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
         setIsUpdating(false);
       }
     }
-  }, [isInserting, isUpdating, isInsertPending, isInsertError, isInsertSuccess, isUpdatePending, isUpdateError, isUpdateSuccess, toast]);
+  }, [isInserting, isUpdating, isInsertPending, isInsertError, isInsertSuccess, isUpdatePending, isUpdateError, isUpdateSuccess, showToast]);
 
   return (
     <TTBox className="column w-full">
@@ -332,8 +332,6 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
           </div>
         </div>
       </div>
-
-      <TTToast />
     </TTBox>
   );
 }

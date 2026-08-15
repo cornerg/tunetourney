@@ -4,7 +4,6 @@ import { useInsertClub, useUpdateClub } from "#/api/clubs.ts";
 import { useFileDelete, useFileUpload } from "#/api/files.ts";
 import TTButton from "#/components/primitives/TTButton";
 import TTInput from "#/components/primitives/TTInput.tsx";
-import { useTTToast } from "#/components/primitives/TTToast.tsx";
 import { getGradient, useBreakpoints, type Gradient } from "#/hooks/utils.ts";
 import type { Club } from "#/models/supabaseTables.ts";
 import { useLoadScreen } from "#/state/loadscreenState.ts";
@@ -13,6 +12,7 @@ import { cn } from "#/utils/utils.ts";
 import { FaRegImage } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 import { LuSave } from "react-icons/lu";
+import { useToast } from "#/state/toastStore.ts";
 
 const now = Date.now();
 
@@ -39,7 +39,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
   const logoInputRef = React.useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { show, hide, changeText } = useLoadScreen();
-  const { TTToast, toast } = useTTToast();
+  const { showToast } = useToast();
 
   // When source data changes, sync local data with source data
   React.useEffect(() => {
@@ -77,7 +77,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
         if (validFiletype) {
           editLocal({ banner: URL.createObjectURL(file) });
         } else {
-          toast({
+          showToast({
             title: "Invalid filetype",
             message: "The file type is not permitted for banners.",
             type: "error",
@@ -85,7 +85,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
         }
       }
     },
-    [editLocal, toast],
+    [editLocal, showToast],
   );
 
   const handleClickLogoUploader = React.useCallback(
@@ -100,7 +100,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
         if (validFiletype) {
           editLocal({ logo: URL.createObjectURL(file) });
         } else {
-          toast({
+          showToast({
             title: "Invalid filetype",
             message: "The file type is not permitted for logos.",
             type: "error",
@@ -108,7 +108,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
         }
       }
     },
-    [editLocal, toast],
+    [editLocal, showToast],
   );
 
   const handleCancel = React.useCallback(async () => {
@@ -134,7 +134,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
         delete saveData[key];
     }
     if (!Object.keys(saveData).length) {
-      toast({
+      showToast({
         title: "No Unsaved Changes",
         message: "No changes to this club were found to save.",
         type: "warning",
@@ -196,7 +196,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
         }
 
         hide();
-        toast({
+        showToast({
           title: "Club Saved",
           message: "The club has been saved.",
           type: "success",
@@ -213,7 +213,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
     } catch (error) {
       console.error("An error occurred saving Club: ", error);
       hide();
-      toast({
+      showToast({
         title: "An Error Occurred",
         message: "Your club couldn't be saved. Please try again.",
         type: "error",
@@ -221,7 +221,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
     } finally {
       setIsSaving(false);
     }
-  }, [sourceClub, localClub, toast, show, changeText, uploadFile, updateClub, insertClub, hide, deleteFile, setEdit, navigate]);
+  }, [sourceClub, localClub, showToast, show, changeText, uploadFile, updateClub, insertClub, hide, deleteFile, setEdit, navigate]);
 
   return (
     <div className={cn("column w-full", className)} {...props}>
@@ -333,8 +333,6 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
           onChange={e => editLocal({ description: e.target.value })}
         />
       </div>
-
-      <TTToast />
     </div>
   );
 }

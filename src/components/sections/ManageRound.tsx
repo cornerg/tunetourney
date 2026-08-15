@@ -4,10 +4,10 @@ import { useSubmissions } from "#/api/submissions.ts";
 import { useTournamentUsers, useVotedUsers } from "#/api/users.ts";
 import TTAlertDialogue from "#/components/primitives/TTAlertDialogue.tsx";
 import TTButton from "#/components/primitives/TTButton.tsx";
-import { useTTToast } from "#/components/primitives/TTToast.tsx";
 import { ROUND_STATUS } from "#/models/RoundStatus.ts";
 import type { Round } from "#/models/supabaseTables.ts";
 import { useLoadScreen } from "#/state/loadscreenState.ts";
+import { useToast } from "#/state/toastStore.ts";
 
 type Props = {
   round: Round;
@@ -19,7 +19,7 @@ export default function ManageRound({ round }: Props) {
   const { data: votedUsers } = useVotedUsers(round?.id ?? "");
   const { mutateAsync: updateRound } = useUpdateRound();
   const { show, hide } = useLoadScreen();
-  const { TTToast, toast } = useTTToast();
+  const { showToast } = useToast();
 
   const areAllSubmitted = React.useMemo(() => {
     if (round.status === ROUND_STATUS.submitting) {
@@ -92,21 +92,21 @@ export default function ManageRound({ round }: Props) {
         show("Updating round");
         await updateRound({ id: advanceRound.id, status: nextStatus });
         hide();
-        toast({
+        showToast({
           title: "Submission Saved",
           message: "Your submission has been saved.",
           type: "success",
         });
       } catch (e) {
         console.error("Something went wrong updating the round. ", e);
-        toast({
+        showToast({
           title: "An Error Occurred",
           message: "An error occurred while saving your submission.",
           type: "error",
         });
       }
     },
-    [show, updateRound, hide, toast],
+    [show, updateRound, hide, showToast],
   );
 
   return (
@@ -120,8 +120,6 @@ export default function ManageRound({ round }: Props) {
           {advanceLabel}
         </TTButton>
       </TTAlertDialogue>
-
-      <TTToast />
     </div>
   );
 }

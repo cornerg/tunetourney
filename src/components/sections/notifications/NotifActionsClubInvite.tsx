@@ -3,7 +3,7 @@ import TTButton from "#/components/primitives/TTButton.tsx";
 import React from "react";
 import { useInsertClubUser } from "#/api/clubUsers.ts";
 import { useNotificationsHandled } from "#/api/notifications.ts";
-import { useTTToast } from "#/components/primitives/TTToast.tsx";
+import { useToast } from "#/state/toastStore.ts";
 
 type Props = {
   notification: Notification;
@@ -11,7 +11,7 @@ type Props = {
 export default function NotifActionsClubInvite({ notification }: Props) {
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
-  const { TTToast, toast } = useTTToast();
+  const { showToast } = useToast();
   const { mutateAsync: insertClubUser } = useInsertClubUser();
   const { mutateAsync: handleNotification } = useNotificationsHandled();
   const { club_id: clubId, is_owner: isOwner } = React.useMemo(() => {
@@ -34,7 +34,7 @@ export default function NotifActionsClubInvite({ notification }: Props) {
       if (!response) {
         throw new Error("Error accepting invitation");
       } else {
-        toast({
+        showToast({
           title: `Invitation ${accepting ? "accepted!" : "declined."}`,
           message: accepting
             ? "You've been successfully added to the club."
@@ -45,7 +45,7 @@ export default function NotifActionsClubInvite({ notification }: Props) {
       }
     } catch (error) {
       console.error(error);
-      toast({
+      showToast({
         title: "An error occurred",
         message: `Unable to ${accepting ? "accept" : "decline"} the invitation. Please try again.`,
         type: "error",
@@ -53,7 +53,7 @@ export default function NotifActionsClubInvite({ notification }: Props) {
     } finally {
       setIsSaving(false);
     }
-  }, [insertClubUser, notification, clubId, isOwner, toast, handleNotification])
+  }, [insertClubUser, notification, clubId, isOwner, showToast, handleNotification])
 
   return (
     <div className="row w-full justify-end flex-1 gap-2 items-center">
@@ -72,8 +72,6 @@ export default function NotifActionsClubInvite({ notification }: Props) {
         onClick={() => handleSave(true)}>
         Accept
       </TTButton>
-
-      <TTToast />
     </div>
   );
 }

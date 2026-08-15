@@ -1,12 +1,12 @@
 import type { Round } from "#/models/supabaseTables.ts";
-import  { useTTToast } from "#/components/primitives/TTToast.tsx";
 import { useInsertRound, useUpdateRound } from "#/api/rounds.ts";
 import React from "react";
+import { useToast } from "#/state/toastStore.ts";
 
 export function useSaveRound() {
   const { mutateAsync: insertRound } = useInsertRound();
   const { mutateAsync: updateRound } = useUpdateRound();
-  const { toast } = useTTToast();
+  const { showToast } = useToast();
 
   const saveRound = React.useCallback(async (data: Partial<Round>) => {
     let success = false;
@@ -20,7 +20,7 @@ export function useSaveRound() {
       if (!response) {
         throw new Error("Invalid response");
       }
-      toast({
+      showToast({
         title: "Round saved",
         message: `The round has been successfully ${data?.id ? "updated" : "created"}.`,
         type: "success",
@@ -29,7 +29,7 @@ export function useSaveRound() {
 
     } catch (error) {
       console.error(error);
-      toast({
+      showToast({
         title: "An error occurred",
         message: "Your round could not be saved.",
         type: "error",
@@ -37,7 +37,7 @@ export function useSaveRound() {
     }
 
     return { success, response };
-  }, [insertRound, toast, updateRound]);
+  }, [insertRound, showToast, updateRound]);
 
   return { save: saveRound };
 }

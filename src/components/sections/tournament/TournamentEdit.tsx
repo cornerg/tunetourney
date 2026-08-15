@@ -6,7 +6,6 @@ import { useInsertTournament, useUpdateTournament } from "#/api/tournaments.ts";
 import TTButton from "#/components/primitives/TTButton.tsx";
 import TTInput from "#/components/primitives/TTInput.tsx";
 import TTSelect from "#/components/primitives/TTSelect.tsx";
-import { useTTToast } from "#/components/primitives/TTToast.tsx";
 import { useBreakpoints } from "#/hooks/utils.ts";
 import type { Tournament } from "#/models/supabaseTables.ts";
 import { allPlatformKeys, getPlatform, type SupportedPlatformKey } from "#/models/SupportedPlatforms.ts";
@@ -15,6 +14,7 @@ import { cn, toTitleCase } from "#/utils/utils.ts";
 import { IoCloseSharp } from "react-icons/io5";
 import { LuSave } from "react-icons/lu";
 import { useInsertTournamentUsers } from "#/api/tournamentUsers.ts";
+import { useToast } from "#/state/toastStore.ts";
 
 const roundCounts: number[] = [1, 3, 5, 7, 9];
 
@@ -43,7 +43,7 @@ export default function TournamentEdit({
 
   const { isMobile } = useBreakpoints();
   const navigate = useNavigate();
-  const { TTToast, toast } = useTTToast();
+  const { showToast } = useToast();
   const { show, hide, changeText } = useLoadScreen();
   const { title, club_id, round_count, platform } = React.useMemo(
     () => localTournament,
@@ -102,7 +102,7 @@ export default function TournamentEdit({
         delete saveData[key];
     }
     if (!Object.keys(saveData).length) {
-      toast({
+      showToast({
         title: "No Unsaved Changes",
         message: "No changes to this tournament were found to save.",
         type: "warning",
@@ -137,7 +137,7 @@ export default function TournamentEdit({
           }
         }
         hide();
-        toast({
+        showToast({
           title: "Tournament Saved",
           message: "The tournament has been saved.",
           type: "success",
@@ -154,7 +154,7 @@ export default function TournamentEdit({
     } catch (error) {
       console.error("An error occurred saving Tournament: ", error);
       hide();
-      toast({
+      showToast({
         title: "An Error Occurred",
         message: "Your tournament couldn't be saved. Please try again.",
         type: "error",
@@ -162,7 +162,7 @@ export default function TournamentEdit({
     } finally {
       setIsSaving(false);
     }
-  }, [sourceTournament, localTournament, toast, show, changeText, updateTournament, insertTournament, hide, addAllUsers, clubMembers, currentUserId, addUsers, setEdit, navigate]);
+  }, [sourceTournament, localTournament, showToast, show, changeText, updateTournament, insertTournament, hide, addAllUsers, clubMembers, currentUserId, addUsers, setEdit, navigate]);
 
   const canSubmit = React.useMemo(() => {
     return !!club_id && !!title;
@@ -287,8 +287,6 @@ export default function TournamentEdit({
           </div>
         )}
       </div>
-
-      <TTToast />
     </div>
   );
 }

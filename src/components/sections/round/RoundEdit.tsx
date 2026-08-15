@@ -8,7 +8,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import { useNavigate } from "@tanstack/react-router";
 import TTInput from "#/components/primitives/TTInput.tsx";
 import { useSaveRound } from "#/hooks/data/useSaveRound.ts";
-import { useTTToast } from "#/components/primitives/TTToast.tsx";
+import { useToast } from "#/state/toastStore.ts";
 
 const defaultRound: Partial<Round> = {
   status: 0,
@@ -26,7 +26,7 @@ export default function RoundEdit({ sourceRound, tournament, setEdit }: Props) {
   const { isMobile } = useBreakpoints();
   const navigate = useNavigate();
   const { save } = useSaveRound();
-  const { TTToast } = useTTToast();
+  const { showToast } = useToast();
 
   // When source data changes, sync local data with source data
   React.useEffect(() => {
@@ -59,6 +59,11 @@ export default function RoundEdit({ sourceRound, tournament, setEdit }: Props) {
     const { success, response } = await save({ ...localRound, tournament_id: tournament.id });
     setIsSaving(false);
     if (success) {
+      showToast({
+        title: "Round Saved",
+        message: "The round has been successfully saved.",
+        type: "success",
+      })
       if (response?.id) {
         setEdit(false);
       } else {
@@ -119,8 +124,6 @@ export default function RoundEdit({ sourceRound, tournament, setEdit }: Props) {
           onChange={e => editLocal({ description: e.target.value })}
         />
       </div>
-
-      <TTToast />
     </div>
   );
 }
