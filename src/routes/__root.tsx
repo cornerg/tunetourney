@@ -19,6 +19,7 @@ import { useAuth } from "#/hooks/auth.tsx";
 
 
 import appCss from "../styles.css?url";
+import Toaster from "#/components/primitives/Toast/Toaster.tsx";
 
 
 type MyRouterContext = {
@@ -76,6 +77,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         {isInternal && <Sidebar />}
         {isInternal && <InternalPage>{children}</InternalPage>}
         {!isInternal && children}
+        <Toaster />
       </body>
     </html>
   );
