@@ -1,5 +1,5 @@
 import React from "react";
-import { useTournamentScores } from "#/api/tournaments.ts";
+import { useTournamentScores } from "#/api/Tournaments/fetchTournamentScores.ts";
 import TTTooltip from "#/components/primitives/TTTooltip.tsx";
 import ProfilePhoto from "#/components/ProfilePhoto.tsx";
 import { useBreakpoints } from "#/hooks/utils.ts";

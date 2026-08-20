@@ -1,8 +1,9 @@
 import React from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useClubs } from "#/api/clubs.ts";
+import { useClubs } from "#/api/Clubs/fetchClubs.ts";
 import ClubEdit from "#/components/sections/Club/ClubEdit.tsx";
 import ClubView from "#/components/sections/Club/ClubView.tsx";
+import ClubTournaments from "#/components/sections/Club/ClubTournaments.tsx";
 
 function ClubPage() {
   const [edit, setEdit] = React.useState<boolean>(false);
@@ -28,10 +29,14 @@ function ClubPage() {
   }, [clubId, clubs]);
 
   return (
-    <div className="column w-full h-max rounded-3xl rounded-tr-xl overflow-hidden bg-surface border border-gray-400">
+    <div className="column w-full h-max gap-8">
       {!edit && !!club && <ClubView club={club} setEdit={setEdit} />}
 
       {edit && <ClubEdit sourceClub={club} setEdit={setEdit} />}
+
+      {!edit && !!club && (
+        <ClubTournaments clubId={club.id} />
+      )}
     </div>
   );
 }

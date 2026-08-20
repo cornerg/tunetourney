@@ -208,3 +208,4 @@ sketch
 # End of https://www.toptal.com/developers/gitignore/api/react,webstorm,jetbrains
 /.idea/prettier.xml
 /package-lock.json
+/.env

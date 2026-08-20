@@ -1,4 +1,4 @@
-import { useNotifications } from "#/api/notifications.ts";
+import { useNotifications } from "#/api/Notifications/fetchNotifications.ts";
 import React from "react";
 import NotificationRow from "#/components/sections/notifications/NotificationRow.tsx";
 

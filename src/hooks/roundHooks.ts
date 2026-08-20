@@ -1,5 +1,5 @@
 import React from "react";
-import { useRounds } from "#/api/rounds.ts";
+import { useRounds } from "#/api/Rounds/fetchRounds.ts";
 
 export function useTournamentRounds(tournamentId: string | null | undefined) {
   const { data: allRounds, isLoading } = useRounds();

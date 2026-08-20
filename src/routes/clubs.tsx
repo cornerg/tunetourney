@@ -1,7 +1,7 @@
 import React from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useClubs } from "#/api/clubs.ts";
-import ClubCard from "#/components/ClubCard.tsx";
+import { useClubs } from "#/api/Clubs/fetchClubs.ts";
+import ClubCard from "#/components/sections/Club/ClubCard.tsx";
 import TTButton from "#/components/primitives/TTButton.tsx";
 
 function Clubs() {

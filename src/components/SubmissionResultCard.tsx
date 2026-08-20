@@ -1,5 +1,5 @@
 import React from "react";
-import { useTournamentUsers } from "#/api/users.ts";
+import { useTournamentUsers } from "#/api/TournamentUsers/fetchTournamentUsers.ts";
 import SpotifyEmbed from "#/components/embeds/SpotifyEmbed.tsx";
 import YouTubeEmbed from "#/components/embeds/YouTubeEmbed.tsx";
 import TTBox from "#/components/primitives/TTBox.tsx";

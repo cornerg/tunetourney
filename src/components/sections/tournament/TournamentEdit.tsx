@@ -1,8 +1,10 @@
 import React from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useClubUsers, useOwnedClubs } from "#/api/clubs.ts";
-import { useCurrentUserId } from "#/api/sessions.ts";
-import { useInsertTournament, useUpdateTournament } from "#/api/tournaments.ts";
+import { useClubUsers } from "#/api/ClubUsers/fetchClubUsers.ts";
+import { useOwnedClubs } from "#/api/Clubs/fetchOwnedClubs.ts";
+import { useCurrentUserId } from "#/api/auth/currentUserId.ts";
+import { useUpdateTournament } from "#/api/Tournaments/updateTournament.ts";
+import { useInsertTournament } from "#/api/Tournaments/insertTournament.ts";
 import TTButton from "#/components/primitives/TTButton.tsx";
 import TTInput from "#/components/primitives/TTInput.tsx";
 import TTSelect from "#/components/primitives/TTSelect.tsx";
@@ -13,7 +15,7 @@ import { useLoadScreen } from "#/state/loadscreenState.ts";
 import { cn, toTitleCase } from "#/utils/utils.ts";
 import { IoCloseSharp } from "react-icons/io5";
 import { LuSave } from "react-icons/lu";
-import { useInsertTournamentUsers } from "#/api/tournamentUsers.ts";
+import { useInsertTournamentUsers } from "#/api/TournamentUsers/insertTournamentUsers.ts";
 import { useToast } from "#/state/toastStore.ts";
 
 const roundCounts: number[] = [1, 3, 5, 7, 9];

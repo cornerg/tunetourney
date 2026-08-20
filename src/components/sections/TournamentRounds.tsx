@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "@tanstack/react-router";
 import TTButton from "#/components/primitives/TTButton.tsx";
-import RoundCard from "#/components/RoundCard.tsx";
+import RoundCard from "#/components/sections/round/RoundCard.tsx";
 import { ROUND_STATUS } from "#/models/RoundStatus.ts";
 import type { Round, Tournament } from "#/models/supabaseTables.ts";
 import { RxChevronRight } from "react-icons/rx";
@@ -18,7 +18,7 @@ export default function TournamentRounds({ tournament, rounds }: Props) {
   const pendingRounds = React.useMemo(() => {
     return rounds.filter(round => round.status === ROUND_STATUS.pending);
   }, [rounds]);
-  const nextRound = React.useMemo(() => {
+  const activeRound = React.useMemo(() => {
     return rounds.find(
       round =>
         round.status > ROUND_STATUS.pending &&
@@ -38,24 +38,25 @@ export default function TournamentRounds({ tournament, rounds }: Props) {
       <div className="row w-full h-max justify-between gap-4">
         <h3 className="heading">Rounds</h3>
 
-        <TTButton
-          className="px-2 min-h-10"
-          buttonStyle="primary"
-          tooltip="Add a round"
-          disabled={hasAllRounds}
-          onClick={() =>
-            void navigate({
-              to: "/tournament/$tournamentId/round/$roundId",
-              params: { tournamentId: tournament.id, roundId: "new" },
-            })
-          }>
-          New Round
-        </TTButton>
+        {!activeRound && !hasAllRounds && (
+          <TTButton
+            className="px-2 min-h-10"
+            buttonStyle="primary"
+            tooltip="Add a round"
+            onClick={() =>
+              void navigate({
+                to: "/tournament/$tournamentId/round/$roundId",
+                params: { tournamentId: tournament.id, roundId: "new" },
+              })
+            }>
+            Start Next Round
+          </TTButton>
+        )}
       </div>
 
-      {!!nextRound && (
+      {!!activeRound && (
         <div className="row w-full flex-wrap gap-4 pb-2">
-          <RoundCard round={nextRound} tournament={tournament} />
+          <RoundCard round={activeRound} tournament={tournament} />
         </div>
       )}
 

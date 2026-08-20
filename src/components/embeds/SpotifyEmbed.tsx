@@ -19,8 +19,9 @@ export default function SpotifyEmbed({
   return (
     <div
       className={cn(
-        `relative w-[${width}px] h-[${height}px] rounded-2xl border-1 border-dark overflow-hidden`,
+        `relative rounded-2xl border border-dark overflow-hidden`,
       )}
+      style={{ width: `${width}px`, height: `${height}px` }}
       {...props}>
       <iframe
         data-testid="embed-iframe"

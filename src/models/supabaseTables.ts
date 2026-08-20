@@ -33,7 +33,7 @@ export type Submission = {
   id: string;
   created_at: string;
   url_id?: string;
-  user_id?: string;
+  user_id?: string; // Returned as NULL during voting phase
   round_id?: string;
   comment?: string;
   platform?: SupportedPlatformKey;
@@ -68,7 +68,7 @@ export type Vote = {
   created_at: string;
   score: number;
   comment: string | null;
-  user_id?: string;
+  user_id?: string; // Returned as NULL during voting phase
   submission_id?: string;
   round_id?: string;
 }

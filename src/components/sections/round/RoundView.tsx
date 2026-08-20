@@ -1,15 +1,16 @@
 import type { Round, Tournament } from "#/models/supabaseTables.ts";
 import BadgeRoundStatus from "#/components/BadgeRoundStatus.tsx";
 import React from "react";
-import { useTournamentOwners, useVotedUsers } from "#/api/users.ts";
-import { useCurrentUserId } from "#/api/sessions.ts";
+import { useVotedUserIds } from "#/api/Users/fetchVotedUserIds.ts";
+import { useTournamentOwners } from "#/api/TournamentUsers/fetchTournamentOwners.ts";
+import { useCurrentUserId } from "#/api/auth/currentUserId.ts";
 import { ROUND_STATUS } from "#/models/RoundStatus.ts";
 import ManageRound from "#/components/sections/ManageRound.tsx";
 import RoundRoster from "#/components/sections/RoundRoster.tsx";
-import RoundSubmitting from "#/components/sections/RoundSubmitting.tsx";
-import RoundVoting from "#/components/sections/RoundVoting.tsx";
-import RoundVoteReview from "#/components/sections/RoundVoteReview.tsx";
-import RoundResults from "#/components/sections/RoundResults.tsx";
+import RoundSubmitting from "#/components/sections/round/RoundSubmitting.tsx";
+import RoundVoting from "#/components/sections/round/RoundVoting.tsx";
+import RoundVoteReview from "#/components/sections/round/RoundVoteReview.tsx";
+import RoundResults from "#/components/sections/round/RoundResults.tsx";
 import TTButton from "#/components/primitives/TTButton.tsx";
 import { GoPencil } from "react-icons/go";
 
@@ -19,7 +20,7 @@ type Props = {
   setEdit: (newState: boolean) => void;
 }
 export default function RoundView({ round, tournament, setEdit }: Props) {
-  const { data: votedUsers } = useVotedUsers(round.id);
+  const { data: votedUsers } = useVotedUserIds(round.id);
   const { data: owners } = useTournamentOwners(tournament?.id ?? round?.tournament_id);
   const currentUserId = useCurrentUserId();
 
@@ -52,7 +53,7 @@ export default function RoundView({ round, tournament, setEdit }: Props) {
   
   return (
     <div className="column w-full gap-4">
-      <div className="column w-full gap-2">
+      <div className="column w-full gap-0">
         <div className="row w-full items-center gap-4">
           <div className="row w-full items-center gap-4 flex-1">
             <h2 className="subtitle">{round?.title}</h2>
@@ -71,11 +72,15 @@ export default function RoundView({ round, tournament, setEdit }: Props) {
             )}
           </div>
         </div>
-        <p className="text-sm font-bold">{tournament?.title}</p>
-        <p className="text-dark">{round?.description}</p>
 
-        {!!round && <RoundRoster round={round} />}
+        <p className="text-sm">
+          — <strong className="font-bold">{tournament?.title}</strong>
+        </p>
       </div>
+
+      <p className="text-dark">{round?.description}</p>
+
+      {!!round && <RoundRoster round={round} />}
 
       {showSection !== "pending" && <hr className="w-full text-gray-300" />}
 

@@ -1,8 +1,8 @@
 import type { ClubUser, Notification } from "#/models/supabaseTables.ts";
 import TTButton from "#/components/primitives/TTButton.tsx";
 import React from "react";
-import { useInsertClubUser } from "#/api/clubUsers.ts";
-import { useNotificationsHandled } from "#/api/notifications.ts";
+import { useInsertClubUser } from "#/api/ClubUsers/insertClubUser.ts";
+import { useHandleNotifications } from "#/api/Notifications/handleNotifications.ts";
 import { useToast } from "#/state/toastStore.ts";
 
 type Props = {
@@ -13,7 +13,7 @@ export default function NotifActionsClubInvite({ notification }: Props) {
 
   const { showToast } = useToast();
   const { mutateAsync: insertClubUser } = useInsertClubUser();
-  const { mutateAsync: handleNotification } = useNotificationsHandled();
+  const { mutateAsync: handleNotifications } = useHandleNotifications();
   const { club_id: clubId, is_owner: isOwner } = React.useMemo(() => {
     return notification.metadata!;
   }, [notification]);
@@ -41,7 +41,7 @@ export default function NotifActionsClubInvite({ notification }: Props) {
             : "The club invitation has been successfully declined.",
           type: "success",
         });
-        await handleNotification(notification);
+        await handleNotifications(notification);
       }
     } catch (error) {
       console.error(error);
@@ -53,7 +53,7 @@ export default function NotifActionsClubInvite({ notification }: Props) {
     } finally {
       setIsSaving(false);
     }
-  }, [insertClubUser, notification, clubId, isOwner, showToast, handleNotification])
+  }, [insertClubUser, notification, clubId, isOwner, showToast, handleNotifications])
 
   return (
     <div className="row w-full justify-end flex-1 gap-2 items-center">

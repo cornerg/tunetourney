@@ -1,5 +1,5 @@
 import type { Notification } from "#/models/supabaseTables.ts";
-import { useReadNotifications } from "#/api/notifications.ts";
+import { useReadNotifications } from "#/api/Notifications/readNotifications.ts";
 import React from "react";
 import NotifActionsClubInvite from "#/components/sections/notifications/NotifActionsClubInvite.tsx";
 import { cn, getFormattedDate, getRelativeTime } from "#/utils/utils.ts";

@@ -1,12 +1,11 @@
 import React from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useTournaments } from "#/api/tournaments.ts";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useTournaments } from "#/api/Tournaments/fetchTournaments.ts";
 import TTButton from "#/components/primitives/TTButton.tsx";
-import TournamentCard from "#/components/TournamentCard.tsx";
+import TournamentCard from "#/components/sections/tournament/TournamentCard.tsx";
 
 function TournamentsPage() {
   const { data: tournaments } = useTournaments();
-  const navigate = useNavigate();
 
   const sortedTournaments = React.useMemo(() => {
     if (!tournaments || (tournaments?.length ?? 0) <= 0) return [];
@@ -28,15 +27,11 @@ function TournamentsPage() {
         <div className="row w-full justify-between items-center gap-4">
           <h1 className="title text-primary">Tournaments</h1>
 
-          <TTButton
-            className="px-2 min-h-10"
-            buttonStyle="primary"
-            tooltip="Start a new club"
-            onClick={() =>
-              void navigate({ to: "/tournament/$tournamentId", params: { tournamentId: "new" } })
-            }>
-            New Tournament
-          </TTButton>
+          <Link to="/tournament/$tournamentId" params={{ tournamentId: "new" }}>
+            <TTButton className="px-2 min-h-10" buttonStyle="primary">
+              New Tournament
+            </TTButton>
+          </Link>
         </div>
 
         <p className="text-black text-base">

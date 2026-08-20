@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "#/integrations/supabase/supabase.ts";
-
-import { useCurrentUserId } from "./sessions";
+import { useCurrentUserId } from "#/api/auth/currentUserId.ts";
 
 const oneHour = 1000 * 60 * 60;
 

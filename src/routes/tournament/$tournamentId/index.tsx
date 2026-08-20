@@ -1,6 +1,6 @@
 import React from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useTournaments } from "#/api/tournaments.ts";
+import { useTournaments } from "#/api/Tournaments/fetchTournaments.ts";
 import TournamentEdit from "#/components/sections/tournament/TournamentEdit.tsx";
 import TournamentView from "#/components/sections/tournament/TournamentView.tsx";
 import { useTournamentRounds } from "#/hooks/roundHooks.ts";
