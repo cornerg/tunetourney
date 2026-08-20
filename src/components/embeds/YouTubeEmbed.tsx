@@ -19,8 +19,9 @@ export default function YouTubeEmbed({
   return (
     <div
       className={cn(
-        `relative w-[${width}px] h-[${height}px] rounded-xl border border-dark overflow-hidden`,
+        `relative rounded-xl border border-dark overflow-hidden`,
       )}
+      style={{ width: `${width}px`, height: `${height}px` }}
       {...props}>
       <iframe
         className="absolute top-0 left-0"

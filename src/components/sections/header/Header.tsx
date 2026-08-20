@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useCurrentUser } from "#/api/users.ts";
+import { useCurrentUser } from "#/api/Users/fetchCurrentUser.ts";
 import ButtonDiscordLogin from "#/components/ButtonDiscordLogin.tsx";
 import { useBreakpoints } from "#/hooks/utils.ts";
 

@@ -10,6 +10,7 @@ export default [
       "src/@types/*",
       "react.ts",
       "src/integrations/tanstack-query/root-provider.tsx",
+      "vite-env.d.ts"
     ],
   },
   {
@@ -39,7 +40,6 @@ export default [
     plugins: {
       react,
       "react-hooks": reactHooks,
-      "react-hooks/refs": "off",
       "react-refresh": reactRefresh,
     },
     settings: {
@@ -68,6 +68,7 @@ export default [
 
       // Rules to disable
       "react-hooks/set-state-in-effect": "off",
+      "react-hooks/refs": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
       "react/prop-types": 0,
       "react/no-unescaped-entities": "warn",

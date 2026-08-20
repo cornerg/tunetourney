@@ -1,5 +1,5 @@
 import { SlBell } from "react-icons/sl";
-import { useNotifications } from "#/api/notifications.ts";
+import { useNotifications } from "#/api/Notifications/fetchNotifications.ts";
 import React from "react";
 import { Popover } from "radix-ui";
 import "#/styles/popover.css";

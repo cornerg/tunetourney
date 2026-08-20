@@ -1,15 +1,12 @@
 import React from "react";
-import { useSubmissions } from "#/api/submissions.ts";
-import {
-  useCurrentUser,
-  useTournamentOwners,
-  useTournamentUsers,
-  useVotedUsers,
-} from "#/api/users.ts";
-import TTTooltip from "#/components/primitives/TTTooltip.tsx";
-import ProfilePhoto from "#/components/ProfilePhoto.tsx";
+import { useSubmissions } from "#/api/Submissions/fetchSubmissions.ts";
+import { useCurrentUser } from "#/api/Users/fetchCurrentUser.ts";
+import { useTournamentUsers } from "#/api/TournamentUsers/fetchTournamentUsers.ts";
+import { useTournamentOwners } from "#/api/TournamentUsers/fetchTournamentOwners.ts";
+import { useVotedUserIds } from "#/api/Users/fetchVotedUserIds.ts";
 import { ROUND_STATUS } from "#/models/RoundStatus.ts";
 import type { Round } from "#/models/supabaseTables.ts";
+import RosterAvatar from "#/components/users/RosterAvatar.tsx";
 
 type Props = {
   round: Round;
@@ -19,142 +16,56 @@ export default function RoundRoster({ round }: Props) {
   const { data: currentUser } = useCurrentUser();
   const { data: organizers } = useTournamentOwners(round.tournament_id);
   const { data: submissions } = useSubmissions(round.id);
-  const { data: votedUsers } = useVotedUsers(round.id);
+  const { data: votedIds } = useVotedUserIds(round.id);
 
-  const otherUsers = React.useMemo(
-    () => allUsers?.filter(user => user.id !== currentUser?.id),
-    [allUsers, currentUser?.id],
-  );
+  const members = React.useMemo(() => {
+    return allUsers?.filter(user => !organizers?.map(org => org.id)?.includes(user.id)) ?? [];
+  }, [allUsers, organizers]);
 
-  const completedUsers = React.useMemo(() => {
-    return (
-      otherUsers?.filter(user => {
-        if (round.status === ROUND_STATUS.submitting) {
-          return !!submissions?.map(sub => sub.user_id)?.includes(user.id);
-        }
-        if (round.status === ROUND_STATUS.voting) {
-          return !!votedUsers?.includes(user.id);
-        }
-        return true;
-      }) ?? []
-    );
-  }, [otherUsers, round.status, submissions, votedUsers]);
+  const isUserDone = React.useCallback((userId: string) => {
+    if (round.status === ROUND_STATUS.voting) {
+      return !!votedIds?.includes(userId);
+    } else {
+      return !!submissions?.map(sub => sub.user_id)?.includes(userId);
+    }
+  }, [round, votedIds, submissions]);
 
-  const uncompletedUsers = React.useMemo(() => {
-    return (
-      otherUsers?.filter(
-        user => !completedUsers?.map(u => u.id)?.includes(user.id),
-      ) ?? []
-    );
-  }, [otherUsers, completedUsers]);
+  const sortedUsers = React.useMemo(() => {
+    const votedOwners = organizers?.filter(user => isUserDone(user.id)) ?? [];
+    const pendingOwners = organizers?.filter(user => !isUserDone(user.id)) ?? [];
+    const votedMembers = members.filter(user => isUserDone(user.id));
+    const pendingMembers = members.filter(user => !isUserDone(user.id));
+
+    return [...votedOwners, ...pendingOwners, ...votedMembers, ...pendingMembers]
+      .filter((user) => user.id !== currentUser?.id)
+      .sort((a, b) => a.name > b.name ? 1 : -1);
+  }, [organizers, members, isUserDone, currentUser]);
+
+  const isCurrentUserOwner = React.useMemo(() => {
+    return !!organizers?.find(org => org.id === currentUser?.id);
+  }, [organizers, currentUser]);
 
   const isCurrentUserDone = React.useMemo(() => {
-    if (round.status === ROUND_STATUS.submitting) {
-      return !!submissions?.map(sub => sub.user_id)?.includes(currentUser?.id);
-    }
-    if (round.status === ROUND_STATUS.voting) {
-      return !!votedUsers?.includes(currentUser?.id ?? "");
-    }
-    return true;
-  }, [round, currentUser?.id, submissions, votedUsers]);
-
-  const getStatusTerm = React.useCallback(
-    (isCompleted: boolean) => {
-      if (round.status === ROUND_STATUS.submitting) {
-        return isCompleted ? " (Submitted)" : " (Not submitted)";
-      }
-      if (round.status === ROUND_STATUS.voting) {
-        return isCompleted ? " (Voted)" : " (Not voted)";
-      }
-      return "";
-    },
-    [round.status],
-  );
+    if (!currentUser?.id) return false;
+    return isUserDone(currentUser?.id);
+  }, [currentUser, isUserDone]);
 
   return (
-    <div className="row w-full justify-between gap-4">
-      <div className="column w-full flex-1 gap-2">
-        <h4 className="subheading">Participants</h4>
+    <div className="row w-full flex-1 gap-2 items-center">
+      {!!currentUser?.id && (
+        <>
+          <RosterAvatar user={currentUser} isOrganizer={isCurrentUserOwner} isComplete={isCurrentUserDone} />
+          <div className="w-px h-full min-h-10 bg-gray-300" />
+        </>
+      )}
 
-        <div className="row gap-2 items-center">
-          {!!currentUser?.id && (
-            <TTTooltip
-              label={`${currentUser?.name ?? "Unnamed User"}${getStatusTerm(isCurrentUserDone)}`}
-              delay={30}>
-              <ProfilePhoto
-                user={currentUser}
-                size={40}
-                fontSize={16}
-                className="rounded-full bg-surface border-1"
-              />
-            </TTTooltip>
-          )}
-
-          <div className="w-[1px] h-full min-h-10 bg-gray-300" />
-
-          {completedUsers?.map(user => {
-            return (
-              <div key={user.id} className="row items-center gap-2">
-                <TTTooltip
-                  label={`${user?.name ?? "Unnamed User"}${getStatusTerm(true)}`}
-                  delay={30}>
-                  <ProfilePhoto
-                    user={user}
-                    size={40}
-                    fontSize={16}
-                    className="rounded-full bg-surface border-1"
-                  />
-                </TTTooltip>
-              </div>
-            );
-          })}
-
-          {completedUsers.length > 0 && uncompletedUsers.length > 0 && (
-            <div className="w-[1px] h-full min-h-10 bg-gray-300" />
-          )}
-
-          {uncompletedUsers?.map(user => {
-            return (
-              <div
-                key={user.id}
-                className="row items-center gap-2"
-                style={{ opacity: 0.4 }}>
-                <TTTooltip
-                  label={`${user?.name ?? "Unnamed User"} (${getStatusTerm(false)})`}
-                  delay={30}>
-                  <ProfilePhoto
-                    user={user}
-                    size={40}
-                    fontSize={16}
-                    className="rounded-full bg-surface border-1"
-                  />
-                </TTTooltip>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="column w-full items-end flex-1 gap-2">
-        <h4 className="subheading text-end">Organizers</h4>
-
-        {organizers?.map(user => {
-          return (
-            <div key={user.id} className="row items-center gap-2">
-              <TTTooltip
-                label={`${user?.name ?? "Unnamed User"} (Organizer)`}
-                delay={30}>
-                <ProfilePhoto
-                  user={user}
-                  size={40}
-                  fontSize={16}
-                  className="rounded-full bg-surface"
-                />
-              </TTTooltip>
-            </div>
-          );
-        })}
-      </div>
+      {sortedUsers.map((user) => {
+        const isOrganizer = !!organizers?.map(org => org.id)?.includes(user.id);
+        const isComplete = (round.status === ROUND_STATUS.submitting || round.status === ROUND_STATUS.voting) && isUserDone(user.id);
+        return (
+          <RosterAvatar key={user.id} user={user} isOrganizer={isOrganizer} isComplete={isComplete} />
+        );
+      })}
     </div>
   );
 }

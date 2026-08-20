@@ -1,5 +1,5 @@
 import React from "react";
-import { useTournaments } from "#/api/tournaments.ts";
+import { useTournaments } from "#/api/Tournaments/fetchTournaments.ts";
 
 export function useTournament(tournamentId: string | null | undefined) {
   const { data: tournaments, isLoading } = useTournaments();

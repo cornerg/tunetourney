@@ -1,7 +1,9 @@
 import * as React from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useCurrentUserId, useSessionToken } from "#/api/sessions.ts";
-import { useInsertUser, useUserData } from "#/api/users.ts";
+import { useCurrentUserId } from "#/api/auth/currentUserId.ts";
+import { useSessionToken } from "#/api/auth/sessionToken.ts";
+import { useUsers } from "#/api/Users/fetchUsers.ts";
+import { useInsertUser } from "#/api/Users/insertUser.ts";
 import { supabase } from "#/integrations/supabase/supabase.ts";
 import { getContext } from "#/integrations/tanstack-query/root-provider.tsx";
 import { useLoadScreen } from "#/state/loadscreenState.ts";
@@ -11,7 +13,7 @@ const { queryClient } = getContext();
 export function useAuth() {
   const { show, hide } = useLoadScreen();
   const navigate = useNavigate();
-  const { data: users } = useUserData();
+  const { data: users } = useUsers();
   const { mutate: insertUser } = useInsertUser();
   const userToken = useSessionToken();
   const currentUserId = useCurrentUserId();

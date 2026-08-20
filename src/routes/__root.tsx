@@ -69,6 +69,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
         <title>Tune Tourney</title>
+        <link rel="icon" href="/public/favicon.ico" />
+        <link rel="apple-touch-icon" href="/public/apple-touch-icon.png" />
       </head>
       <Scripts />
       <body style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT ?? 52}px)` }}>

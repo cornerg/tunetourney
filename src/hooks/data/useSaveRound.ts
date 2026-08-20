@@ -1,5 +1,6 @@
 import type { Round } from "#/models/supabaseTables.ts";
-import { useInsertRound, useUpdateRound } from "#/api/rounds.ts";
+import { useInsertRound } from "#/api/Rounds/insertRound.ts";
+import { useUpdateRound } from "#/api/Rounds/updateRound.ts";
 import React from "react";
 import { useToast } from "#/state/toastStore.ts";
 

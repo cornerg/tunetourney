@@ -1,6 +1,6 @@
 import React from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { checkLogin } from "#/api/sessions.ts";
+import { checkLogin } from "#/api/auth/checkLogin.ts";
 import { getImageFromCollection } from "#/assets/imageCollections.ts";
 import HomeRight from "#/components/sections/HomeRight.tsx";
 

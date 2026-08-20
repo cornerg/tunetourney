@@ -1,10 +1,9 @@
 import React from "react";
 import { cn } from "#/utils/utils.ts";
-import { Slider } from "radix-ui";
 
 import "@/styles/ScoreSlider.css";
 
-const VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 type Props = {
   value: number | undefined;
@@ -17,64 +16,47 @@ export default function ScoreSlider({
   ...props
 }: Props) {
   return (
-    <div className={cn("column w-full gap-0", className)} {...props}>
-      <div className="row w-full items-center gap-0">
-        <div
-          className="w-full mr-[-8px] flex-1 h-3 rounded-l-lg bg-primary"
-          onClick={() => setValue(1)}
-        />
+    <div
+      className={cn("relative row h-10 py-1 gap-0", className)}
+      style={{
+        width: "calc(110% - 40px)",
+        marginLeft: "calc(-5% + 20px)",
+        marginRight: "calc(-5% + 20px)",
+      }}
+      {...props}>
+      <div className="absolute w-[90%] h-0.5 top-4.75 mx-[5%] bg-gray-500 rounded-sm z-1" />
 
-        <Slider.Root
-          className="sliderRoot relative flex items-center select-none touch-none w-full flex-[18] h-8"
-          min={1}
-          max={10}
-          step={1}
-          value={[value || 1]}
-          onValueChange={values => {
-            setValue(values[0]);
+      {NUMBERS.map(number => {
+        return (
+          <div
+            key={`value-${number}`}
+            className="group row w-full flex-1 justify-center items-center z-2 cursor-pointer"
+            onClick={() => setValue(number)}>
+            <p
+              className={cn(
+                "row w-8 h-8 p-1 justify-center items-center bg-surface border-2 border-gray-500 rounded-full font-mono text-[16px] group-hover:text-primary transition-colors",
+                { "text-primary font-bold": value === number },
+              )}>
+              {number}
+            </p>
+          </div>
+        );
+      })}
+
+      {typeof value === "number" && (
+        <div
+          className="absolute row top-0 h-10 justify-center items-center"
+          style={{
+            width: `${100 / Math.max(...NUMBERS)}%`,
+            left: `${(value - 1) * (100 / Math.max(...NUMBERS))}%`,
+            transition: "left 500ms ease",
           }}>
-          <Slider.Track className="sliderTrack relative bg-dark grow h-3 cursor-pointer">
-            <Slider.Range className="absolute bg-primary h-full" />
-          </Slider.Track>
-          <Slider.Thumb
-            className="sliderThumb block w-4 h-8 bg-secondary rounded-xl cursor-pointer hover:border-4 hover:border-secondary"
-            aria-label="Score"
+          <div
+            className="w-10 h-10 border-2 border-primary rounded-full z-3"
+            style={{ left: `${(value - 1) * (100 / Math.max(...NUMBERS))}%` }}
           />
-        </Slider.Root>
-
-        <div
-          className="w-full ml-[-8px] flex-1 h-3 rounded-r-lg bg-dark"
-          onClick={() => setValue(10)}
-        />
-      </div>
-
-      <div className="row w-full flex-nowrap">
-        {VALUES.map(num => {
-          const isSelected = num === value;
-          const isNeighbour =
-            !!value && (num === value - 1 || num === value + 1);
-          return (
-            <div
-              key={`value-${num}`}
-              className="row w-full h-9 flex-1 justify-center"
-              onClick={() => setValue(num)}>
-              <p
-                className={cn("w-9 text-center font-bold select-none", {
-                  "text-dark": !isSelected,
-                  "text-sm mt-[-8px]": !isSelected && !isNeighbour,
-                  "text-lg mt-[-5px]": isNeighbour,
-                  "text-3xl mt-[-2px] text-primary": isSelected,
-                })}
-                style={{
-                  transition:
-                    "color 200ms ease-out, font-size 200ms ease-out, margin-top 200ms ease-out",
-                }}>
-                {num}
-              </p>
-            </div>
-          );
-        })}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

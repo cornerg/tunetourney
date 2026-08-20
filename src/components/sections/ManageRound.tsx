@@ -1,37 +1,41 @@
 import React from "react";
-import { useUpdateRound } from "#/api/rounds.ts";
-import { useSubmissions } from "#/api/submissions.ts";
-import { useTournamentUsers, useVotedUsers } from "#/api/users.ts";
+import { useUpdateRound } from "#/api/Rounds/updateRound.ts";
+import { useSubmissions } from "#/api/Submissions/fetchSubmissions.ts";
+import { useTournamentUsers } from "#/api/TournamentUsers/fetchTournamentUsers.ts";
+import { useVotedUserIds } from "#/api/Users/fetchVotedUserIds.ts";
 import TTAlertDialogue from "#/components/primitives/TTAlertDialogue.tsx";
 import TTButton from "#/components/primitives/TTButton.tsx";
 import { ROUND_STATUS } from "#/models/RoundStatus.ts";
-import type { Round } from "#/models/supabaseTables.ts";
+import type { Round, User } from "#/models/supabaseTables.ts";
 import { useLoadScreen } from "#/state/loadscreenState.ts";
 import { useToast } from "#/state/toastStore.ts";
 
 type Props = {
   round: Round;
-}
+};
 export default function ManageRound({ round }: Props) {
-
   const { data: participants } = useTournamentUsers(round?.tournament_id ?? "");
   const { data: submissions } = useSubmissions(round?.id ?? "");
-  const { data: votedUsers } = useVotedUsers(round?.id ?? "");
+  const { data: votedIds } = useVotedUserIds(round.id);
   const { mutateAsync: updateRound } = useUpdateRound();
   const { show, hide } = useLoadScreen();
   const { showToast } = useToast();
 
   const areAllSubmitted = React.useMemo(() => {
+    if (round.status !== ROUND_STATUS.submitting && round.status !== ROUND_STATUS.voting) return true;
+    let awaiting: User[] = [];
     if (round.status === ROUND_STATUS.submitting) {
-      return !participants?.filter(
-        user => !submissions?.map(sub => sub.user_id)?.includes(user.id),
-      );
+      awaiting =
+        participants?.filter(
+          user => !submissions?.find(sub => sub.user_id === user.id),
+        ) ?? [];
     }
     if (round.status === ROUND_STATUS.voting) {
-      return !participants?.filter(user => !votedUsers?.includes(user.id));
+      awaiting =
+        participants?.filter(user => !votedIds?.includes(user.id)) ?? [];
     }
-    return true;
-  }, [submissions, votedUsers, participants, round.status]);
+    return awaiting.length <= 0;
+  }, [submissions, votedIds, participants, round.status]);
 
   const advanceLabel = React.useMemo(() => {
     switch (round.status) {
@@ -64,16 +68,6 @@ export default function ManageRound({ round }: Props) {
       default:
         return "This round has already been completed.";
     }
-  }, [round.status, areAllSubmitted]);
-
-  const buttonStyle = React.useMemo(() => {
-    if (
-      (round?.status === ROUND_STATUS.submitting && !areAllSubmitted) ||
-      round?.status === ROUND_STATUS.voting
-    ) {
-      return "outline";
-    }
-    return "primary";
   }, [round.status, areAllSubmitted]);
 
   const handleAdvance = React.useCallback(
@@ -116,7 +110,7 @@ export default function ManageRound({ round }: Props) {
         description={dialogueDescription}
         buttonText="Continue"
         onConfirm={() => handleAdvance(round)}>
-        <TTButton buttonStyle={buttonStyle} className="min-h-9 px-2">
+        <TTButton buttonStyle={areAllSubmitted ? "primary" : "outline"} className="min-h-9 px-2">
           {advanceLabel}
         </TTButton>
       </TTAlertDialogue>

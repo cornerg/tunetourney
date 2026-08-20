@@ -1,7 +1,9 @@
 import React from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useInsertClub, useUpdateClub } from "#/api/clubs.ts";
-import { useFileDelete, useFileUpload } from "#/api/files.ts";
+import { useInsertClub } from "#/api/Clubs/insertClub.ts";
+import { useUpdateClub } from "#/api/Clubs/updateClub.ts";
+import { useUploadFile } from "#/api/files/uploadFile.ts";
+import { useDeleteFile } from "#/api/files/deleteFile.ts";
 import TTButton from "#/components/primitives/TTButton";
 import TTInput from "#/components/primitives/TTInput.tsx";
 import { getGradient, useBreakpoints, type Gradient } from "#/hooks/utils.ts";
@@ -13,6 +15,7 @@ import { FaRegImage } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 import { LuSave } from "react-icons/lu";
 import { useToast } from "#/state/toastStore.ts";
+import { FaEraser } from "react-icons/fa6";
 
 const now = Date.now();
 
@@ -31,8 +34,8 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
   );
   const { mutateAsync: insertClub } = useInsertClub();
   const { mutateAsync: updateClub } = useUpdateClub();
-  const { mutateAsync: uploadFile } = useFileUpload();
-  const { mutateAsync: deleteFile } = useFileDelete();
+  const { mutateAsync: uploadFile } = useUploadFile();
+  const { mutateAsync: deleteFile } = useDeleteFile();
 
   const { isMobile } = useBreakpoints();
   const bannerInputRef = React.useRef<HTMLInputElement>(null);
@@ -87,6 +90,14 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
     },
     [editLocal, showToast],
   );
+  const handleClearBanner = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      editLocal({ banner: null });
+    },
+    [editLocal],
+  );
 
   const handleClickLogoUploader = React.useCallback(
     () => logoInputRef.current?.click(),
@@ -110,6 +121,14 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
     },
     [editLocal, showToast],
   );
+  const handleClearLogo = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      editLocal({ logo: null });
+    },
+    [editLocal],
+  );
 
   const handleCancel = React.useCallback(async () => {
     if (sourceClub?.id) {
@@ -127,7 +146,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
     // Iterate through properties to remove unchanged fields
     for (const key of Object.keys(saveData) as (keyof Club)[]) {
       if (
-        !!sourceClub?.[key] &&
+        (!!sourceClub?.[key] || (["banner", "logo"].includes(key))) &&
         sourceClub?.[key] === saveData[key] &&
         key !== "id"
       )
@@ -224,7 +243,12 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
   }, [sourceClub, localClub, showToast, show, changeText, uploadFile, updateClub, insertClub, hide, deleteFile, setEdit, navigate]);
 
   return (
-    <div className={cn("column w-full", className)} {...props}>
+    <div
+      className={cn(
+        "column w-full rounded-3xl rounded-tr-xl overflow-hidden bg-surface border border-gray-400",
+        className,
+      )}
+      {...props}>
       <div className="relative row w-full h-64 justify-center gap-1 bg-cover bg-center">
         <div
           className="row w-full h-full justify-center items-center bg-cover bg-center"
@@ -242,7 +266,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
             hidden
           />
           <div
-            className="group row w-full h-full justify-center items-center cursor-pointer"
+            className="group relative row w-full h-full justify-center items-center cursor-pointer"
             onClick={handleClickBannerUploader}>
             <div className="column w-full max-w-3xs h-full max-h-16 justify-center items-center gap-0 backdrop-blur-xs group-hover:backdrop-blur-sm rounded-lg border border-primary/30 group-hover:border-primary bg-primary/10 group-hover:bg-primary/30 transition-all">
               <div className="row w-full h-max justify-center items-center gap-4">
@@ -258,6 +282,15 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
               <p className="text-xs text-white/50 group-hover:text-white transition-colors">
                 Allowed types: .jpg, .png, .gif, .webp
               </p>
+            </div>
+
+            <div
+              className="absolute group/clear bottom-1 right-1 row w-10 h-10 justify-center items-center rounded-lg border border-dark/80 bg-surface/60 hover:border-primary hover:bg-surface transition-colors cursor-pointer z-2"
+              onClick={handleClearBanner}>
+              <FaEraser
+                size={22}
+                className="w-5.5 h-5.5 text-dark/80 group/clear-hover:text-primary"
+              />
             </div>
           </div>
         </div>
@@ -303,7 +336,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
               hidden
             />
             <div
-              className="group column w-full h-full justify-center items-center bg-primary/0 hover:bg-primary-20 backdrop-blur-[0] hover:backdrop-blur-sm transition-all cursor-pointer"
+              className="group relative column w-full h-full pb-4 justify-center items-center bg-primary/0 hover:bg-primary-20 backdrop-blur-[0] hover:backdrop-blur-sm transition-all cursor-pointer"
               onClick={handleClickLogoUploader}>
               <FaRegImage
                 size={32}
@@ -312,6 +345,15 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
               <p className="text-xs text-center text-white/50 group-hover:text-white transition-colors">
                 Upload Logo
               </p>
+
+              <div
+                className="absolute group/clear bottom-1 right-1 row w-6 h-6 justify-center items-center rounded-lg border border-dark/80 bg-surface/60 hover:border-primary hover:bg-surface transition-colors cursor-pointer z-2"
+                onClick={handleClearLogo}>
+                <FaEraser
+                  size={18}
+                  className="w-4.5 h-4.5 text-dark/80 group/clear-hover:text-primary"
+                />
+              </div>
             </div>
           </div>
 
