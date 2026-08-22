@@ -159,6 +159,11 @@ export default function SubmissionEdit({ round, savedSubmission }: Props) {
       if (!response) {
         throw new Error("Invalid response from saving submission");
       }
+      showToast({
+        title: "Submission saved!",
+        message: "Thank you for submitting! Voting will start soon.",
+        type: "success",
+      })
     } catch (error) {
       console.error(error);
       showToast({

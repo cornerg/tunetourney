@@ -40,7 +40,7 @@ export default function TTDialog({
               {title}
             </Dialog.Title>
             <Dialog.Close
-              className="group row w-10 h-10 mt-[-8px] mr-[-16px] pl-2 pb-2 justify-start items-end cursor-pointer"
+              className="group row w-10 h-10 -mt-2 -mr-4 pl-2 pb-2 justify-start items-end cursor-pointer focus-visible:outline-none"
               onClick={() => onOpenChange(false)}>
               <MdClose
                 size={22}

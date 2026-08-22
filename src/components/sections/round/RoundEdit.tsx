@@ -8,7 +8,6 @@ import { IoCloseSharp } from "react-icons/io5";
 import { useNavigate } from "@tanstack/react-router";
 import TTInput from "#/components/primitives/TTInput.tsx";
 import { useSaveRound } from "#/hooks/data/useSaveRound.ts";
-import { useToast } from "#/state/toastStore.ts";
 
 const defaultRound: Partial<Round> = {
   status: 0,
@@ -26,7 +25,6 @@ export default function RoundEdit({ sourceRound, tournament, setEdit }: Props) {
   const { isMobile } = useBreakpoints();
   const navigate = useNavigate();
   const { save } = useSaveRound();
-  const { showToast } = useToast();
 
   // When source data changes, sync local data with source data
   React.useEffect(() => {
@@ -56,15 +54,11 @@ export default function RoundEdit({ sourceRound, tournament, setEdit }: Props) {
   
   const handleSave = React.useCallback(async () => {
     setIsSaving(true);
+    const isUpdating = !!sourceRound?.id;
     const { success, response } = await save({ ...localRound, tournament_id: tournament.id });
     setIsSaving(false);
     if (success) {
-      showToast({
-        title: "Round Saved",
-        message: "The round has been successfully saved.",
-        type: "success",
-      })
-      if (response?.id) {
+      if (isUpdating) {
         setEdit(false);
       } else {
         void navigate({
@@ -73,7 +67,7 @@ export default function RoundEdit({ sourceRound, tournament, setEdit }: Props) {
         });
       }
     }
-  }, [localRound, navigate, save, setEdit, tournament.id]);
+  }, [localRound, navigate, save, setEdit, sourceRound?.id, tournament.id]);
   
   const canSubmit = React.useMemo(() => {
     return !!tournament && !!localRound.title;

@@ -126,7 +126,6 @@ export default function TournamentEdit({
       }
 
       if (!response?.id) {
-        hide();
         throw new Error("Invalid mutation response");
       } else {
         if (!sourceTournament?.id && addAllUsers) {
@@ -191,16 +190,18 @@ export default function TournamentEdit({
             buttonStyle="outline"
             className="w-8 h-8"
             tooltip="Save"
-            disabled={isSaving || !canSubmit}>
-            <LuSave size={22} onClick={handleSave} />
+            disabled={isSaving || !canSubmit}
+            onClick={handleSave}>
+            <LuSave size={22} className="w-5.5 h-5.5" />
           </TTButton>
 
           <TTButton
             buttonStyle="outline"
             className="w-8 h-8"
             tooltip="Cancel"
-            disabled={isSaving}>
-            <IoCloseSharp size={22} onClick={handleCancel} />
+            disabled={isSaving}
+            onClick={handleCancel}>
+            <IoCloseSharp size={22} className="w-5.5 h-5.5" />
           </TTButton>
         </div>
       </div>
@@ -218,6 +219,7 @@ export default function TournamentEdit({
           <TTSelect
             className="w-full min-w-40 max-w-96 h-10 flex-1"
             label="Club"
+            placeholder="Select club..."
             value={club_id}
             onChange={e => editLocal({ club_id: e.target.value })}>
             {(clubs ?? []).map(club => {

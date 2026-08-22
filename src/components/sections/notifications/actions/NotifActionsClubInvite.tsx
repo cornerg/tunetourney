@@ -4,6 +4,7 @@ import React from "react";
 import { useInsertClubUser } from "#/api/ClubUsers/insertClubUser.ts";
 import { useHandleNotifications } from "#/api/Notifications/handleNotifications.ts";
 import { useToast } from "#/state/toastStore.ts";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   notification: Notification;
@@ -14,6 +15,7 @@ export default function NotifActionsClubInvite({ notification }: Props) {
   const { showToast } = useToast();
   const { mutateAsync: insertClubUser } = useInsertClubUser();
   const { mutateAsync: handleNotifications } = useHandleNotifications();
+  const queryClient = useQueryClient();
   const { club_id: clubId, is_owner: isOwner } = React.useMemo(() => {
     return notification.metadata!;
   }, [notification]);
@@ -34,6 +36,9 @@ export default function NotifActionsClubInvite({ notification }: Props) {
       if (!response) {
         throw new Error("Error accepting invitation");
       } else {
+        const queryKey = ["clubs", notification.user_id];
+        await queryClient.invalidateQueries({ queryKey, exact: false });
+        await queryClient.refetchQueries({ queryKey, exact: false });
         showToast({
           title: `Invitation ${accepting ? "accepted!" : "declined."}`,
           message: accepting

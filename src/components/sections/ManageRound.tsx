@@ -42,9 +42,9 @@ export default function ManageRound({ round }: Props) {
       case ROUND_STATUS.pending:
         return "Start Round";
       case ROUND_STATUS.submitting:
-        return "Close Submission";
+        return "Start Voting";
       case ROUND_STATUS.voting:
-        return "Close Voting";
+        return "End Round";
       default:
         return "Round Ended";
     }

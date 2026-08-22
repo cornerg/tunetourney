@@ -16,19 +16,25 @@ async function insertVotesFn(newEntries: Partial<Vote>[]) {
 }
 
 export function useInsertVotes() {
-  const userId = useCurrentUserId();
+  const currentUserId = useCurrentUserId();
   return useMutation({
     mutationFn: (votes: Partial<Vote>[]) => insertVotesFn(votes),
     onSuccess: (newEntries, _variables, _onMutateResult, context) => {
       const roundId = newEntries[0]?.round_id ?? "";
-      const queryKey = ["votes", userId, roundId];
-      context.client.setQueryData(queryKey, (old: Vote[]) => {
+      const votesQueryKey = ["votes", currentUserId, roundId];
+      const usersQueryKey = ["votedUserIds", currentUserId, roundId];
+      void context.client.setQueryData(votesQueryKey, (prev: Vote[]) => {
         if (Array.isArray(newEntries) && newEntries.length > 0) {
-          if (Array.isArray(old)) return [...old, ...newEntries];
-          return [newEntries];
+          if (Array.isArray(prev)) return [...prev, ...newEntries];
+          return [...newEntries];
         }
       });
-      void context.client.invalidateQueries({ queryKey });
+      void context.client.setQueryData(usersQueryKey, (prev: string[] | null) => {
+        const userId = newEntries[0].user_id ?? "";
+        return Array.isArray(prev) ? [...prev, userId] : [userId];
+      })
+      void context.client.invalidateQueries({ queryKey: votesQueryKey });
+      void context.client.invalidateQueries({ queryKey: usersQueryKey });
     },
   });
 }

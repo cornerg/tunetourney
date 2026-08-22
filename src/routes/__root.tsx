@@ -1,6 +1,3 @@
-
-
-
 import "../styles/flex.css";
 import "../styles/font.css";
 import "../styles/theme.css";
@@ -8,7 +5,7 @@ import "../styles/theme.css";
 
 
 import * as React from "react";
-import type { QueryClient } from "@tanstack/react-query";
+import { type QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import Header, { HEADER_HEIGHT } from "#/components/sections/header/Header.tsx";
 import InternalPage from "#/components/InternalPage.tsx";
@@ -20,7 +17,6 @@ import { useAuth } from "#/hooks/auth.tsx";
 
 import appCss from "../styles.css?url";
 import Toaster from "#/components/primitives/Toast/Toaster.tsx";
-
 
 type MyRouterContext = {
   queryClient: QueryClient;
@@ -60,6 +56,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     if ((location.search as { signin?: boolean })?.signin === true) {
+      console.log("Sign In URL parameter found; starting signin process.");
       void signIn();
     }
   }, [location, signIn]);
@@ -75,7 +72,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <Scripts />
       <body style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT ?? 52}px)` }}>
         <LoadScreen />
-        <Header />
+        {isInternal && <Header />}
         {isInternal && <Sidebar />}
         {isInternal && <InternalPage>{children}</InternalPage>}
         {!isInternal && children}

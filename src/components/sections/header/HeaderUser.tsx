@@ -12,6 +12,7 @@ export default function HeaderUser({ currentUser }: Props) {
 
   return (
     <TTDropdownMenu
+      width={100}
       options={[
         <DropdownMenu.Item
           key="signout"

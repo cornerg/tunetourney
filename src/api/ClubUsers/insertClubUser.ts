@@ -22,8 +22,8 @@ export function useInsertClubUser() {
     onSuccess: (newEntry, _variables, _onMutateResult, context) => {
       if (newEntry?.id) {
         const queryKey = ["clubUsers", currentUserId, newEntry.club_id];
-        void context.client.setQueryData(queryKey, (prev: ClubUser[]) => {
-          return [...prev, newEntry];
+        void context.client.setQueryData(queryKey, (prev: ClubUser[] | null) => {
+          return Array.isArray(prev) ? [...prev, newEntry] : [newEntry];
         });
         void context.client.invalidateQueries({ queryKey });
       }

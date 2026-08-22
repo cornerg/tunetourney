@@ -48,7 +48,7 @@ export default function ClubMemberLists({ club }: Props) {
               key={user.id}
               club={club}
               user={user}
-              isOwner={isOwner}
+              isCurrentUserOwner={isOwner}
             />
           ))}
 
@@ -76,7 +76,7 @@ export default function ClubMemberLists({ club }: Props) {
               key={user.id}
               club={club}
               user={user}
-              isOwner={isOwner}
+              isCurrentUserOwner={isOwner}
             />
           ))}
 

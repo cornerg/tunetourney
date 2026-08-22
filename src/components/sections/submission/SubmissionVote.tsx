@@ -10,6 +10,7 @@ import { IoMusicalNotes } from "react-icons/io5";
 
 type Props = {
   submission: Submission;
+  isOwner: boolean;
   score: number | undefined;
   handleScore: (score: number) => void;
   comment: string;
@@ -17,6 +18,7 @@ type Props = {
 }
 export default function SubmissionVote({
   submission,
+  isOwner,
   score,
   handleScore,
   comment,
@@ -53,8 +55,8 @@ export default function SubmissionVote({
       </div>
 
       <div
-        className="column w-full h-max justify-between flex-1 gap-2"
-        style={{ minHeight: embedSize.height }}>
+        className="column w-full h-max flex-1 gap-2"
+        style={{ minHeight: embedSize.height, justifyContent: isOwner ? "flex-start" : "space-between" }}>
         <p
           className={
             submission?.comment?.trim()?.length
@@ -65,22 +67,30 @@ export default function SubmissionVote({
         </p>
         <hr className="w-full text-gray-300" />
 
-        <div className="column w-full h-full flex-1 justify-evenly gap-0">
-          <div className="column w-full gap-0 overflow-x-hidden">
-            <p className="font-bold text-nowrap">Your score</p>
-            <ScoreSlider
-              value={score}
-              setValue={value => handleScore(value)}
+        {!isOwner && (
+          <div className="column w-full h-full flex-1 justify-evenly gap-0">
+            <div className="column w-full gap-0 overflow-x-hidden">
+              <p className="font-bold text-nowrap">Your score</p>
+              <ScoreSlider
+                value={score}
+                setValue={value => handleScore(value)}
+              />
+            </div>
+
+            <TTInput
+              className="w-full h-9"
+              value={comment}
+              onChange={e => handleComment(e.target.value)}
+              label="Comment (optional)"
             />
           </div>
+        )}
 
-          <TTInput
-            className="w-full h-9"
-            value={comment}
-            onChange={e => handleComment(e.target.value)}
-            label="Comment (optional)"
-          />
-        </div>
+        {isOwner && (
+          <p className="text-sm text-gray-500 font-medium">
+            This is your submission.
+          </p>
+        )}
       </div>
     </TTBox>
   );

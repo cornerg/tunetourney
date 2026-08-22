@@ -76,6 +76,10 @@ export default function TournamentCard({
               </div>
             </>
           )}
+
+          {!activeRound && (
+            <p className="text-sm text-gray-400 font-medium">No active round</p>
+          )}
         </div>
       </div>
     </Link>
