@@ -58,7 +58,7 @@ export default function NotifActionsClubInvite({ notification }: Props) {
     } finally {
       setIsSaving(false);
     }
-  }, [insertClubUser, notification, clubId, isOwner, showToast, handleNotifications])
+  }, [insertClubUser, notification, clubId, isOwner, queryClient, showToast, handleNotifications])
 
   return (
     <div className="row w-full justify-end flex-1 gap-2 items-center">
