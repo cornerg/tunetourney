@@ -34,7 +34,6 @@ export default function HeaderNotifications() {
       <Popover.Portal>
         <Popover.Content className="popover-content w-xs min-h-8 bg-surface p-2 border border-gray-400 ouline-none focus:outline-none rounded-lg shadow-lg z-11">
           <NotificationsList />
-
           <Popover.Arrow className="fill-gray-400" />
         </Popover.Content>
       </Popover.Portal>

@@ -1,10 +1,11 @@
 import { supabase } from "#/integrations/supabase/supabase.ts";
 import type { User } from "#/models/supabaseTables.ts";
-import { useCurrentUserId } from "#/api/auth/currentUserId.ts";
 import { useQuery } from "@tanstack/react-query";
 import { hour } from "#/utils/time.ts";
 
-async function fetchCurrentUserFn(userId: string) {
+async function fetchCurrentUserFn() {
+  const { data: userData } = await supabase.auth.getUser();
+  const userId = userData.user?.id;
   if (!userId) {
     return null;
   }
@@ -16,14 +17,17 @@ async function fetchCurrentUserFn(userId: string) {
     console.error("Error fetching current user: ", error);
     return null;
   }
+  if (!Array.isArray(data) || data.length <= 0 || !data[0]) {
+    console.error("No user returned for current user.");
+    return null;
+  }
   return data[0] as User;
 }
 
 export function useCurrentUser() {
-  const currentUserId = useCurrentUserId();
   return useQuery({
-    queryKey: ["users", currentUserId, currentUserId],
-    queryFn: () => fetchCurrentUserFn(currentUserId),
+    queryKey: ["currentUser"],
+    queryFn: () => fetchCurrentUserFn(),
     staleTime: hour,
   });
 }

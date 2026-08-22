@@ -336,7 +336,7 @@ export default function ClubEdit({ sourceClub, setEdit, className, ...props }: P
               hidden
             />
             <div
-              className="group relative column w-full h-full pb-4 justify-center items-center bg-primary/0 hover:bg-primary-20 backdrop-blur-[0] hover:backdrop-blur-sm transition-all cursor-pointer"
+              className="group relative column w-full h-full pb-4 justify-center items-center rounded-2xl bg-primary/0 hover:bg-primary/20 backdrop-blur-[0] hover:backdrop-blur-sm transition-all cursor-pointer"
               onClick={handleClickLogoUploader}>
               <FaRegImage
                 size={32}

@@ -1,15 +1,16 @@
 import React from "react";
 import TTButton from "#/components/primitives/TTButton";
-import TournamentScores from "#/components/sections/tournament/TournamentScores.tsx";
+import TournamentMemberList from "#/components/sections/tournament/TournamentMemberList.tsx";
 import TournamentRounds from "#/components/sections/TournamentRounds.tsx";
 import { useTournamentRounds } from "#/hooks/roundHooks.ts";
 import { useBreakpoints } from "#/hooks/utils.ts";
 import type { Tournament } from "#/models/supabaseTables.ts";
-import { cn } from "#/utils/utils.ts";
-import { FiTrash2 } from "react-icons/fi";
+import { cn, getFormattedDate } from "#/utils/utils.ts";
 import { GoPencil } from "react-icons/go";
-import { RiLogoutBoxRLine } from "react-icons/ri";
-import { ROUND_STATUS } from "#/models/RoundStatus.ts";
+import { useTournamentOwners } from "#/api/TournamentUsers/fetchTournamentOwners.ts";
+import { useCurrentUserId } from "#/api/auth/currentUserId.ts";
+import ButtonLeaveTournament from "#/components/buttons/ButtonLeaveTournament.tsx";
+import ButtonDeleteTournament from "#/components/buttons/ButtonDeleteTournament.tsx";
 
 type Props = {
   tournament: Tournament;
@@ -18,10 +19,12 @@ type Props = {
 export default function TournamentView({ tournament, setEdit, className, ...props }: Props) {
   const { isMobile } = useBreakpoints();
   const { rounds } = useTournamentRounds(tournament.id);
+  const { data: owners } = useTournamentOwners(tournament.id);
+  const currentUserId = useCurrentUserId();
 
-  const hasFinishedRounds = React.useMemo(() => {
-    return !!rounds.find((round) => round.status >= ROUND_STATUS.closed);
-  }, [rounds]);
+  const isOwner = React.useMemo(() => {
+    return !!currentUserId && owners?.find(owner => owner.id === currentUserId);
+  }, [currentUserId, owners])
 
   return (
     <div className={cn("column w-full h-max gap-4 pb-2", className)} {...props}>
@@ -33,7 +36,7 @@ export default function TournamentView({ tournament, setEdit, className, ...prop
           <div className="column w-full flex-1 gap-0">
             <h2 className="subtitle">{tournament?.title}</h2>
             <p className="text-sm text-body">
-              {new Date(tournament.created_at).toLocaleDateString("en-US")}
+              Started {getFormattedDate(tournament.created_at)}
             </p>
           </div>
 
@@ -46,23 +49,15 @@ export default function TournamentView({ tournament, setEdit, className, ...prop
               <GoPencil size={22} />
             </TTButton>
 
-            <TTButton
-              buttonStyle="outline"
-              className="w-8 h-8"
-              tooltip="Delete club">
-              <FiTrash2 size={22} />
-            </TTButton>
+            {isOwner && (
+              <ButtonDeleteTournament tournament={tournament} />
+            )}
 
-            <TTButton
-              buttonStyle="outline"
-              className="w-8 h-8"
-              tooltip="Delete club">
-              <RiLogoutBoxRLine size={22} />
-            </TTButton>
+            <ButtonLeaveTournament tournament={tournament} />
           </div>
         </div>
 
-        {hasFinishedRounds && <TournamentScores tournamentId={tournament.id} />}
+        <TournamentMemberList tournament={tournament} />
       </div>
 
       {!!tournament && <TournamentRounds tournament={tournament} rounds={rounds} />}

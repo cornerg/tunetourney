@@ -48,7 +48,7 @@ export default function ProfilePhoto({
   if (photo) {
     return (
       <img
-        className={cn("border-1 border-gray-300", className)}
+        className={cn("border border-gray-300 select-none", className)}
         src={photo}
         alt="user avatar"
         width={size}
@@ -61,7 +61,7 @@ export default function ProfilePhoto({
   return (
     <div
       className={cn(
-        "row justify-center items-center border-1 border-gray-300",
+        "row justify-center items-center border border-gray-300",
         className,
       )}
       style={{

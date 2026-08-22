@@ -11,7 +11,7 @@ export const HEADER_HEIGHT = 52;
 
 export default function Header() {
   const { isMobile } = useBreakpoints();
-  const { data: currentUser, isLoading: isUserLoading } = useCurrentUser();
+  const { data: currentUser, isLoading: isUserLoading, isStale } = useCurrentUser();
 
   return (
     <>
@@ -21,8 +21,8 @@ export default function Header() {
           {
             "pl-4 pr-4": isMobile,
             "pl-8": !isMobile,
-          }
-          )}
+          },
+        )}
         style={{ height: `${HEADER_HEIGHT}px` }}>
         <Link className="row items-center w-max gap-3 cursor-pointer" to="/">
           <img
@@ -38,11 +38,9 @@ export default function Header() {
         </Link>
 
         <div className="row justify-end items-center gap-2 w-full flex-1">
-          {!currentUser && !isUserLoading && <ButtonDiscordLogin />}
+          {!currentUser?.id && !isUserLoading && <ButtonDiscordLogin />}
 
-          {currentUser?.id && (
-            <HeaderLoggedIn currentUser={currentUser} />
-          )}
+          {currentUser?.id && !isStale && <HeaderLoggedIn currentUser={currentUser} />}
         </div>
       </header>
 

@@ -14,7 +14,7 @@ export async function insertTournamentUsersFn(
     console.error("Error adding Tournament User", error);
     return null;
   }
-  return data?.[0] as TournamentUser | undefined;
+  return (data ?? null) as TournamentUser[] | null;
 }
 
 export function useInsertTournamentUsers() {
@@ -22,10 +22,15 @@ export function useInsertTournamentUsers() {
   return useMutation({
     mutationFn: (data: Partial<TournamentUser>[]) =>
       insertTournamentUsersFn(data),
-    onSuccess: (_newEntry, _variables, _onMutateResult, context) => {
-      void context.client.invalidateQueries({
-        queryKey: ["tournaments", currentUserId],
-      });
+    onSuccess: (newEntries, _variables, _onMutateResult, context) => {
+      if (newEntries?.length) {
+        const tournamentsQueryKey = ["tournaments", currentUserId];
+        const usersQueryKey = ["tournamentUsers", currentUserId, newEntries[0].tournament_id];
+        void context.client.invalidateQueries({ queryKey: tournamentsQueryKey });
+        void context.client.setQueryData(usersQueryKey, (prev: TournamentUser[] | null) => {
+          return Array.isArray(prev) ? [...prev, ...newEntries] : [...newEntries];
+        });
+      }
     },
   });
 }

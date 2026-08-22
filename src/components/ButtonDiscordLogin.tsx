@@ -20,7 +20,7 @@ export default function ButtonDiscordLogin() {
       <p className="text-white font-bold text-sm" onClick={handleLogin}>
         Log in with Discord
       </p>
-      <img src={discord} alt="Discord logo" className="w-[20px] h-[20px]" />
+      <img src={discord} alt="Discord logo" className="w-5 h-5" />
     </div>
   );
 }

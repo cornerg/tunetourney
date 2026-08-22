@@ -1,30 +1,32 @@
 import * as React from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useCurrentUserId } from "#/api/auth/currentUserId.ts";
-import { useSessionToken } from "#/api/auth/sessionToken.ts";
-import { useUsers } from "#/api/Users/fetchUsers.ts";
 import { useInsertUser } from "#/api/Users/insertUser.ts";
 import { supabase } from "#/integrations/supabase/supabase.ts";
-import { getContext } from "#/integrations/tanstack-query/root-provider.tsx";
 import { useLoadScreen } from "#/state/loadscreenState.ts";
-
-const { queryClient } = getContext();
+import { useQueryClient } from "@tanstack/react-query";
 
 export function useAuth() {
   const { show, hide } = useLoadScreen();
   const navigate = useNavigate();
-  const { data: users } = useUsers();
-  const { mutate: insertUser } = useInsertUser();
-  const userToken = useSessionToken();
-  const currentUserId = useCurrentUserId();
+  const { mutateAsync: insertUser } = useInsertUser();
+  const queryClient = useQueryClient();
 
   const handleSignIn = React.useCallback(async () => {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) return;
-    const currentUserData = users?.find(user => user.id === data.user.id);
-    if (!currentUserData) {
-      show("Signing up");
-      try {
+    try {
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        throw new Error("User was not logged in");
+      }
+      const { data: currentUserData, error } = await supabase
+        .from("Users")
+        .select("*")
+        .eq("id", data.user.id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+      if (!currentUserData?.length) {
+        show("Signing up");
         const id = data.user.id;
         let name = "";
         let avatar = "";
@@ -38,20 +40,26 @@ export function useAuth() {
             "";
           avatar = userdata.avatar_url ?? userdata.picture ?? "";
         }
-        insertUser({ id, name, avatar });
-      } catch (e) {
-        console.log("Error creating user data: ", e);
-      } finally {
-        hide();
-        await navigate({ to: "/dashboard" });
+        const newUser = await insertUser({ id, name, avatar });
+        if (!newUser) {
+          throw new Error("No user returned from insert");
+        }
+        return newUser;
       }
+    } catch (e) {
+      console.log("Error creating user data: ", e);
+    } finally {
+      hide();
+      await navigate({ to: "/dashboard" });
     }
-  }, [show, hide, navigate, users, insertUser]);
+  }, [show, hide, navigate, insertUser]);
 
   const handleSignout = React.useCallback(async () => {
     show("Logging you out");
     let isSuccessful = false;
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData) return;
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error("Error logging out: ", error);
@@ -61,13 +69,13 @@ export function useAuth() {
     } finally {
       hide();
       if (isSuccessful) {
-        await queryClient.invalidateQueries({
-          queryKey: ["users", userToken, currentUserId],
-        });
-        await navigate({ to: "/login" });
+        const queryKey = ["currentUser"];
+        await queryClient.setQueryData(queryKey, () => null);
+        await queryClient.invalidateQueries({ queryKey });
+        await navigate({ to: "/" });
       }
     }
-  }, [show, hide, userToken, currentUserId, navigate]);
+  }, [show, hide, queryClient, navigate]);
 
   return { signIn: handleSignIn, signOut: handleSignout };
 }

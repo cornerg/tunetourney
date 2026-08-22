@@ -23,11 +23,12 @@ export default function RoundRoster({ round }: Props) {
   }, [allUsers, organizers]);
 
   const isUserDone = React.useCallback((userId: string) => {
-    if (round.status === ROUND_STATUS.voting) {
-      return !!votedIds?.includes(userId);
-    } else {
+    if (round.status === ROUND_STATUS.submitting) {
       return !!submissions?.map(sub => sub.user_id)?.includes(userId);
+    } else if (round.status === ROUND_STATUS.voting) {
+      return !!votedIds?.includes(userId);
     }
+    return false;
   }, [round, votedIds, submissions]);
 
   const sortedUsers = React.useMemo(() => {
@@ -46,9 +47,9 @@ export default function RoundRoster({ round }: Props) {
   }, [organizers, currentUser]);
 
   const isCurrentUserDone = React.useMemo(() => {
-    if (!currentUser?.id) return false;
+    if (!currentUser?.id || round.status ) return false;
     return isUserDone(currentUser?.id);
-  }, [currentUser, isUserDone]);
+  }, [currentUser?.id, isUserDone, round.status]);
 
   return (
     <div className="row w-full flex-1 gap-2 items-center">

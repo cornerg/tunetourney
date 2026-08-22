@@ -94,11 +94,12 @@ export default function RoundVoting({ round }: Props) {
   );
 
   const totalScoreRange = React.useMemo(() => {
-    const min = (submissions?.length ?? 0) * 5;
-    const max = (submissions?.length ?? 0) * 7;
-    const barLimit = (submissions?.length ?? 0) * 10;
+    const otherSubmissions = (submissions ?? []).filter((sub) => sub.user_id !== currentUserId);
+    const min = otherSubmissions.length * 5;
+    const max = otherSubmissions.length * 7;
+    const barLimit = otherSubmissions.length * 10;
     return { min, max, barLimit };
-  }, [submissions?.length]);
+  }, [currentUserId, submissions]);
 
   const currentTotalScore = React.useMemo(() => {
     return votes?.reduce((total, cur) => total + cur.score, 0) ?? 0;
@@ -107,14 +108,14 @@ export default function RoundVoting({ round }: Props) {
   const canSubmit = React.useMemo(() => {
     if (isInserting) return false;
     const voteCount = votes?.length ?? 0;
-    const submissionCount = submissions?.length ?? 0;
+    const submissionCount = (submissions ?? []).filter((sub) => sub.user_id !== currentUserId).length ?? 0;
     const totalScore = votes?.reduce((total, cur) => total + cur.score, 0) ?? 0;
     return (
       voteCount === submissionCount &&
       totalScore >= totalScoreRange.min &&
       totalScore <= totalScoreRange.max
     );
-  }, [isInserting, votes, submissions?.length, totalScoreRange.min, totalScoreRange.max]);
+  }, [isInserting, votes, submissions, totalScoreRange.min, totalScoreRange.max, currentUserId]);
 
   return (
     <div className="column w-full gap-4">
@@ -149,6 +150,7 @@ export default function RoundVoting({ round }: Props) {
           const submissionId = submission.id;
           return (
             <SubmissionVote
+              isOwner={submission.user_id === currentUserId}
               key={submission.id}
               submission={submission}
               score={vote?.score}

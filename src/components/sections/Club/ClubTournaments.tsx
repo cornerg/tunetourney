@@ -19,18 +19,16 @@ export default function ClubTournaments({ clubId }: Props) {
     });
   }, [allTournaments, clubId]);
 
-  if (!tournaments.length) {
-    return null;
-  }
-
   return (
     <div className="column w-full gap-4">
       <div className="row w-full justify-between items-center gap-4">
-        <h3 className="heading text-lg font-bold text-dark">Tournaments</h3>
+        <h3 className="heading text-lg font-bold text-dark">
+          {!tournaments?.length ? "No tournaments" : "Tournaments"}
+        </h3>
 
         <Link to="/tournament/$tournamentId" params={{ tournamentId: "new" }}>
           <TTButton className="px-2 min-h-8" buttonStyle="outline">
-            New Tournament
+            {!tournaments?.length ? "Start first tournament" : "New Tournament"}
           </TTButton>
         </Link>
       </div>
